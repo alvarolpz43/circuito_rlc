@@ -44,6 +44,28 @@ const RLCEngine = {
             overshootPct = 0;
         }
 
+        // Cálculo de polos en el plano complejo s (Raíces de la EDO)
+        let poles = [];
+        if (delta < -1e-7) {
+            poles = [
+                { real: -alpha, imag: omega_d, label: `-${alpha.toFixed(1)} + j${omega_d.toFixed(1)} rad/s` },
+                { real: -alpha, imag: -omega_d, label: `-${alpha.toFixed(1)} - j${omega_d.toFixed(1)} rad/s` }
+            ];
+        } else if (Math.abs(delta) <= 1e-7) {
+            poles = [
+                { real: -alpha, imag: 0, label: `-${alpha.toFixed(1)} s⁻¹ (raíz doble)` },
+                { real: -alpha, imag: 0, label: `-${alpha.toFixed(1)} s⁻¹ (raíz doble)` }
+            ];
+        } else {
+            const sqrtDelta = Math.sqrt(delta);
+            const s1 = (-R + sqrtDelta) / (2.0 * L);
+            const s2 = (-R - sqrtDelta) / (2.0 * L);
+            poles = [
+                { real: s1, imag: 0, label: `${s1.toFixed(1)} s⁻¹` },
+                { real: s2, imag: 0, label: `${s2.toFixed(1)} s⁻¹` }
+            ];
+        }
+
         return {
             R, L, C,
             omega_n,
@@ -56,8 +78,23 @@ const RLCEngine = {
             t_p,
             overshootPct,
             regimeName,
-            regimeClass
+            regimeClass,
+            poles
         };
+    },
+
+    /**
+     * Calcula la solución analítica exacta y el error residual infinito L_inf = max |V_num - V_exacta|.
+     */
+    calculateResidualError(tArray, Vc_num, R, L, C, E0) {
+        const Vc_analit = this.solveAnalytical(R, L, C, E0, tArray);
+        let maxError = 0.0;
+        const N = tArray.length;
+        for (let i = 0; i < N; i++) {
+            const err = Math.abs(Vc_num[i] - Vc_analit[i]);
+            if (err > maxError) maxError = err;
+        }
+        return { maxError, Vc_analit };
     },
 
     /**

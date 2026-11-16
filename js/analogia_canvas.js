@@ -28,9 +28,19 @@ const AnalogiaCanvas = {
         if (!this.canvas) return;
         this.ctx = this.canvas.getContext("2d");
 
-        // Asegurar que la resolución interna del canvas coincida exactamente con la visual
-        this.canvas.width = 900;
-        this.canvas.height = 380;
+        const dpr = window.devicePixelRatio || 1;
+        this.canvas.width = 900 * dpr;
+        this.canvas.height = 380 * dpr;
+        this.canvas.style.width = "100%";
+        this.canvas.style.maxWidth = "900px";
+        this.canvas.style.height = "auto";
+        this.canvas.style.aspectRatio = "900 / 380";
+        if (this.ctx.resetTransform) {
+            this.ctx.resetTransform();
+        } else {
+            this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        }
+        this.ctx.scale(dpr, dpr);
 
         this.initElectrons(28);
         this.renderFrame(0);
@@ -90,17 +100,17 @@ const AnalogiaCanvas = {
     renderFrame(t) {
         if (!this.ctx || !this.canvas) return;
         const ctx = this.ctx;
-        const w = this.canvas.width;
-        const h = this.canvas.height;
+        const w = 900;
+        const h = 380;
 
         ctx.clearRect(0, 0, w, h);
 
         // Fondo oscuro
-        ctx.fillStyle = "#050811";
+        ctx.fillStyle = "#0b111e";
         ctx.fillRect(0, 0, w, h);
 
         // Línea divisoria central
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+        ctx.strokeStyle = "rgba(148, 163, 184, 0.15)";
         ctx.lineWidth = 1.5;
         ctx.setLineDash([5, 5]);
         ctx.beginPath();
@@ -145,7 +155,7 @@ const AnalogiaCanvas = {
     },
 
     drawMechanicalSystem(ctx, centerX, h, x_norm, i_norm) {
-        ctx.fillStyle = "#00f2fe";
+        ctx.fillStyle = "#38bdf8";
         ctx.font = "bold 13px 'Outfit', sans-serif";
         ctx.textAlign = "center";
         ctx.fillText("SISTEMA MECÁNICO (Masa-Resorte)", centerX, 28);
@@ -178,8 +188,8 @@ const AnalogiaCanvas = {
         // Masa
         const massW = 95;
         const massH = 42;
-        ctx.fillStyle = "#1e293b";
-        ctx.strokeStyle = "#8b5cf6";
+        ctx.fillStyle = "#111a2e";
+        ctx.strokeStyle = "#38bdf8";
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.roundRect(centerX - massW / 2, massY, massW, massH, 6);
@@ -246,7 +256,7 @@ const AnalogiaCanvas = {
     },
 
     drawElectricalCircuit(ctx, centerX, h, x_norm, i_norm, Vc, I) {
-        ctx.fillStyle = "#8b5cf6";
+        ctx.fillStyle = "#38bdf8";
         ctx.font = "bold 13px 'Outfit', sans-serif";
         ctx.textAlign = "center";
         ctx.fillText("CIRCUITO ELÉCTRICO RLC", centerX, 28);
@@ -256,43 +266,43 @@ const AnalogiaCanvas = {
         const rectW = 240;
         const rectH = 210;
 
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+        ctx.strokeStyle = "rgba(148, 163, 184, 0.3)";
         ctx.lineWidth = 2;
         ctx.strokeRect(rectX, rectY, rectW, rectH);
 
         // Fuente 12V
         const srcX = rectX;
         const srcY = rectY + rectH / 2;
-        ctx.fillStyle = "#050811";
+        ctx.fillStyle = "#0b111e";
         ctx.fillRect(srcX - 16, srcY - 20, 32, 40);
-        ctx.strokeStyle = "#3b82f6";
+        ctx.strokeStyle = "#38bdf8";
         ctx.beginPath();
         ctx.arc(srcX, srcY, 16, 0, Math.PI * 2);
         ctx.stroke();
-        ctx.fillStyle = "#3b82f6";
+        ctx.fillStyle = "#38bdf8";
         ctx.font = "bold 10px 'Inter', sans-serif";
         ctx.fillText("12V", srcX, srcY + 4);
 
         // Inductor L
         const lX = rectX + rectW * 0.35;
         const lY = rectY;
-        ctx.fillStyle = "#050811";
+        ctx.fillStyle = "#0b111e";
         ctx.fillRect(lX - 22, lY - 10, 44, 20);
-        ctx.strokeStyle = "#8b5cf6";
+        ctx.strokeStyle = "#0284c7";
         ctx.lineWidth = 2;
         for (let i = -2; i <= 2; i++) {
             ctx.beginPath();
             ctx.arc(lX + i * 7, lY, 5, Math.PI, 0, false);
             ctx.stroke();
         }
-        ctx.fillStyle = "#8b5cf6";
+        ctx.fillStyle = "#38bdf8";
         ctx.font = "10px 'Inter', sans-serif";
         ctx.fillText("L = 0.5H", lX, lY - 12);
 
         // Resistor R
         const rX = rectX + rectW * 0.75;
         const rY = rectY;
-        ctx.fillStyle = "#050811";
+        ctx.fillStyle = "#0b111e";
         ctx.fillRect(rX - 20, rY - 10, 40, 20);
         ctx.strokeStyle = "#f59e0b";
         ctx.beginPath();
@@ -309,7 +319,7 @@ const AnalogiaCanvas = {
         // Condensador C
         const cX = rectX + rectW;
         const cY = rectY + rectH / 2;
-        ctx.fillStyle = "#050811";
+        ctx.fillStyle = "#0b111e";
         ctx.fillRect(cX - 14, cY - 22, 28, 44);
 
         const plateCharge = Math.min(1.0, Vc / 12.0);
@@ -326,7 +336,7 @@ const AnalogiaCanvas = {
         ctx.lineTo(cX + 12, cY + 14);
         ctx.stroke();
 
-        ctx.fillStyle = "#00f2fe";
+        ctx.fillStyle = "#38bdf8";
         ctx.font = "bold 10px 'Inter', sans-serif";
         ctx.fillText(`C = 200µF`, cX + 40, cY - 4);
         ctx.fillText(`Vc = ${Vc.toFixed(1)}V`, cX + 40, cY + 10);
@@ -334,7 +344,7 @@ const AnalogiaCanvas = {
         // Electrones fluyendo
         if (Math.abs(I) > 0.001) {
             const speed = (I / 0.15) * 0.006;
-            ctx.fillStyle = "#00f2fe";
+            ctx.fillStyle = "#38bdf8";
 
             this.electrons.forEach(el => {
                 el.dist = (el.dist + speed + 1.0) % 1.0;
@@ -364,7 +374,10 @@ const AnalogiaCanvas = {
     updateButtons() {
         const btnPlay = document.getElementById("btnPlayAnalogia");
         if (btnPlay) {
-            btnPlay.innerHTML = this.isRunning ? "⏸️ Pausar Animación" : "▶️ Iniciar Animación";
+            btnPlay.innerHTML = this.isRunning
+                ? '<i data-lucide="pause"></i> <span>Pausar Animación</span>'
+                : '<i data-lucide="play"></i> <span>Iniciar Animación</span>';
+            if (window.lucide) lucide.createIcons();
         }
     }
 };

@@ -12,13 +12,27 @@
 
 ## 📁 ESTRUCTURA Y CONTENIDO DEL REPOSITORIO
 
-Este proyecto contiene la deducción analítica matemática completa, el código fuente en Python, las figuras científicas en alta resolución (300 DPI), los archivos de audio sintético y procesado, el informe académico formal y el guion cronometrado para la sustentación oral de 15 minutos:
+Este proyecto contiene la deducción analítica matemática completa, el código fuente en Python, la suite interactiva web, las figuras científicas en alta resolución (300 DPI), los archivos de audio sintético y procesado, el informe académico formal y el guion cronometrado para la sustentación oral de 15 minutos:
 
 ```
 circuito_rlc/
 │
-├── circuito_rlc.py                                 # Script modular en Python con RK4, gráficas y audio
-├── INFORME_PROYECTO_RLC.md                         # Informe académico formal y exhaustivo (Paper universitario)
+├── index.html                                      # Plataforma Web Interactiva de Simulación y Defensa
+├── css/
+│   └── styles.css                                  # Estilos maestros (Glassmorphism 2.0, Paleta Institucional)
+├── js/
+│   ├── rlc_engine.js                               # Motor matemático de cálculo RK4, analítica y polos
+│   ├── app.js                                      # Controlador principal, atajos de teclado y telemetría
+│   ├── audio_lab.js                                # Laboratorio Web Audio API (Sintetizador, Mic y Archivos)
+│   ├── analogia_canvas.js                          # Animación Hi-DPI masa-resorte vs cargas RLC (60 FPS)
+│   └── lucide.min.js                               # Iconos vectoriales profesionales (Modo 100% Offline)
+├── assets/
+│   ├── logo_unimayor.png                           # Escudo oficial de la Institución Universitaria Colegio Mayor del Cauca
+│   ├── logo_unimayor_transparent.png               # Versión transparente del escudo institucional
+│   └── favicon.png                                 # Favicon institucional para navegador
+│
+├── circuito_rlc.py                                 # Pipeline científico modular en Python (RK4, FFT, Bode y WAV)
+├── INFORME_PROYECTO_RLC.md                         # Informe académico formal exhaustivo (Paper de ingeniería)
 ├── GUION_EXPOSICION_DEFENSA.md                     # Guion de sustentación oral (15 min repartidos) + Preguntas
 ├── README.md                                       # Este archivo descriptivo del proyecto
 │
@@ -33,7 +47,30 @@ circuito_rlc/
 
 ---
 
-## 🚀 REQUISITOS Y EJECUCIÓN
+## 🌐 APLICACIÓN WEB INTERACTIVA (MODO EXPOSICIÓN)
+
+Para abrir la plataforma de sustentación interactiva y el simulador en tiempo real:
+- Haz doble clic sobre `index.html` en el explorador de archivos, o ábrelo en Google Chrome, Microsoft Edge o Firefox.
+- **Modo 100% Offline:** Todas las librerías vectoriales y motores matemáticos operan localmente sin depender de internet en el aula.
+
+### Funcionalidades de la Plataforma Web:
+1. **Simulador RK4 con Superposición Analítica en Vivo:**
+   - Sliders de $R, L, C$ y $E_0$ a 60 FPS fijos.
+   - Botón *"Superponer Analítica"* que calcula el error residual de convergencia en nanovoltios ($L_\infty \approx 3.69\text{ nV}$).
+2. **Diagrama de Polos en el Plano Complejo $s$ (Lugar de las Raíces):**
+   - Muestra las raíces $s_{1,2} = -\alpha \pm \sqrt{\alpha^2 - \omega_n^2}$ moviéndose dinámicamente y el semiplano izquierdo de estabilidad de Lyapunov.
+3. **Laboratorio de Audio Sensorial:**
+   - Sintetizador polifónico en vivo con corte acústico instantáneo.
+   - **Micrófono en Vivo:** Permite hablar y escuchar la voz en tiempo real filtrada "bajo el agua".
+   - **Carga de Archivo Propio:** Permite subir canciones MP3/WAV para procesarlas por el filtro RLC.
+4. **Teleprónter Oficial de 15 Minutos:**
+   - Cronómetro regresivo con barra de progreso y cambio automático del expositor en turno.
+5. **Control por Teclado:**
+   - `←` / `→` Cambiar pestañas • `Espacio` Pausar/Iniciar cronómetro • `P` Modo Presentación Pantalla Completa • `R` Reiniciar 15:00.
+
+---
+
+## 🚀 REQUISITOS Y EJECUCIÓN (PYTHON)
 
 ### Requisitos de Python:
 El proyecto requiere Python 3.9 o superior y las siguientes bibliotecas de computación científica:

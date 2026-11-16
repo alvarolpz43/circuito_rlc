@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROYECTO 2: Circuito RLC como Filtro de Audio | Colegio Mayor del Cauca</title>
+    <title>PROYECTO 2: Circuito RLC como Filtro de Audio | Ecuaciones Diferenciales - Colegio Mayor del Cauca</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,6 +19,9 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- Lucide Icons (Local y CDN fallback) -->
+    <script src="js/lucide.min.js"></script>
+
     <!-- Estilos maestros optimizados -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -28,41 +32,51 @@
          ==================================================================== -->
     <header class="header-hero">
         <div class="header-container">
-            <div class="brand-section">
-                <div class="institution-badge">CMC</div>
-                <div class="brand-text">
-                    <h1>Circuito RLC como Filtro de Audio</h1>
-                    <p>Colegio Mayor del Cauca • EDOs Unidad 3</p>
+            <!-- Nivel 1: Identidad Institucional & Controles de Modo -->
+            <div class="header-top-row">
+                <div class="brand-section">
+                    <div class="institution-logo-wrap">
+                        <img src="assets/logo_unimayor.png" alt="Colegio Mayor del Cauca" class="header-logo">
+                    </div>
+                    <div class="brand-text">
+                        <h1>Circuito RLC como Filtro de Audio</h1>
+                        <p>Colegio Mayor del Cauca • Facultad de Ingeniería • Ecuaciones Diferenciales</p>
+                    </div>
+                </div>
+
+                <div class="header-meta">
+                    <button id="btnPresentationMode" class="btn-presentation-mode" title="Modo Presentación Pantalla Completa (Tecla P)">
+                        <i data-lucide="tv"></i> <span>Presentación</span>
+                    </button>
+                    <span class="group-badge">GRUPO 3</span>
                 </div>
             </div>
 
-            <!-- Navegación por pestañas -->
-            <nav class="nav-tabs">
-                <button class="tab-btn active" data-tab="tab-inicio">
-                    <span>🏛️</span> Inicio
-                </button>
-                <button class="tab-btn" data-tab="tab-deduccion">
-                    <span>📐</span> Deducción
-                </button>
-                <button class="tab-btn" data-tab="tab-simulador">
-                    <span>⚙️</span> Simulador RK4
-                </button>
-                <button class="tab-btn" data-tab="tab-galeria">
-                    <span>📊</span> Galería & Bode
-                </button>
-                <button class="tab-btn" data-tab="tab-audio">
-                    <span>🎵</span> Audio Lab
-                </button>
-                <button class="tab-btn" data-tab="tab-analogia">
-                    <span>⚖️</span> Analogía Física
-                </button>
-                <button class="tab-btn" data-tab="tab-defensa">
-                    <span>🎙️</span> Defensa 15m
-                </button>
-            </nav>
-
-            <div class="header-meta">
-                <span class="group-badge">GRUPO 3</span>
+            <!-- Nivel 2: Barra de Navegación por Pestañas (Totalmente Visible) -->
+            <div class="header-nav-row">
+                <nav class="nav-tabs">
+                    <button class="tab-btn active" data-tab="tab-inicio">
+                        <i data-lucide="home"></i> <span>Inicio</span>
+                    </button>
+                    <button class="tab-btn" data-tab="tab-deduccion">
+                        <i data-lucide="calculator"></i> <span>Deducción</span>
+                    </button>
+                    <button class="tab-btn" data-tab="tab-simulador">
+                        <i data-lucide="cpu"></i> <span>Simulador RK4</span>
+                    </button>
+                    <button class="tab-btn" data-tab="tab-galeria">
+                        <i data-lucide="bar-chart-2"></i> <span>Galería & Bode</span>
+                    </button>
+                    <button class="tab-btn" data-tab="tab-audio">
+                        <i data-lucide="music"></i> <span>Audio Lab</span>
+                    </button>
+                    <button class="tab-btn" data-tab="tab-analogia">
+                        <i data-lucide="activity"></i> <span>Analogía Física</span>
+                    </button>
+                    <button class="tab-btn" data-tab="tab-defensa">
+                        <i data-lucide="mic"></i> <span>Defensa 15m</span>
+                    </button>
+                </nav>
             </div>
         </div>
     </header>
@@ -77,7 +91,7 @@
              ================================================================ -->
         <section id="tab-inicio" class="tab-pane active">
             <div class="hero-banner">
-                <div class="hero-tag">⚡ Ingeniería Informática • Física Matemática</div>
+                <div class="hero-tag"><i data-lucide="zap"></i> Ecuaciones Diferenciales • Ingeniería Informática</div>
                 <h2 class="hero-title">El Circuito RLC como Filtro de Audio Analógico</h2>
                 <p class="hero-desc">
                     Modelado riguroso, deducción analítica a mano y simulación computacional de ecuaciones diferenciales de segundo orden aplicadas al acondicionamiento de señales acústicas y diseño de filtros pasa-bajo.
@@ -86,18 +100,22 @@
                 <!-- Tarjetas de Parámetros Nominales -->
                 <div class="stats-grid">
                     <div class="stat-item">
+                        <div class="stat-icon-wrap"><i data-lucide="layers"></i></div>
                         <div class="stat-value">0.5 H</div>
                         <div class="stat-label">Inductancia (L)</div>
                     </div>
                     <div class="stat-item">
+                        <div class="stat-icon-wrap"><i data-lucide="cpu"></i></div>
                         <div class="stat-value">200 µF</div>
                         <div class="stat-label">Capacitancia (C)</div>
                     </div>
                     <div class="stat-item">
+                        <div class="stat-icon-wrap"><i data-lucide="activity"></i></div>
                         <div class="stat-value">100 rad/s</div>
                         <div class="stat-label">Frecuencia Natural (&omega;<sub>n</sub>)</div>
                     </div>
                     <div class="stat-item">
+                        <div class="stat-icon-wrap"><i data-lucide="shield-check"></i></div>
                         <div class="stat-value">100 Ω</div>
                         <div class="stat-label">Resistencia Crítica (R<sub>cr</sub>)</div>
                     </div>
@@ -114,7 +132,7 @@
                     <div class="member-info">
                         <h4>Jessica Vanesa Acosta Galindez</h4>
                         <div class="member-role">Planteamiento Físico & Deducción</div>
-                        <div class="member-time">⏱️ Minuto 00:00 - 03:45</div>
+                        <div class="member-time"><i data-lucide="clock"></i> Minuto 00:00 - 03:45</div>
                     </div>
                 </div>
 
@@ -123,7 +141,7 @@
                     <div class="member-info">
                         <h4>Kevin Daniel Bermudez Zamora</h4>
                         <div class="member-role">Solución Analítica & Analogía</div>
-                        <div class="member-time">⏱️ Minuto 03:45 - 07:30</div>
+                        <div class="member-time"><i data-lucide="clock"></i> Minuto 03:45 - 07:30</div>
                     </div>
                 </div>
 
@@ -132,7 +150,7 @@
                     <div class="member-info">
                         <h4>Alvaro Jose Lopez Quira</h4>
                         <div class="member-role">Computación Científica & RK4</div>
-                        <div class="member-time">⏱️ Minuto 07:30 - 11:15</div>
+                        <div class="member-time"><i data-lucide="clock"></i> Minuto 07:30 - 11:15</div>
                     </div>
                 </div>
 
@@ -141,7 +159,62 @@
                     <div class="member-info">
                         <h4>Jorge Enrique Muñoz Dulcey</h4>
                         <div class="member-role">Análisis de Audio, Bode & Cierre</div>
-                        <div class="member-time">⏱️ Minuto 11:15 - 15:00</div>
+                        <div class="member-time"><i data-lucide="clock"></i> Minuto 11:15 - 15:00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Innovación 1 & 2: Diagrama de Polos en el Plano Complejo s & Diagnóstico de Estabilidad -->
+            <div class="splane-analysis-layout">
+                <div class="glass-card splane-card">
+                    <div class="splane-header">
+                        <div>
+                            <h3 style="font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                                <i data-lucide="crosshair"></i> Diagrama de Polos en el Plano Complejo s (Lugar de las Raíces)
+                            </h3>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
+                                Representación geométrica de las raíces características $s_{1,2} = -\alpha \pm \sqrt{\alpha^2 - \omega_n^2}$ en el plano $\sigma + j\omega$
+                            </p>
+                        </div>
+                        <span id="splaneRegimeBadge" class="regime-pill regime-sub" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">Subamortiguado</span>
+                    </div>
+
+                    <div class="splane-canvas-wrap">
+                        <canvas id="canvasSPlane" width="580" height="280"></canvas>
+                    </div>
+                </div>
+
+                <div class="glass-card splane-details-card">
+                    <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i data-lucide="activity"></i> Raíces & Estabilidad de Lyapunov
+                    </h3>
+                    
+                    <div class="pole-values-box">
+                        <div class="pole-row">
+                            <span class="pole-label">Polo $s_1$:</span>
+                            <span id="poleVal1" class="pole-val" style="color: var(--accent-cyan); font-family: var(--font-mono); font-weight: 700;">-10.0 + j99.5 rad/s</span>
+                        </div>
+                        <div class="pole-row">
+                            <span class="pole-label">Polo $s_2$:</span>
+                            <span id="poleVal2" class="pole-val" style="color: var(--accent-cyan); font-family: var(--font-mono); font-weight: 700;">-10.0 - j99.5 rad/s</span>
+                        </div>
+                        <div class="pole-row">
+                            <span class="pole-label">Atenuación ($lpha$):</span>
+                            <span id="poleAlpha" class="pole-val" style="font-family: var(--font-mono);">10.0 s⁻¹</span>
+                        </div>
+                        <div class="pole-row">
+                            <span class="pole-label">Frec. Amortiguada ($\omega_d$):</span>
+                            <span id="poleWd" class="pole-val" style="font-family: var(--font-mono);">99.50 rad/s (15.84 Hz)</span>
+                        </div>
+                    </div>
+
+                    <div class="stability-badge-card" style="margin-top: 1rem; padding: 0.9rem; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--radius-sm);">
+                        <div style="font-size: 0.82rem; font-weight: 700; color: var(--accent-green); display: flex; align-items: center; gap: 0.4rem;">
+                            <i data-lucide="shield-check"></i> Sistema Asintóticamente Estable
+                        </div>
+                        <p style="font-size: 0.76rem; color: var(--text-muted); margin-top: 0.3rem; line-height: 1.5;">
+                            Dado que $R > 0$ y $L > 0$, la parte real $\text{Re}(s) = -\alpha = -\frac{R}{2L} < 0$ se ubica estrictamente en el <strong>semiplano izquierdo abierto (LHP)</strong>, garantizando que el transitorio decae exponencialmente a cero sin divergir.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -174,7 +247,7 @@
                         $$L Q''(t) + R Q'(t) + \frac{1}{C} Q(t) = E(t)$$
                     </div>
                     <div class="callout-box">
-                        <span>ℹ️</span>
+                        <i data-lucide="info" class="callout-icon"></i>
                         <div><strong>Tensión de Salida del Filtro:</strong> La señal filtrada se extrae directamente sobre el condensador electrostático: $V_C(t) = \frac{Q(t)}{C}$.</div>
                     </div>
                 </div>
@@ -228,7 +301,7 @@
                         $$\mathbf{V_C(t) = 12 \left[ 1 - e^{-10 t} \left( \cos(10\sqrt{99} t) + \frac{1}{\sqrt{99}} \sin(10\sqrt{99} t) \right) \right]\text{ [V]}}$$
                     </div>
                     <div class="callout-box warn">
-                        <span>⚠️</span>
+                        <i data-lucide="alert-triangle" class="callout-icon"></i>
                         <div>
                             <strong>Pico Máximo de Sobreimpulso:</strong> Ocurre en $t_p = \frac{\pi}{\omega_d} = \frac{\pi}{10\sqrt{99}} \approx \mathbf{31.57\text{ ms}}$, alcanzando:
                             $$V_{C,\max} = 12 \cdot \left(1 + e^{-\frac{\pi}{\sqrt{99}}}\right) \approx \mathbf{20.75\text{ V}} \quad \implies \text{Sobreimpulso del } \mathbf{72.9\%}$$
@@ -327,8 +400,20 @@
                 <!-- Gráfica Reactiva -->
                 <div class="chart-card-wrapper">
                     <div class="chart-header">
-                        <h3 style="font-size: 1.05rem; color: #fff;">Respuesta Temporal en Bornes del Condensador V<sub>C</sub>(t)</h3>
-                        <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-cyan);">RK4 • 60 FPS</span>
+                        <div>
+                            <h3 style="font-size: 1.05rem; color: #fff; margin-bottom: 0.15rem;">Respuesta Temporal en Bornes del Condensador V<sub>C</sub>(t)</h3>
+                            <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-cyan);">RK4 • 60 FPS FIJOS</span>
+                        </div>
+
+                        <div class="chart-actions">
+                            <button id="btnToggleAnalytical" class="btn-compare-analytical" title="Superpone la solución analítica exacta calculada a mano y evalúa el error numérico">
+                                <i data-lucide="git-compare"></i> <span>Superponer Analítica</span>
+                            </button>
+                            <div id="badgeResidualError" class="badge-error-residual" style="display: none;">
+                                <span class="badge-err-label">Error L<sub>&infin;</sub>:</span>
+                                <span id="valResidualError" class="badge-err-val">3.69 nV</span>
+                            </div>
+                        </div>
                     </div>
                     <div class="chart-canvas-box">
                         <canvas id="chartRK4"></canvas>
@@ -349,7 +434,7 @@
                 <div class="figure-card">
                     <div class="figure-img-wrap">
                         <img src="figura1_validacion_rk4_vs_analitica.png" alt="Figura 1: Validación RK4 vs Analítica" class="figure-img">
-                        <div class="figure-zoom-overlay">🔍 Clic para pantalla completa</div>
+                        <div class="figure-zoom-overlay"><i data-lucide="maximize-2"></i> Clic para pantalla completa</div>
                     </div>
                     <div class="figure-caption">
                         <h4>Figura 1: Validación Analítica vs. Numérica RK4</h4>
@@ -361,7 +446,7 @@
                 <div class="figure-card">
                     <div class="figure-img-wrap">
                         <img src="figura2_comparativa_regimenes_amortiguamiento.png" alt="Figura 2: Comparativa de Regímenes" class="figure-img">
-                        <div class="figure-zoom-overlay">🔍 Clic para pantalla completa</div>
+                        <div class="figure-zoom-overlay"><i data-lucide="maximize-2"></i> Clic para pantalla completa</div>
                     </div>
                     <div class="figure-caption">
                         <h4>Figura 2: Dinámicas para R = 10, 50, 100 y 200 Ω</h4>
@@ -373,7 +458,7 @@
                 <div class="figure-card">
                     <div class="figure-img-wrap">
                         <img src="figura3_filtrado_senal_multitono.png" alt="Figura 3: Filtrado Multi-tono" class="figure-img">
-                        <div class="figure-zoom-overlay">🔍 Clic para pantalla completa</div>
+                        <div class="figure-zoom-overlay"><i data-lucide="maximize-2"></i> Clic para pantalla completa</div>
                     </div>
                     <div class="figure-caption">
                         <h4>Figura 3: Filtrado de Señal Multi-seno (5, 50 y 500 Hz)</h4>
@@ -385,7 +470,7 @@
                 <div class="figure-card">
                     <div class="figure-img-wrap">
                         <img src="figura4_diagrama_bode_filtro_audio.png" alt="Figura 4: Diagrama de Bode" class="figure-img">
-                        <div class="figure-zoom-overlay">🔍 Clic para pantalla completa</div>
+                        <div class="figure-zoom-overlay"><i data-lucide="maximize-2"></i> Clic para pantalla completa</div>
                     </div>
                     <div class="figure-caption">
                         <h4>Figura 4: Diagrama de Bode en Magnitud y Fase</h4>
@@ -407,7 +492,7 @@
                 <div class="audio-player-card">
                     <div class="audio-header">
                         <div class="audio-title">
-                            <span>🔊</span> Audio Original Sintético
+                            <i data-lucide="volume-2"></i> Audio Original Sintético
                         </div>
                         <span class="badge-tag orig">44.1 kHz • PCM 16-bit</span>
                     </div>
@@ -421,7 +506,7 @@
                 <div class="audio-player-card featured">
                     <div class="audio-header">
                         <div class="audio-title">
-                            <span>🌊</span> Audio Filtrado "Bajo el Agua"
+                            <i data-lucide="waves"></i> Audio Filtrado "Bajo el Agua"
                         </div>
                         <span class="badge-tag filt">Filtro RLC Serie</span>
                     </div>
@@ -435,7 +520,7 @@
             <!-- Sintetizador Interactivo en Tiempo Real -->
             <div class="synth-live-card">
                 <h3 style="font-size: 1.15rem; color: #fff; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <span>🎹</span> Sintetizador y Filtro RLC en Tiempo Real (Web Audio API)
+                    <i data-lucide="sliders-horizontal"></i> Sintetizador y Filtro RLC en Tiempo Real (Web Audio API)
                 </h3>
                 <p style="font-size: 0.88rem; color: var(--text-muted);">
                     Genera una señal polifónica rica en armónicos en tus propios altavoces y activa/desactiva el filtro pasa-bajo de 2do orden para escuchar el corte instantáneo:
@@ -443,11 +528,22 @@
 
                 <div class="synth-controls">
                     <button id="btnPlaySynth" class="synth-btn">
-                        ▶️ Iniciar Sintetizador
+                        <i data-lucide="play"></i> <span>Iniciar Sintetizador</span>
                     </button>
-                    <button id="btnToggleFilter" class="synth-btn" style="background: rgba(0, 242, 254, 0.15); border: 1px solid var(--accent-cyan); color: #fff;">
-                        🎛️ Filtro RLC: <strong>ACTIVADO (Bajo el Agua)</strong>
+                    <button id="btnToggleFilter" class="synth-btn btn-filter-active">
+                        <i data-lucide="filter"></i> <span>Filtro RLC: <strong>ACTIVADO (Bajo el Agua)</strong></span>
                     </button>
+                    <button id="btnLiveMic" class="synth-btn btn-mic-option">
+                        <i data-lucide="mic"></i> <span>Hablar por Micrófono</span>
+                    </button>
+                    <label class="synth-btn btn-upload-option" title="Sube una canción o pista de tu computadora para filtrarla en vivo">
+                        <i data-lucide="upload"></i> <span id="lblAudioFile">Cargar Audio Propio</span>
+                        <input type="file" id="audioFileInput" accept="audio/*" style="display: none;">
+                    </label>
+                </div>
+                <div id="audioSourceIndicator" class="audio-source-indicator">
+                    <span class="source-dot"></span>
+                    <span id="audioSourceText">Fuente activa: Sintetizador Polifónico</span>
                 </div>
 
                 <!-- Canvas del Espectro de Audio -->
@@ -472,10 +568,10 @@
 
                 <div class="analogia-controls">
                     <button id="btnPlayAnalogia" class="timer-btn">
-                        ▶️ Iniciar Animación
+                        <i data-lucide="play"></i> <span>Iniciar Animación</span>
                     </button>
                     <button id="btnResetAnalogia" class="timer-btn">
-                        🔄 Reiniciar
+                        <i data-lucide="rotate-ccw"></i> <span>Reiniciar</span>
                     </button>
                 </div>
             </div>
@@ -545,17 +641,22 @@
 
             <!-- Tarjeta de Control del Cronómetro -->
             <div class="timer-header-card">
-                <div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">TIEMPO DE EXPOSICIÓN RESTANTE:</div>
+                <div class="timer-info-wrap">
+                    <div class="timer-meta-label">
+                        <i data-lucide="clock"></i> TIEMPO DE EXPOSICIÓN RESTANTE:
+                    </div>
                     <div id="timerDisplay" class="timer-display">15:00</div>
+                    <div class="defense-progress-bar-wrap">
+                        <div id="defenseProgressBar" class="defense-progress-bar"></div>
+                    </div>
                 </div>
 
                 <div class="timer-controls">
-                    <button id="btnTimerToggle" class="timer-btn" style="background: var(--accent-cyan); color: #080c16; font-weight: 800;">
-                        ▶️ Iniciar Defensa
+                    <button id="btnTimerToggle" class="timer-btn btn-timer-primary">
+                        <i data-lucide="play"></i> <span>Iniciar Defensa</span>
                     </button>
                     <button id="btnTimerReset" class="timer-btn">
-                        🔄 Reiniciar (15:00)
+                        <i data-lucide="rotate-ccw"></i> <span>Reiniciar (15:00)</span>
                     </button>
                 </div>
             </div>
@@ -616,8 +717,8 @@
                     <!-- Pregunta 1 -->
                     <div class="question-item">
                         <div class="question-header">
-                            <span>❓ Pregunta 1: ¿Por qué en el condensador es pasa-bajo, pero en el inductor es pasa-alto y en la resistencia pasa-banda?</span>
-                            <span>▾</span>
+                            <span class="question-title"><i data-lucide="help-circle"></i> Pregunta 1: ¿Por qué en el condensador es pasa-bajo, pero en el inductor es pasa-alto y en la resistencia pasa-banda?</span>
+                            <i data-lucide="chevron-down" class="chevron-icon"></i>
                         </div>
                         <div class="question-content">
                             <strong>Respuesta del Grupo:</strong> Por la naturaleza de sus reactancias complejas en frecuencia:<br>
@@ -630,8 +731,8 @@
                     <!-- Pregunta 2 -->
                     <div class="question-item">
                         <div class="question-header">
-                            <span>❓ Pregunta 2: El sobreimpulso en R = 10 Ω alcanza 20.75 V cuando la fuente solo da 12 V. ¿Viola esto la conservación de energía?</span>
-                            <span>▾</span>
+                            <span class="question-title"><i data-lucide="help-circle"></i> Pregunta 2: El sobreimpulso en R = 10 Ω alcanza 20.75 V cuando la fuente solo da 12 V. ¿Viola esto la conservación de energía?</span>
+                            <i data-lucide="chevron-down" class="chevron-icon"></i>
                         </div>
                         <div class="question-content">
                             <strong>Respuesta del Grupo:</strong> No viola la conservación de la energía; es una transferencia temporal entre campos de energía.<br>
@@ -642,8 +743,8 @@
                     <!-- Pregunta 3 -->
                     <div class="question-item">
                         <div class="question-header">
-                            <span>❓ Pregunta 3: ¿Por qué RK4 fue perfectamente estable con audio a 44.1 kHz sin presentar aliasing numérico?</span>
-                            <span>▾</span>
+                            <span class="question-title"><i data-lucide="help-circle"></i> Pregunta 3: ¿Por qué RK4 fue perfectamente estable con audio a 44.1 kHz sin presentar aliasing numérico?</span>
+                            <i data-lucide="chevron-down" class="chevron-icon"></i>
                         </div>
                         <div class="question-content">
                             <strong>Respuesta del Grupo:</strong> Por el criterio de la región de estabilidad absoluta de Runge-Kutta 4 en el plano complejo.<br>
@@ -667,11 +768,33 @@
     </div>
 
     <!-- ====================================================================
+         BARRA DE ATAJOS DE TECLADO (MODO EXPOSICIÓN MAGISTRAL)
+         ==================================================================== -->
+    <aside class="presentation-shortcuts-bar">
+        <div class="shortcuts-container">
+            <span class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> Cambiar Pestañas</span>
+            <span class="shortcut-sep">•</span>
+            <span class="shortcut-item"><kbd>Espacio</kbd> Iniciar / Pausar Cronómetro</span>
+            <span class="shortcut-sep">•</span>
+            <span class="shortcut-item"><kbd>P</kbd> Modo Presentación</span>
+            <span class="shortcut-sep">•</span>
+            <span class="shortcut-item"><kbd>R</kbd> Reiniciar 15:00</span>
+        </div>
+    </aside>
+
+    <!-- ====================================================================
          FOOTER
          ==================================================================== -->
     <footer class="footer">
-        <p><strong>PROYECTO 2: EL CIRCUITO RLC COMO FILTRO DE AUDIO</strong> • Grupo 3</p>
-        <p>Institución Universitaria Colegio Mayor del Cauca • Facultad de Ingeniería • Popayán, 2026</p>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <img src="assets/logo_unimayor.png" alt="Colegio Mayor del Cauca" class="footer-logo">
+                <div>
+                    <p class="footer-title"><strong>PROYECTO 2: EL CIRCUITO RLC COMO FILTRO DE AUDIO</strong> • Grupo 3</p>
+                    <p class="footer-sub">Institución Universitaria Colegio Mayor del Cauca • Facultad de Ingeniería • Ecuaciones Diferenciales • Popayán, 2026</p>
+                </div>
+            </div>
+        </div>
     </footer>
 
     <!-- Scripts de la aplicación -->
