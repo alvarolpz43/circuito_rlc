@@ -7,6 +7,15 @@
  */
 
 const RLCEngine = {
+    // Constantes nominales estandarizadas del proyecto
+    NOMINAL_RESISTANCES: [10.0, 50.0, 100.0, 200.0],
+    DEFAULT_R: 10.0,
+    DEFAULT_L: 0.5,
+    DEFAULT_C: 200e-6,
+    DEFAULT_E0: 12.0,
+    R_AUDIO: 50.0,
+    R_CRITICAL: 100.0,
+
     /**
      * Calcula los parámetros físicos, frecuencias y régimen de amortiguamiento.
      */
@@ -227,5 +236,71 @@ const RLCEngine = {
         }
 
         return { freqs, mag_db, phase_deg, f_n };
+    },
+
+    /**
+     * Calcula los datos de la señal multi-tono (Figura 3) en dominio del tiempo y frecuencia.
+     * E(t) = sen(2*pi*5*t) + sen(2*pi*50*t) + sen(2*pi*500*t)
+     */
+    calculateMultitoneData(R = 50.0, L = 0.5, C = 200e-6, duration = 0.4, numPoints = 400) {
+        const omega_n = 1.0 / Math.sqrt(L * C);
+        const f1 = 5.0, f2 = 50.0, f3 = 500.0;
+        const freqs = [f1, f2, f3];
+
+        // Función de transferencia en cada armónico: H(j*omega) = omega_n^2 / ((omega_n^2 - omega^2) + j*(R/L)*omega)
+        const harmonics = freqs.map(f => {
+            const w = 2.0 * Math.PI * f;
+            const real = Math.pow(omega_n, 2) - Math.pow(w, 2);
+            const imag = (R / L) * w;
+            const mag = Math.pow(omega_n, 2) / Math.sqrt(Math.pow(real, 2) + Math.pow(imag, 2));
+            const phase = -Math.atan2(imag, real);
+            const db = 20.0 * Math.log10(mag);
+            return { f, mag, phase, db };
+        });
+
+        // Muestreo en el dominio del tiempo (0 a duration s, graficado en ms)
+        const t_ms = [];
+        const e_in = [];
+        const vc_out = [];
+        const ref_5hz = [];
+
+        const dt = duration / (numPoints - 1);
+        for (let i = 0; i < numPoints; i++) {
+            const t = i * dt;
+            const ms = t * 1000.0;
+            const val_in = Math.sin(2 * Math.PI * f1 * t) + 
+                           Math.sin(2 * Math.PI * f2 * t) + 
+                           Math.sin(2 * Math.PI * f3 * t);
+            
+            const val_out = harmonics[0].mag * Math.sin(2 * Math.PI * f1 * t + harmonics[0].phase) +
+                            harmonics[1].mag * Math.sin(2 * Math.PI * f2 * t + harmonics[1].phase) +
+                            harmonics[2].mag * Math.sin(2 * Math.PI * f3 * t + harmonics[2].phase);
+
+            const val_ref = Math.sin(2 * Math.PI * f1 * t);
+
+            t_ms.push(ms.toFixed(1));
+            e_in.push(parseFloat(val_in.toFixed(3)));
+            vc_out.push(parseFloat(val_out.toFixed(3)));
+            ref_5hz.push(parseFloat(val_ref.toFixed(3)));
+        }
+
+        // Espectro frecuencial comparativo
+        const spectrum = {
+            labels: ['5 Hz (Graves)', '50 Hz (Medios)', '500 Hz (Agudos)'],
+            frequencies: [5, 50, 500],
+            inputMag: [1.0, 1.0, 1.0],
+            outputMag: [
+                parseFloat(harmonics[0].mag.toFixed(3)),
+                parseFloat(harmonics[1].mag.toFixed(3)),
+                parseFloat(harmonics[2].mag.toFixed(4))
+            ],
+            attenuationDb: [
+                harmonics[0].db.toFixed(1),
+                harmonics[1].db.toFixed(1),
+                harmonics[2].db.toFixed(1)
+            ]
+        };
+
+        return { t_ms, e_in, vc_out, ref_5hz, spectrum, harmonics };
     }
 };

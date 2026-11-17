@@ -73,6 +73,9 @@
                     <button class="tab-btn" data-tab="tab-analogia">
                         <i data-lucide="activity"></i> <span>Analogía Física</span>
                     </button>
+                    <button class="tab-btn" data-tab="tab-codigo">
+                        <i data-lucide="code-2"></i> <span>Código Científico</span>
+                    </button>
                     <button class="tab-btn" data-tab="tab-defensa">
                         <i data-lucide="mic"></i> <span>Defensa 15m</span>
                     </button>
@@ -137,9 +140,9 @@
                 </div>
 
                 <div class="member-card">
-                    <div class="member-avatar">KB</div>
+                    <div class="member-avatar">JM</div>
                     <div class="member-info">
-                        <h4>Kevin Daniel Bermudez Zamora</h4>
+                        <h4>Jorge Enrique Muñoz Dulcey</h4>
                         <div class="member-role">Solución Analítica & Analogía</div>
                         <div class="member-time"><i data-lucide="clock"></i> Minuto 03:45 - 07:30</div>
                     </div>
@@ -155,9 +158,9 @@
                 </div>
 
                 <div class="member-card">
-                    <div class="member-avatar">JM</div>
+                    <div class="member-avatar">KB</div>
                     <div class="member-info">
-                        <h4>Jorge Enrique Muñoz Dulcey</h4>
+                        <h4>Kevin Daniel Bermudez Zamora</h4>
                         <div class="member-role">Análisis de Audio, Bode & Cierre</div>
                         <div class="member-time"><i data-lucide="clock"></i> Minuto 11:15 - 15:00</div>
                     </div>
@@ -426,55 +429,154 @@
              PESTAÑA 4: GALERÍA CIENTÍFICA & DIAGRAMA DE BODE
              ================================================================ -->
         <section id="tab-galeria" class="tab-pane">
-            <h2 class="section-title">Galería Científica de Gráficas de Publicación (300 DPI)</h2>
-            <p class="section-subtitle">Figuras generadas por el pipeline de computación científica en Python (`circuito_rlc.py`):</p>
+            <div class="gallery-title-row">
+                <div>
+                    <h2 class="section-title">Galería Científica Interactiva de Publicación</h2>
+                    <p class="section-subtitle">Visualización interactiva y dinámica (Chart.js & Plotly Python Engine) de las simulaciones validadas por el pipeline de computación científica:</p>
+                </div>
+                
+                <!-- Selector de Modo de Visualización -->
+                <div class="gallery-view-mode-bar">
+                    <div class="view-mode-group">
+                        <button id="btnViewChartJs" class="view-mode-btn active" title="Visualización nativa Chart.js">
+                            <i data-lucide="layout-grid"></i> <span>Mosaico Chart.js</span>
+                        </button>
+                        <button id="btnViewPlotly" class="view-mode-btn" title="Dashboard Plotly con sliders y zoom sincronizado">
+                            <i data-lucide="cpu"></i> <span>Dashboard Plotly (Dinámico)</span>
+                        </button>
+                    </div>
+                    <a href="dashboard_interactivo_rlc.html" target="_blank" class="view-link-btn" title="Abrir Dashboard Plotly en nueva ventana">
+                        <i data-lucide="external-link"></i> <span>Abrir en Pantalla Completa</span>
+                    </a>
+                </div>
+            </div>
 
-            <div class="gallery-grid">
+            <!-- Contenedor Embebido de Plotly Dashboard -->
+            <div id="plotlyEmbedWrapper" class="plotly-embed-container" style="display: none;">
+                <div class="plotly-embed-header">
+                    <div class="plotly-meta">
+                        <span class="badge-tech"><i data-lucide="zap"></i> Plotly Engine</span>
+                        <span>Dashboard Científico Interactivo con Sliders en Tiempo Real y Zoom Sincronizado</span>
+                    </div>
+                    <div class="plotly-quick-links">
+                        <a href="figura1_interactiva.html" target="_blank" class="plotly-sublink"><i data-lucide="external-link"></i> Fig 1 (Validación)</a>
+                        <a href="figura2_interactiva.html" target="_blank" class="plotly-sublink"><i data-lucide="external-link"></i> Fig 2 (Slider R)</a>
+                        <a href="figura3_interactiva.html" target="_blank" class="plotly-sublink"><i data-lucide="external-link"></i> Fig 3 (Filtrado)</a>
+                        <a href="figura4_interactiva.html" target="_blank" class="plotly-sublink"><i data-lucide="external-link"></i> Fig 4 (Bode)</a>
+                    </div>
+                </div>
+                <iframe id="iframePlotlyDashboard" src="dashboard_interactivo_rlc.html" class="plotly-iframe" title="Dashboard Plotly Interactivo"></iframe>
+            </div>
+
+            <div id="chartJsGalleryGrid" class="gallery-grid">
                 <!-- Figura 1 -->
                 <div class="figure-card">
-                    <div class="figure-img-wrap">
-                        <img src="figura1_validacion_rk4_vs_analitica.png" alt="Figura 1: Validación RK4 vs Analítica" class="figure-img">
-                        <div class="figure-zoom-overlay"><i data-lucide="maximize-2"></i> Clic para pantalla completa</div>
+                    <div class="figure-chart-header">
+                        <div class="figure-chart-title">
+                            <i data-lucide="check-circle-2"></i>
+                            <span>Figura 1: Validación Analítica vs. Numérica RK4 (R = 10 Ω)</span>
+                        </div>
+                        <div class="figure-chart-actions">
+                            <button id="btnToggleFig1Error" class="btn-chart-action" title="Alternar curva de error residual nanométrico">
+                                <i data-lucide="activity"></i> <span>Ver Error (nV)</span>
+                            </button>
+                            <a href="figura1_interactiva.html" target="_blank" class="btn-chart-action btn-chart-plotly" title="Abrir Gráfica Dinámica 1 en Plotly">
+                                <i data-lucide="external-link"></i> <span>Plotly</span>
+                            </a>
+                            <button class="btn-chart-action btn-chart-expand" data-chart="fig1" data-title="Figura 1: Validación Analítica vs. Numérica RK4 (R = 10 Ω)" title="Pantalla completa">
+                                <i data-lucide="maximize-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="figure-canvas-wrap">
+                        <canvas id="chartGaleriaFig1"></canvas>
                     </div>
                     <div class="figure-caption">
                         <h4>Figura 1: Validación Analítica vs. Numérica RK4</h4>
-                        <p>Superposición exacta de la solución calculada a mano vs. la simulación RK4 ($h = 0.1\text{ ms}$) para $R = 10\,\Omega$. El panel inferior demuestra un error máximo de $\|V_{C,\text{num}} - V_{C,\text{analit}}\|_\infty = \mathbf{3.69 \times 10^{-9}\text{ V}}$ (escala de nanovoltios).</p>
+                        <p>Superposición exacta de la solución calculada a mano vs. la simulación RK4 ($h = 0.1\text{ ms}$) para $R = 10\,\Omega$. El gráfico interactivo demuestra un error residual máximo de $\|V_{C,\text{num}} - V_{C,\text{analit}}\|_\infty = \mathbf{3.69 \times 10^{-9}\text{ V}}$ (escala de nanovoltios). Pasa el cursor por cualquier punto para inspeccionar el valor exacto.</p>
                     </div>
                 </div>
 
                 <!-- Figura 2 -->
                 <div class="figure-card">
-                    <div class="figure-img-wrap">
-                        <img src="figura2_comparativa_regimenes_amortiguamiento.png" alt="Figura 2: Comparativa de Regímenes" class="figure-img">
-                        <div class="figure-zoom-overlay"><i data-lucide="maximize-2"></i> Clic para pantalla completa</div>
+                    <div class="figure-chart-header">
+                        <div class="figure-chart-title">
+                            <i data-lucide="sliders"></i>
+                            <span>Figura 2: Dinámicas para R = 10, 50, 100 y 200 Ω</span>
+                        </div>
+                        <div class="figure-chart-actions">
+                            <a href="figura2_interactiva.html" target="_blank" class="btn-chart-action btn-chart-plotly" title="Abrir Gráfica Dinámica 2 en Plotly con Slider de R">
+                                <i data-lucide="external-link"></i> <span>Plotly (Slider)</span>
+                            </a>
+                            <button class="btn-chart-action btn-chart-expand" data-chart="fig2" data-title="Figura 2: Comparativa de Regímenes de Amortiguamiento (R = 10, 50, 100, 200 Ω)" title="Pantalla completa">
+                                <i data-lucide="maximize-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="figure-canvas-wrap">
+                        <canvas id="chartGaleriaFig2"></canvas>
                     </div>
                     <div class="figure-caption">
                         <h4>Figura 2: Dinámicas para R = 10, 50, 100 y 200 Ω</h4>
-                        <p>Contraste transitorio ante escalón de 12 V: desde la fuerte oscilación subamortiguada del 72.9% ($10\,\Omega$) hasta el amortiguamiento crítico óptimo libre de sobreimpulso ($100\,\Omega$) y la lentitud del régimen sobreamortiguado ($200\,\Omega$).</p>
+                        <p>Contraste transitorio ante escalón de 12 V: desde la fuerte oscilación subamortiguada del 72.9% ($10\,\Omega$) hasta el amortiguamiento crítico óptimo libre de sobreimpulso ($100\,\Omega$) y la lentitud del régimen sobreamortiguado ($200\,\Omega$). Haz clic en la leyenda superior para aislar cualquier régimen.</p>
                     </div>
                 </div>
 
                 <!-- Figura 3 -->
                 <div class="figure-card">
-                    <div class="figure-img-wrap">
-                        <img src="figura3_filtrado_senal_multitono.png" alt="Figura 3: Filtrado Multi-tono" class="figure-img">
-                        <div class="figure-zoom-overlay"><i data-lucide="maximize-2"></i> Clic para pantalla completa</div>
+                    <div class="figure-chart-header">
+                        <div class="figure-chart-title">
+                            <i data-lucide="waves"></i>
+                            <span>Figura 3: Filtrado Multi-tono (5, 50 y 500 Hz | R = 50 Ω)</span>
+                        </div>
+                        <div class="figure-chart-actions">
+                            <div class="btn-switch-group">
+                                <button id="btnFig3Time" class="btn-switch-item active" title="Ver en el dominio del tiempo">Tiempo (ms)</button>
+                                <button id="btnFig3Freq" class="btn-switch-item" title="Ver espectro de frecuencias FFT">Espectro FFT (dB)</button>
+                            </div>
+                            <a href="figura3_interactiva.html" target="_blank" class="btn-chart-action btn-chart-plotly" title="Abrir Gráfica Dinámica 3 en Plotly con Zoom Sincronizado">
+                                <i data-lucide="external-link"></i> <span>Plotly (Zoom)</span>
+                            </a>
+                            <button class="btn-chart-action btn-chart-expand" data-chart="fig3" data-title="Figura 3: Filtrado de Señal Multi-seno (5, 50 y 500 Hz)" title="Pantalla completa">
+                                <i data-lucide="maximize-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="figure-canvas-wrap">
+                        <canvas id="chartGaleriaFig3"></canvas>
                     </div>
                     <div class="figure-caption">
                         <h4>Figura 3: Filtrado de Señal Multi-seno (5, 50 y 500 Hz)</h4>
-                        <p>Entrada $E(t)$ vs. salida $V_C(t)$ y espectro FFT. La frecuencia grave ($5\text{ Hz}$) pasa sin pérdida ($0\text{ dB}$), mientras que $50\text{ Hz}$ es atenuada en $\mathbf{-20.1\text{ dB}}$ y los agudos de $500\text{ Hz}$ son aniquilados con $\mathbf{-60.0\text{ dB}}$.</p>
+                        <p>Entrada $E(t)$ vs. salida $V_C(t)$ y espectro FFT para $R = 50\,\Omega$. La frecuencia grave ($5\text{ Hz}$) pasa sin pérdida ($0\text{ dB}$), mientras que $50\text{ Hz}$ es atenuada en $\mathbf{-20.1\text{ dB}}$ y los agudos de $500\text{ Hz}$ son aniquilados con $\mathbf{-60.0\text{ dB}}$. Alterna entre Tiempo y Espectro con los botones superiores.</p>
                     </div>
                 </div>
 
                 <!-- Figura 4 -->
                 <div class="figure-card">
-                    <div class="figure-img-wrap">
-                        <img src="figura4_diagrama_bode_filtro_audio.png" alt="Figura 4: Diagrama de Bode" class="figure-img">
-                        <div class="figure-zoom-overlay"><i data-lucide="maximize-2"></i> Clic para pantalla completa</div>
+                    <div class="figure-chart-header">
+                        <div class="figure-chart-title">
+                            <i data-lucide="trending-down"></i>
+                            <span>Figura 4: Diagrama de Bode en Magnitud y Fase</span>
+                        </div>
+                        <div class="figure-chart-actions">
+                            <div class="btn-switch-group">
+                                <button id="btnFig4Mag" class="btn-switch-item active" title="Ver curva de magnitud en dB">Magnitud (dB)</button>
+                                <button id="btnFig4Phase" class="btn-switch-item" title="Ver curva de desfase angular">Fase (°)</button>
+                            </div>
+                            <a href="figura4_interactiva.html" target="_blank" class="btn-chart-action btn-chart-plotly" title="Abrir Gráfica Dinámica 4 en Plotly (Bode)">
+                                <i data-lucide="external-link"></i> <span>Plotly (Bode)</span>
+                            </a>
+                            <button class="btn-chart-action btn-chart-expand" data-chart="fig4" data-title="Figura 4: Diagrama de Bode en Magnitud y Fase" title="Pantalla completa">
+                                <i data-lucide="maximize-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="figure-canvas-wrap">
+                        <canvas id="chartGaleriaFig4"></canvas>
                     </div>
                     <div class="figure-caption">
                         <h4>Figura 4: Diagrama de Bode en Magnitud y Fase</h4>
-                        <p>Función de transferencia $H(j\omega) = V_C/E$. Demuestra rigurosamente la pendiente asintótica de caída de $\mathbf{-40\text{ dB/década}}$ ($-12\text{ dB/octava}$) y el desfase de $-90^\circ$ en la frecuencia de corte $f_n \approx 15.9\text{ Hz}$.</p>
+                        <p>Función de transferencia $H(j\omega) = V_C/E$ en escala logarítmica. Demuestra rigurosamente la pendiente asintótica de caída de $\mathbf{-40\text{ dB/década}}$ ($-12\text{ dB/octava}$) y el desfase de $-90^\circ$ en la frecuencia de corte $f_n \approx 15.9\text{ Hz}$.</p>
                     </div>
                 </div>
             </div>
@@ -633,6 +735,311 @@
         </section>
 
         <!-- ================================================================
+             PESTAÑA 6: EXPLICACIÓN DE CÓDIGO CIENTÍFICO & ALGORITMOS
+             ================================================================ -->
+        <section id="tab-codigo" class="tab-pane">
+            <h2 class="section-title">Explicación del Algoritmo Científico & Código Fuente</h2>
+            <p class="section-subtitle">Arquitectura de computación científica: reducción de EDOs de 2do orden, integrador manual RK4, deducción analítica y pipeline de audio:</p>
+
+            <div class="code-viewer-container">
+                <!-- Barra de Navegación de Módulos de Código -->
+                <div class="code-modules-nav">
+                    <button class="code-module-btn active" data-module="mod-estados">
+                        <i data-lucide="git-branch"></i> <span>1. Espacio de Estados</span>
+                    </button>
+                    <button class="code-module-btn" data-module="mod-rk4">
+                        <i data-lucide="play-circle"></i> <span>2. Integrador RK4 Manual</span>
+                    </button>
+                    <button class="code-module-btn" data-module="mod-analitica">
+                        <i data-lucide="calculator"></i> <span>3. Solución Analítica</span>
+                    </button>
+                    <button class="code-module-btn" data-module="mod-audio">
+                        <i data-lucide="music"></i> <span>4. Filtrado de Audio WAV</span>
+                    </button>
+                    <button class="code-module-btn" data-module="mod-plotly">
+                        <i data-lucide="cpu"></i> <span>5. Motor Plotly Dinámico</span>
+                    </button>
+                </div>
+
+                <!-- MÓDULO 1: ESPACIO DE ESTADOS -->
+                <div id="mod-estados" class="code-module-pane active">
+                    <div class="code-pane-grid">
+                        <div class="code-text-column">
+                            <div class="code-concept-card">
+                                <h3><i data-lucide="layers"></i> Reducción de Orden: EDO 2do Orden a Sistema de 1er Orden</h3>
+                                <p>
+                                    La ecuación diferencial gobernante del circuito RLC serie según la Ley de Voltajes de Kirchhoff (KVL) es de segundo orden no homogénea:
+                                </p>
+                                <div class="math-box-highlight">
+                                    $$L \frac{d^2 Q(t)}{dt^2} + R \frac{dQ(t)}{dt} + \frac{1}{C} Q(t) = E(t)$$
+                                </div>
+                                <p>
+                                    Para integrarla numéricamente con el método Runge-Kutta de 4to orden (RK4), se define el vector de variables de estado $\vec{Y}(t) = \begin{bmatrix} Q(t) \\ I(t) \end{bmatrix}$, donde la primera componente es la carga eléctrica en el condensador y la segunda es la corriente que circula por la malla ($I = dQ/dt$):
+                                </p>
+                                <div class="math-box-highlight">
+                                    $$\begin{cases} 
+                                    \frac{dQ}{dt} = I(t) \\[6pt]
+                                    \frac{dI}{dt} = \frac{E(t) - R \cdot I(t) - \frac{1}{C} Q(t)}{L}
+                                    \end{cases}$$
+                                </div>
+                                <p>
+                                    El voltaje en el condensador, que constituye la salida del filtro pasa-bajo, se recupera directamente de la variable de estado mediante la relación constitutiva $V_C(t) = \frac{Q(t)}{C}$.
+                                </p>
+                                <div class="feature-bullets">
+                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Desacoplamiento:</strong> Convierte una EDO escalar de 2do orden en dos EDOs acopladas de 1er orden.</div>
+                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Generalidad:</strong> Admite cualquier forma de onda de excitación $E(t)$ (escalón, multi-seno, audio WAV).</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="code-editor-column">
+                            <div class="code-card">
+                                <div class="code-card-header">
+                                    <span class="code-filename"><i data-lucide="file-code"></i> sistema_rlc_derivadas (Python / NumPy)</span>
+                                    <button class="btn-copy-code" data-target="code-snippet-estados"><i data-lucide="copy"></i> <span>Copiar</span></button>
+                                </div>
+                                <pre id="code-snippet-estados" class="code-pre"><code><span class="tok-kw">def</span> <span class="tok-fn">sistema_rlc_derivadas</span>(t, state, R, L, C, fuente_func):
+    <span class="tok-str">"""
+    Define el sistema de EDOs de 1er orden en variables de estado.
+    state[0] = Q(t)  (Carga en el condensador [C])
+    state[1] = I(t)  (Corriente en el circuito [A] = dQ/dt)
+    """</span>
+    Q, I = state[<span class="tok-num">0</span>], state[<span class="tok-num">1</span>]
+    E_t = fuente_func(t)  <span class="tok-com"># Voltaje de excitación instantáneo</span>
+    
+    dQ_dt = I
+    dI_dt = (E_t - R * I - (<span class="tok-num">1.0</span> / C) * Q) / L
+    
+    <span class="tok-kw">return</span> np.array([dQ_dt, dI_dt], dtype=np.float64)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MÓDULO 2: INTEGRADOR MANUAL RK4 -->
+                <div id="mod-rk4" class="code-module-pane">
+                    <div class="code-pane-grid">
+                        <div class="code-text-column">
+                            <div class="code-concept-card">
+                                <h3><i data-lucide="cpu"></i> Integrador Numérico Runge-Kutta 4 (RK4) Implementado a Mano</h3>
+                                <p>
+                                    En estricto cumplimiento de la rúbrica del proyecto, el algoritmo de integración se programó manualmente desde cero sin utilizar solvers de caja negra (como <code>scipy.integrate.solve_ivp</code>).
+                                </p>
+                                <p>
+                                    En cada paso temporal de tamaño $h = \Delta t$, el método calcula cuatro pendientes vectoriales intermedias en el espacio de fases:
+                                </p>
+                                <div class="math-box-highlight">
+                                    $$\begin{aligned}
+                                    \vec{k}_1 &= \vec{f}(t_n, \vec{y}_n) \\
+                                    \vec{k}_2 &= \vec{f}\left(t_n + \tfrac{h}{2}, \vec{y}_n + \tfrac{h}{2}\vec{k}_1\right) \\
+                                    \vec{k}_3 &= \vec{f}\left(t_n + \tfrac{h}{2}, \vec{y}_n + \tfrac{h}{2}\vec{k}_2\right) \\
+                                    \vec{k}_4 &= \vec{f}\left(t_n + h, \vec{y}_n + h\vec{k}_3\right) \\
+                                    \vec{y}_{n+1} &= \vec{y}_n + \frac{h}{6}(\vec{k}_1 + 2\vec{k}_2 + 2\vec{k}_3 + \vec{k}_4)
+                                    \end{aligned}$$
+                                </div>
+                                <div class="feature-bullets">
+                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Orden de Precisión:</strong> Error local de truncamiento $\mathcal{O}(h^5)$ y error acumulado global $\mathcal{O}(h^4)$.</div>
+                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Estabilidad Numérica:</strong> Con $h = 0.2\text{ ms}$ y $\omega_n = 100\text{ rad/s}$, $|h \cdot \omega_n| = 0.02 \ll 2.78$, garantizando convergencia incondicional sin deriva numérica.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="code-editor-column">
+                            <div class="code-card">
+                                <div class="code-card-header">
+                                    <span class="code-filename"><i data-lucide="file-code"></i> rk4_integrador (Python / Algoritmo Manual)</span>
+                                    <button class="btn-copy-code" data-target="code-snippet-rk4"><i data-lucide="copy"></i> <span>Copiar</span></button>
+                                </div>
+                                <pre id="code-snippet-rk4" class="code-pre"><code><span class="tok-kw">def</span> <span class="tok-fn">rk4_integrador</span>(f, y0, t_array, R, L, C, fuente_func):
+    <span class="tok-str">"""
+    Integrador numérico manual Runge-Kutta de 4to orden (RK4).
+    Retorna la trayectoria de estado [Q(t), I(t)] en cada instante temporal.
+    """</span>
+    N = len(t_array)
+    dt = t_array[<span class="tok-num">1</span>] - t_array[<span class="tok-num">0</span>]
+    solucion = np.zeros((N, <span class="tok-num">2</span>), dtype=np.float64)
+    solucion[<span class="tok-num">0</span>] = y0
+    
+    y = np.array(y0, dtype=np.float64)
+    <span class="tok-kw">for</span> i <span class="tok-kw">in</span> range(N - <span class="tok-num">1</span>):
+        t_curr = t_array[i]
+        
+        k1 = f(t_curr, y, R, L, C, fuente_func)
+        k2 = f(t_curr + <span class="tok-num">0.5</span> * dt, y + <span class="tok-num">0.5</span> * dt * k1, R, L, C, fuente_func)
+        k3 = f(t_curr + <span class="tok-num">0.5</span> * dt, y + <span class="tok-num">0.5</span> * dt * k2, R, L, C, fuente_func)
+        k4 = f(t_curr + dt, y + dt * k3, R, L, C, fuente_func)
+        
+        y = y + (dt / <span class="tok-num">6.0</span>) * (k1 + <span class="tok-num">2.0</span> * k2 + <span class="tok-num">2.0</span> * k3 + k4)
+        solucion[i + <span class="tok-num">1</span>] = y
+        
+    <span class="tok-kw">return</span> solucion</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MÓDULO 3: SOLUCIÓN ANALÍTICA EXACTA -->
+                <div id="mod-analitica" class="code-module-pane">
+                    <div class="code-pane-grid">
+                        <div class="code-text-column">
+                            <div class="code-concept-card">
+                                <h3><i data-lucide="check-circle-2"></i> Solución Analítica por Coeficientes Indeterminados</h3>
+                                <p>
+                                    Para validar con rigor matemático el integrador RK4, se dedujo a mano la solución exacta ante un escalón de $E(t) = 12\text{ V}$ para $R = 10\,\Omega, L = 0.5\text{ H}, C = 200\,\mu\text{F}$ con condiciones de reposo $Q(0) = 0, I(0) = 0$.
+                                </p>
+                                <p>
+                                    La ecuación característica $0.5 r^2 + 10 r + 5000 = 0 \iff r^2 + 20 r + 10000 = 0$ arroja raíces complejas conjugadas:
+                                </p>
+                                <div class="math-box-highlight">
+                                    $$r_{1,2} = -\alpha \pm j \omega_d = -10 \pm j 30\sqrt{11} \approx -10 \pm j 99.4987\text{ rad/s}$$
+                                </div>
+                                <p>
+                                    Solución particular estacionaria: $Q_p = C \cdot E_0 = 200\,\mu\text{F} \times 12\text{ V} = 2.4\text{ mC}$. Imponiendo reposo inicial se determinan las constantes $C_1 = -2.4\text{ mC}$ y $C_2 = -\frac{10}{\omega_d} C_1$, obteniendo la expresión exacta del voltaje:
+                                </p>
+                                <div class="math-box-highlight">
+                                    $$V_C(t) = 12 - e^{-10 t} \left[ 12 \cos(\omega_d t) + \frac{120}{\omega_d} \sin(\omega_d t) \right]$$
+                                </div>
+                                <div class="feature-bullets">
+                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Error de Validación:</strong> $\|V_{C,\text{num}} - V_{C,\text{analit}}\|_\infty = \mathbf{3.69 \times 10^{-9}\text{ V}}$ (escala nanométrica).</div>
+                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Sobreimpulso Teórico:</strong> $M_p = e^{-\alpha \pi / \omega_d} \times 100\% = \mathbf{72.92\%}$ en $t_p = \pi / \omega_d = \mathbf{31.57\text{ ms}}$.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="code-editor-column">
+                            <div class="code-card">
+                                <div class="code-card-header">
+                                    <span class="code-filename"><i data-lucide="file-code"></i> solucion_analitica_vc (NumPy Vectorized)</span>
+                                    <button class="btn-copy-code" data-target="code-snippet-analitica"><i data-lucide="copy"></i> <span>Copiar</span></button>
+                                </div>
+                                <pre id="code-snippet-analitica" class="code-pre"><code><span class="tok-kw">def</span> <span class="tok-fn">solucion_analitica_vc</span>(t_array, R=<span class="tok-num">10.0</span>, L=<span class="tok-num">0.5</span>, C=<span class="tok-num">200e-6</span>, E0=<span class="tok-num">12.0</span>):
+    <span class="tok-str">"""
+    Evalúa la solución analítica exacta de V_C(t) y la corriente I(t).
+    Deduzco a mano con coeficientes indeterminados y raíces complejas.
+    """</span>
+    alpha = R / (<span class="tok-num">2.0</span> * L)                       <span class="tok-com"># 10.0 s^-1</span>
+    omega_n_sq = <span class="tok-num">1.0</span> / (L * C)                  <span class="tok-com"># 10000 rad^2/s^2</span>
+    omega_d = np.sqrt(omega_n_sq - alpha**<span class="tok-num">2</span>)     <span class="tok-com"># 30*sqrt(11) ~ 99.4987 rad/s</span>
+    
+    decay = np.exp(-alpha * t_array)
+    oscilacion = np.cos(omega_d * t_array) + (alpha / omega_d) * np.sin(omega_d * t_array)
+    vc = E0 * (<span class="tok-num">1.0</span> - decay * oscilacion)
+    
+    corriente = (E0 / (omega_d * L)) * decay * np.sin(omega_d * t_array)
+    <span class="tok-kw">return</span> vc, corriente, alpha, omega_d</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MÓDULO 4: PROCESAMIENTO DE AUDIO WAV -->
+                <div id="mod-audio" class="code-module-pane">
+                    <div class="code-pane-grid">
+                        <div class="code-text-column">
+                            <div class="code-concept-card">
+                                <h3><i data-lucide="volume-2"></i> Integración Muestra a Muestra en Señales de Audio PCM (44.1 kHz)</h3>
+                                <p>
+                                    Para conectar las Ecuaciones Diferenciales con la ingeniería de audio real, sintetizamos un acorde armónico polifónico con armónicos brillantes y chasquidos de alta frecuencia ($5\text{ kHz}$).
+                                </p>
+                                <p>
+                                    La señal completa contiene $N = 44100 \times 3.5 = 154,350$ muestras con un paso temporal infinitesimal de $dt = \frac{1}{44100} \approx 22.67\,\mu\text{s}$. El script corre RK4 sobre cada muestra secuencialmente resolviendo la EDO del circuito con $R = 50\,\Omega$.
+                                </p>
+                                <div class="feature-bullets">
+                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Atenuación Física:</strong> Con $f_n \approx 15.92\text{ Hz}$, la caída de $-40\text{ dB/década}$ atenúa los $440\text{ Hz}$ en $-28\text{ dB}$, los $1760\text{ Hz}$ en $-53\text{ dB}$ y los $5\text{ kHz}$ en $-73\text{ dB}$.</div>
+                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Efecto Acústico Submarino:</strong> La señal filtrada conserva únicamente los graves profundos, eliminando todo el brillo y recreando el timbre opaco característico de escuchar música "bajo el agua".</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="code-editor-column">
+                            <div class="code-card">
+                                <div class="code-card-header">
+                                    <span class="code-filename"><i data-lucide="file-code"></i> procesar_audio_real (Python / WAV PCM 16-bit)</span>
+                                    <button class="btn-copy-code" data-target="code-snippet-audio"><i data-lucide="copy"></i> <span>Copiar</span></button>
+                                </div>
+                                <pre id="code-snippet-audio" class="code-pre"><code><span class="tok-kw">def</span> <span class="tok-fn">filtrar_audio_rk4</span>(audio_in, fs, R_audio=<span class="tok-num">50.0</span>, L=<span class="tok-num">0.5</span>, C=<span class="tok-num">200e-6</span>):
+    <span class="tok-str">"""
+    Integra 154,350 muestras de audio a través de la EDO del circuito RLC.
+    Paso temporal: dt = 1/44100 s = 22.67 µs.
+    """</span>
+    N = len(audio_in)
+    dt = <span class="tok-num">1.0</span> / fs
+    inv_L, inv_C = <span class="tok-num">1.0</span> / L, <span class="tok-num">1.0</span> / C
+    y = np.array([<span class="tok-num">0.0</span>, <span class="tok-num">0.0</span>], dtype=np.float64)  <span class="tok-com"># [Q, I]</span>
+    audio_out = np.zeros(N, dtype=np.float64)
+    
+    <span class="tok-kw">for</span> i <span class="tok-kw">in</span> range(N - <span class="tok-num">1</span>):
+        E1, E2 = audio_in[i], audio_in[i + <span class="tok-num">1</span>]
+        E_mid = <span class="tok-num">0.5</span> * (E1 + E2)
+        Q, I = y[<span class="tok-num">0</span>], y[<span class="tok-num">1</span>]
+        
+        k1_Q = I
+        k1_I = inv_L * (E1 - R_audio * I - inv_C * Q)
+        
+        k2_Q = I + <span class="tok-num">0.5</span> * dt * k1_I
+        k2_I = inv_L * (E_mid - R_audio * k2_Q - inv_C * (Q + <span class="tok-num">0.5</span> * dt * k1_Q))
+        
+        <span class="tok-com"># k3 y k4 completan el paso RK4...</span>
+        y[<span class="tok-num">0</span>] += (dt / <span class="tok-num">6.0</span>) * (k1_Q + <span class="tok-num">2.0</span>*k2_Q + <span class="tok-num">2.0</span>*k3_Q + k4_Q)
+        y[<span class="tok-num">1</span>] += (dt / <span class="tok-num">6.0</span>) * (k1_I + <span class="tok-num">2.0</span>*k2_I + <span class="tok-num">2.0</span>*k3_I + k4_I)
+        audio_out[i + <span class="tok-num">1</span>] = y[<span class="tok-num">0</span>] * inv_C  <span class="tok-com"># V_C = Q / C</span>
+        
+    <span class="tok-kw">return</span> audio_out</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MÓDULO 5: MOTOR PLOTLY DINÁMICO -->
+                <div id="mod-plotly" class="code-module-pane">
+                    <div class="code-pane-grid">
+                        <div class="code-text-column">
+                            <div class="code-concept-card">
+                                <h3><i data-lucide="line-chart"></i> Visualización Científica Dinámica con Plotly</h3>
+                                <p>
+                                    El script autónomo <code>graficas_interactivas_rlc.py</code> genera las 4 figuras interactivas requeridas y las ensambla en un dashboard unificado:
+                                </p>
+                                <div class="feature-bullets">
+                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Figura 1 (Validación):</strong> Solución analítica vs. RK4 con <code>hovermode='x unified'</code> y traza opcional del error residual en nanovoltios.</div>
+                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Figura 2 (Slider de R):</strong> Control deslizante en tiempo real ($5\,\Omega$ a $250\,\Omega$) precomputando 50 pasos de resistencia evaluados con RK4.</div>
+                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Figura 3 (Multi-tono):</strong> Dos subgráficas vinculadas con <code>matches='x'</code> (zoom sincronizado) demostrando la desaparición del armónico de 500 Hz.</div>
+                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Figura 4 (Bode):</strong> Magnitud [dB] y Lineal [V/V] de 1 Hz a 10,000 Hz con botones de alternancia y marcas en $f_n = 15.92\text{ Hz}$ y $-3\text{ dB}$.</div>
+                                </div>
+                                <p style="margin-top: 0.8rem;">
+                                    <strong>Ejecución independiente:</strong> Puedes correr <code>python graficas_interactivas_rlc.py</code> desde cualquier terminal para abrir de inmediato las gráficas dinámicas en tu navegador sin necesidad de servidores externos.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="code-editor-column">
+                            <div class="code-card">
+                                <div class="code-card-header">
+                                    <span class="code-filename"><i data-lucide="file-code"></i> graficas_interactivas_rlc.py (Extracto Arquitectura Plotly)</span>
+                                    <button class="btn-copy-code" data-target="code-snippet-plotly"><i data-lucide="copy"></i> <span>Copiar</span></button>
+                                </div>
+                                <pre id="code-snippet-plotly" class="code-pre"><code><span class="tok-kw">import</span> plotly.graph_objects <span class="tok-kw">as</span> go
+<span class="tok-kw">from</span> plotly.subplots <span class="tok-kw">import</span> make_subplots
+
+<span class="tok-com"># Subgráficas vinculadas con zoom sincronizado (Figura 3)</span>
+fig3 = make_subplots(
+    rows=<span class="tok-num">2</span>, cols=<span class="tok-num">1</span>, shared_xaxes=<span class="tok-kw">True</span>,
+    subplot_titles=(<span class="tok-str">"Señal Compuesta de Entrada E(t) [V]"</span>, 
+                    <span class="tok-str">"Señal Filtrada de Salida V_C(t) [V]"</span>)
+)
+fig3.add_trace(go.Scatter(x=t, y=E_in, name=<span class="tok-str">"Entrada E(t)"</span>, line=dict(color=<span class="tok-str">"#ef4444"</span>)), row=<span class="tok-num">1</span>, col=<span class="tok-num">1</span>)
+fig3.add_trace(go.Scatter(x=t, y=vc_out, name=<span class="tok-str">"Salida V_C(t)"</span>, line=dict(color=<span class="tok-str">"#38bdf8"</span>)), row=<span class="tok-num">2</span>, col=<span class="tok-num">1</span>)
+
+fig3.update_xaxes(matches=<span class="tok-str">'x'</span>)  <span class="tok-com"># Zoom sincronizado instantáneo</span>
+fig3.update_layout(hovermode=<span class="tok-str">'x unified'</span>)
+fig3.write_html(<span class="tok-str">"figura3_interactiva.html"</span>)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
              PESTAÑA 7: TELEPRÓNTER DE DEFENSA (15 MIN) & PREGUNTAS
              ================================================================ -->
         <section id="tab-defensa" class="tab-pane">
@@ -675,7 +1082,7 @@
                 </div>
 
                 <div class="speaker-card">
-                    <div class="speaker-name">Kevin Bermudez</div>
+                    <div class="speaker-name">Jorge Muñoz</div>
                     <div class="speaker-time-window">03:45 - 07:30 (3m 45s)</div>
                     <ul class="speaker-bullets">
                         <li>Solución analítica del escalón de 12V</li>
@@ -697,7 +1104,7 @@
                 </div>
 
                 <div class="speaker-card">
-                    <div class="speaker-name">Jorge Muñoz</div>
+                    <div class="speaker-name">Kevin Bermudez</div>
                     <div class="speaker-time-window">11:15 - 15:00 (3m 45s)</div>
                     <ul class="speaker-bullets">
                         <li>Filtrado multi-seno (5, 50, 500 Hz)</li>
@@ -760,11 +1167,21 @@
     </main>
 
     <!-- ====================================================================
-         MODAL DE ZOOM PARA FIGURAS
+         MODAL INTERACTIVO DE PANTALLA COMPLETA PARA GRÁFICAS
          ==================================================================== -->
-    <div id="imageModal" class="modal-overlay">
-        <button id="modalClose" class="modal-close">&times;</button>
-        <img id="modalImg" src="" alt="Vista previa en alta resolución" class="modal-img">
+    <div id="chartExpandModal" class="modal-overlay">
+        <div class="modal-chart-dialog">
+            <div class="modal-chart-header">
+                <div class="modal-chart-title-wrap">
+                    <i data-lucide="bar-chart-2"></i>
+                    <h3 id="chartModalTitle" class="modal-chart-title">Vista Detallada</h3>
+                </div>
+                <button id="chartModalClose" class="modal-close" title="Cerrar (Esc)">&times;</button>
+            </div>
+            <div class="modal-chart-canvas-wrap">
+                <canvas id="canvasModalChart"></canvas>
+            </div>
+        </div>
     </div>
 
     <!-- ====================================================================
@@ -801,6 +1218,7 @@
     <script src="js/rlc_engine.js"></script>
     <script src="js/audio_lab.js"></script>
     <script src="js/analogia_canvas.js"></script>
+    <script src="js/galeria_charts.js"></script>
     <script src="js/app.js"></script>
 
 </body>

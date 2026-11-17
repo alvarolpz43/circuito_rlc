@@ -25,6 +25,17 @@ const AudioLab = {
     canvasCtx: null,
     dataArray: null,
 
+    // Parámetros físicos del filtro RLC (Inicializados a R_audio = 50 Ω)
+    R: 50.0,
+    L: 0.5,
+    C: 200e-6,
+
+    getCutoffFreq() {
+        const omega_n = 1.0 / Math.sqrt(this.L * this.C);
+        const f_n = omega_n / (2.0 * Math.PI);
+        return Math.max(15, f_n * 2.2);
+    },
+
     initAudioContext() {
         if (!this.audioCtx) {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -238,7 +249,7 @@ const AudioLab = {
             if (window.lucide) lucide.createIcons();
         }
         if (this.filterNode && this.audioCtx) {
-            const targetFreq = this.filterEnabled ? 35.0 : 18000.0;
+            const targetFreq = this.filterEnabled ? this.getCutoffFreq() : 18000.0;
             this.filterNode.frequency.setTargetAtTime(targetFreq, this.audioCtx.currentTime, 0.06);
         }
     },
@@ -249,19 +260,22 @@ const AudioLab = {
         this.filterNode.connect(this.analyserNode);
         this.analyserNode.connect(this.gainNode);
 
-        const targetFreq = this.filterEnabled ? 35.0 : 18000.0;
+        const targetFreq = this.filterEnabled ? this.getCutoffFreq() : 18000.0;
         this.filterNode.frequency.setValueAtTime(targetFreq, this.audioCtx.currentTime);
     },
 
     updateFilterParams(R, L, C) {
+        if (R !== undefined) this.R = R;
+        if (L !== undefined) this.L = L;
+        if (C !== undefined) this.C = C;
         if (!this.filterNode || !this.audioCtx) return;
-        const omega_n = 1.0 / Math.sqrt(L * C);
+        const omega_n = 1.0 / Math.sqrt(this.L * this.C);
         const f_n = omega_n / (2.0 * Math.PI);
-        const zeta = R / (2.0 * Math.sqrt(L / C));
+        const zeta = this.R / (2.0 * Math.sqrt(this.L / this.C));
         const Q = 1.0 / (2.0 * zeta);
 
         if (this.filterEnabled) {
-            this.filterNode.frequency.setTargetAtTime(Math.max(12, f_n * 2.0), this.audioCtx.currentTime, 0.05);
+            this.filterNode.frequency.setTargetAtTime(this.getCutoffFreq(), this.audioCtx.currentTime, 0.05);
             this.filterNode.Q.setTargetAtTime(Math.min(8, Math.max(0.1, Q)), this.audioCtx.currentTime, 0.05);
         }
     },

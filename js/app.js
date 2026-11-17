@@ -45,8 +45,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // 5. Acordeón de Preguntas
     initQuestionsAccordion();
 
-    // 6. Modal de Zoom de Imágenes
-    initImageModal();
+    // 6. Inicializar Gráficas Científicas Interactivas de Galería
+    if (typeof GaleriaCharts !== 'undefined') {
+        GaleriaCharts.init();
+    }
 
     // 7. Inicializar Canvas de Analogía Electromecánica
     AnalogiaCanvas.init();
@@ -54,7 +56,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // 8. Inicializar Laboratorio de Audio (Sintetizador, Micrófono y Archivo)
     initAudioStudio();
 
-    // 9. Modo Presentación Magistral y Atajos de Teclado
+    // 9. Inicializar Visor de Código Científico y Selector de Galería
+    initGalleryViewSwitcher();
+    initCodeViewer();
+
+    // 10. Modo Presentación Magistral y Atajos de Teclado
     initPresentationMode();
     initKeyboardShortcuts();
 });
@@ -89,6 +95,24 @@ function initTabNavigation() {
                 AnalogiaCanvas.pause();
             } else if (targetId === "tab-analogia") {
                 AnalogiaCanvas.init();
+            }
+
+            // Si entramos a la pestaña de Galería, renderizar/redimensionar gráficas de Chart.js
+            if (targetId === "tab-galeria" && typeof GaleriaCharts !== 'undefined') {
+                setTimeout(() => {
+                    GaleriaCharts.renderOrResize();
+                }, 50);
+            }
+
+            // Si entramos a Código Científico, renderizar KaTeX
+            if (targetId === "tab-codigo" && window.renderMathInElement) {
+                renderMathInElement(targetPane, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false }
+                    ],
+                    throwOnError: false
+                });
             }
 
             // Si salimos de tab-audio, detener audio si está sonando
@@ -604,6 +628,7 @@ function initQuestionsAccordion() {
  */
 function initImageModal() {
     const modal = document.getElementById("imageModal");
+    if (!modal) return;
     const modalImg = document.getElementById("modalImg");
     const modalClose = document.getElementById("modalClose");
     const figureImgs = document.querySelectorAll(".figure-img-wrap");
@@ -755,5 +780,99 @@ function initKeyboardShortcuts() {
             const btnReset = document.getElementById("btnTimerReset");
             if (btnReset) btnReset.click();
         }
+    });
+}
+
+/**
+ * ==============================================================================
+ * 10. SELECTOR DE VISTA EN GALERÍA (CHART.JS VS. PLOTLY DASHBOARD EMBEBIDO)
+ * ==============================================================================
+ */
+function initGalleryViewSwitcher() {
+    const btnChartJs = document.getElementById("btnViewChartJs");
+    const btnPlotly = document.getElementById("btnViewPlotly");
+    const chartJsGrid = document.getElementById("chartJsGalleryGrid");
+    const plotlyWrapper = document.getElementById("plotlyEmbedWrapper");
+
+    if (!btnChartJs || !btnPlotly || !chartJsGrid || !plotlyWrapper) return;
+
+    btnChartJs.addEventListener("click", () => {
+        btnChartJs.classList.add("active");
+        btnPlotly.classList.remove("active");
+        chartJsGrid.style.display = "grid";
+        plotlyWrapper.style.display = "none";
+        if (typeof GaleriaCharts !== 'undefined') {
+            setTimeout(() => {
+                GaleriaCharts.renderOrResize();
+            }, 50);
+        }
+    });
+
+    btnPlotly.addEventListener("click", () => {
+        btnPlotly.classList.add("active");
+        btnChartJs.classList.remove("active");
+        chartJsGrid.style.display = "none";
+        plotlyWrapper.style.display = "block";
+    });
+}
+
+/**
+ * ==============================================================================
+ * 11. VISOR INTERACTIVO DE CÓDIGO CIENTÍFICO Y COPIADO AL PORTAPAPELES
+ * ==============================================================================
+ */
+function initCodeViewer() {
+    const moduleButtons = document.querySelectorAll(".code-module-btn");
+    const modulePanes = document.querySelectorAll(".code-module-pane");
+
+    moduleButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const targetId = btn.getAttribute("data-module");
+            moduleButtons.forEach(b => b.classList.remove("active"));
+            modulePanes.forEach(p => p.classList.remove("active"));
+
+            btn.classList.add("active");
+            const targetPane = document.getElementById(targetId);
+            if (targetPane) {
+                targetPane.classList.add("active");
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+                if (window.renderMathInElement) {
+                    renderMathInElement(targetPane, {
+                        delimiters: [
+                            { left: "$$", right: "$$", display: true },
+                            { left: "$", right: "$", display: false }
+                        ],
+                        throwOnError: false
+                    });
+                }
+            }
+        });
+    });
+
+    // Botones de copiar código con retroalimentación visual
+    const copyButtons = document.querySelectorAll(".btn-copy-code");
+    copyButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const targetId = btn.getAttribute("data-target");
+            const preEl = document.getElementById(targetId);
+            if (preEl) {
+                const textToCopy = preEl.innerText;
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const originalHtml = btn.innerHTML;
+                    btn.innerHTML = `<i data-lucide="check"></i> <span>¡Copiado!</span>`;
+                    btn.classList.add("copied");
+                    if (window.lucide) lucide.createIcons();
+                    setTimeout(() => {
+                        btn.innerHTML = originalHtml;
+                        btn.classList.remove("copied");
+                        if (window.lucide) lucide.createIcons();
+                    }, 2000);
+                }).catch(err => {
+                    console.warn("Error al copiar código:", err);
+                });
+            }
+        });
     });
 }

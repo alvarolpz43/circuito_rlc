@@ -17,9 +17,9 @@
 
 ```
 00:00 - 03:45 | JESSICA ACOSTA  | Introducción, KVL, Deducción de EDO, omega_n, R_cr y Discriminantes
-03:45 - 07:30 | KEVIN BERMUDEZ  | Solución Analítica Escalón 12V, Régimen Transitorio y Analogía Mecánica
+03:45 - 07:30 | JORGE MUÑOZ     | Solución Analítica Escalón 12V, Régimen Transitorio y Analogía Mecánica
 07:30 - 11:15 | ALVARO LOPEZ    | Algoritmo RK4, Espacio de Estados y Validación Numérica vs Analítica
-11:15 - 15:00 | JORGE MUÑOZ     | Filtrado Multi-seno, Diagrama de Bode, Demo de Audio y Conclusión Técnica
+11:15 - 15:00 | KEVIN BERMUDEZ  | Filtrado Multi-seno, Diagrama de Bode, Demo de Audio y Conclusión Técnica
 15:00 - 20:00 | TODOS           | Sesión de Preguntas y Respuestas con el Docente Evaluador
 ```
 
@@ -63,11 +63,11 @@
 > 2. Para **$R = 50\,\Omega$**, $\Delta = 2500 - 10000 = -7500 < 0$. Sigue siendo **subamortiguado** ($\zeta = 0.50$), pero las oscilaciones se disipan rápidamente.  
 > 3. Para **$R = 100\,\Omega$**, $\Delta = 10000 - 10000 = 0$. Régimen **críticamente amortiguado** ($\zeta = 1.00$). Raíz doble real en $-100\text{ s}^{-1}$. Es la transición más rápida posible al equilibrio sin sobreimpulso.  
 > 4. Para **$R = 200\,\Omega$**, $\Delta = 40000 - 10000 = +30000 > 0$. Régimen **sobreamortiguado** ($\zeta = 2.00$). Raíces reales distintas, dando una respuesta lenta y aletargada.  
-> Ahora mi compañero Kevin explicará cómo resolvimos analíticamente la ecuación diferencial para el caso de $10\,\Omega$."*
+> Ahora mi compañero Jorge explicará cómo resolvimos analíticamente la ecuación diferencial para el caso de $10\,\Omega$."*
 
 ---
 
-### INTEGRANTE 2: KEVIN DANIEL BERMUDEZ ZAMORA
+### INTEGRANTE 2: JORGE ENRIQUE MUÑOZ DULCEY
 **Rol:** Solución analítica detallada del escalón de 12 V y tabla de analogía física  
 **Tiempo Asignado:** Minuto 03:45 a 07:30 (Duración: 3 min 45 s)
 
@@ -116,7 +116,7 @@
 **Tiempo Asignado:** Minuto 07:30 a 11:15 (Duración: 3 min 45 s)
 
 #### [07:30 - 08:35] Reducción a Sistema de Primer Orden en Espacio de Estados
-> *"Gracias Kevin. Como ingenieros informáticos, nuestro reto fue implementar la computación científica del sistema en Python sin recurrir a 'cajas negras', programando nuestro propio motor de integración numérica.  
+> *"Gracias Jorge. Como ingenieros informáticos, nuestro reto fue implementar la computación científica del sistema en Python sin recurrir a 'cajas negras', programando nuestro propio motor de integración numérica.  
 > Como las computadoras resuelven de forma estándar sistemas de primer orden, convertimos la EDO de segundo orden en un sistema de dos variables de estado:  
 > - Estado 1: La carga en el condensador, $y_1(t) = Q(t)$.  
 > - Estado 2: La corriente del circuito, $y_2(t) = I(t) = Q'(t)$.  
@@ -137,7 +137,7 @@
 
 #### [09:40 - 11:15] Análisis de Resultados: Figura 1 (Validación) y Figura 2 (Regímenes)
 > *"Por favor observen en la diapositiva la **Figura 1** de nuestro informe.  
-> Contrastamos la curva analítica calculada por Kevin (línea azul continua) con las muestras simuladas por nuestro algoritmo RK4 con paso de $0.1\text{ ms}$ (puntos rojos). Como pueden observar en el panel superior, la superposición es absoluta.  
+> Contrastamos la curva analítica calculada por Jorge (línea azul continua) con las muestras simuladas por nuestro algoritmo RK4 con paso de $0.1\text{ ms}$ (puntos rojos). Como pueden observar en el panel superior, la superposición es absoluta.  
 > En el panel inferior graficamos el residuo exacto $|V_{C,\text{num}} - V_{C,\text{analit}}|$. El error máximo absoluto (norma $L_\infty$) en todo el intervalo de $400\text{ ms}$ fue de tan solo:  
 > $$\mathbf{3.69 \times 10^{-9}\text{ V} \quad (3.69\text{ nanovoltios})}$$  
 > Esto valida y certifica que tanto la deducción analítica a mano como el algoritmo numérico en Python son perfectamente correctos y rigurosos. Se corrobora además el pico máximo de $20.75\text{ V}$ en $31.57\text{ ms}$.  
@@ -146,11 +146,11 @@
 > - La curva naranja ($50\,\Omega$) amortigua el sobreimpulso a solo $13.9\text{ V}$.  
 > - La curva verde ($100\,\Omega$, amortiguamiento crítico) alcanza el valor de $12\text{ V}$ sin oscilaciones en apenas $40\text{ ms}$.  
 > - La curva azul ($200\,\Omega$, sobreamortiguado) tarda más de $150\text{ ms}$, evidenciando la pesadez del sistema.  
-> Ahora mi compañero Jorge explicará la aplicación del circuito como filtro de audio y la demostración acústica."*
+> Ahora mi compañero Kevin explicará la aplicación del circuito como filtro de audio y la demostración acústica."*
 
 ---
 
-### INTEGRANTE 4: JORGE ENRIQUE MUÑOZ DULCEY
+### INTEGRANTE 4: KEVIN DANIEL BERMUDEZ ZAMORA
 **Rol:** Filtrado de audio multi-tono, Diagrama de Bode, demostración sonora y conclusión ingenieril  
 **Tiempo Asignado:** Minuto 11:15 a 15:00 (Duración: 3 min 45 s)
 
@@ -176,7 +176,7 @@
 #### [13:15 - 14:15] Demostración de Audio Real: El Efecto "Bajo el Agua"
 > *"Para llevar la teoría a una experiencia tangible, generamos un archivo de audio musical `.wav` de 44.1 kHz (`audio_original.wav`) que contiene acordes polifónicos con armónicos brillantes de cuerda hasta 4 kHz y chasquidos percusivos a 5 kHz.  
 > Luego, procesamos muestra a muestra las 154,350 muestras de audio integrando la EDO con RK4, produciendo `audio_filtrado_submarino.wav`.  
-> *(En este punto, Jorge reproduce 5 segundos de audio_original.wav y luego 5 segundos de audio_filtrado_submarino.wav)*  
+> *(En este punto, Kevin reproduce 5 segundos de audio_original.wav y luego 5 segundos de audio_filtrado_submarino.wav)*  
 > Como acaban de escuchar, todos los agudos y la presencia brillante desaparecen, dejando únicamente un zumbido grave y apagado. Este es exactamente el **efecto de sonido subacuático** (*underwater filter*) que los productores de música utilizan para simular que la música proviene de una habitación contigua o debajo del agua."*
 
 #### [14:15 - 15:00] Conclusión Ingenieril y Cierre de la Exposición
@@ -197,7 +197,7 @@ A continuación se presentan 3 preguntas complejas y conceptuales que el docente
 ### PREGUNTA DIFÍCIL 1 (Fundamento de Circuitos y EDOs):
 > **Docente:** *"Ustedes demostraron que al tomar la salida en el condensador $V_C(t)$, el circuito opera como un filtro pasa-bajo con caída de $-40\text{ dB/década}$. Si decidiéramos tomar la salida en la resistencia $v_R(t)$ o en el inductor $v_L(t)$, ¿qué tipo de filtros obtendríamos y cuál sería la justificación a partir de la impedancia y de la EDO?"*
 
-**Respuesta Correcta del Grupo (Recomendado: Jessica o Kevin):**
+**Respuesta Correcta del Grupo (Recomendado: Jessica o Jorge):**
 > *"Profesor, la topología serie distribuye la misma corriente en los tres componentes, pero la impedancia compleja de cada uno determina la función de transferencia:  
 > 1. **En el condensador ($v_C$):** Su reactancia es $Z_C = \frac{1}{j\omega C}$. A baja frecuencia tiende a circuito abierto ($\infty$), quedándose con toda la tensión de la fuente ($0\text{ dB}$); a alta frecuencia tiende a cortocircuito ($0$), por lo que es un **filtro pasa-bajo**.  
 > 2. **En el inductor ($v_L$):** Su reactancia es $Z_L = j\omega L$. A baja frecuencia es un cortocircuito ($0\text{ V}$) y a alta frecuencia es circuito abierto ($\infty$). Por tanto, la salida en el inductor $v_L(t)$ es un **filtro pasa-alto de 2do orden**, con atenuación de $+40\text{ dB/década}$ en bajas frecuencias y ganancia unitaria en altas frecuencias.  
@@ -208,7 +208,7 @@ A continuación se presentan 3 preguntas complejas y conceptuales que el docente
 ### PREGUNTA DIFÍCIL 2 (Paradoja Energética y Principios de Conservación):
 > **Docente:** *"En la respuesta analítica para $R = 10\,\Omega$, ustedes calcularon que el voltaje en el condensador alcanza un pico de $20.75\text{ V}$, aun cuando la fuente solo suministra $12\text{ V}$. ¿Viola este sobreimpulso del $73\%$ la Primera Ley de la Termodinámica o el Principio de Conservación de la Energía?"*
 
-**Respuesta Correcta del Grupo (Recomendado: Kevin o Alvaro):**
+**Respuesta Correcta del Grupo (Recomendado: Jorge o Alvaro):**
 > *"De ninguna manera, profesor. No existe violación del principio de conservación de la energía; se trata de una transferencia y concentración temporal de energía entre campos.  
 > Durante la primera mitad del semiciclo transitorio ($0 < t < 31.57\text{ ms}$), circula una corriente $I(t)$ no despreciable. La fuente $E(t)$ suministra energía tanto al circuito disipativo como a los elementos reactivos. En particular, el inductor almacena energía en su campo magnético dada por $E_L = \frac{1}{2} L I(t)^2$.  
 > Cuando la tensión en el condensador alcanza los $12\text{ V}$, la corriente no se detiene instantáneamente debido a la inercia inductiva ($L$). Para mantener el flujo de corriente, el campo magnético del inductor colapsa e induce una fem autoinvertida ($v_L = -L \frac{dI}{dt}$) que actúa en serie con la fuente, inyectando la energía magnética almacenada hacia el condensador en forma de energía electrostática adicional $E_C = \frac{1}{2} C V_C^2$.  
@@ -219,7 +219,7 @@ A continuación se presentan 3 preguntas complejas y conceptuales que el docente
 ### PREGUNTA DIFÍCIL 3 (Computación Científica y Estabilidad Numérica):
 > **Docente:** *"En el procesamiento del archivo de audio real utilizaron una frecuencia de muestreo de $44.1\text{ kHz}$ con el método RK4. ¿Por qué el algoritmo se mantuvo perfectamente estable sin divergencia numérica, y qué criterio de tamaño de paso $h$ garantiza que el método RK4 no entre en resonancia numérica espuria?"*
 
-**Respuesta Correcta del Grupo (Recomendado: Alvaro o Jorge):**
+**Respuesta Correcta del Grupo (Recomendado: Alvaro o Kevin):**
 > *"Profesor, la estabilidad numérica de un integrador explícito como RK4 aplicado a un sistema lineal $\dot{\vec{y}} = \mathbf{A} \vec{y}$ depende de que los valores propios $\lambda_i$ de la matriz del sistema, multiplicados por el paso $h$, caigan dentro de la región de estabilidad absoluta de RK4 en el plano complejo.  
 > Para RK4, la región de estabilidad en el eje imaginario cubre el intervalo $[-2.78 j, +2.78 j]$, y en el eje real negativo hasta aproximadamente $-2.78$.  
 > En nuestro circuito, el polo de mayor magnitud (frecuencia natural) es $\omega_n = 100\text{ rad/s}$.  

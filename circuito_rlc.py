@@ -489,10 +489,10 @@ def procesar_audio_real():
     print(f"      -> Archivo original guardado: {wav_original_path} ({duracion} s, {fs} Hz)")
     
     # 2. Filtrado numérico mediante el circuito RLC serie (RK4)
-    # Para audio musical, seleccionamos R = 70 Ω (damping ~ 0.707, Butterworth óptimo) o R = 50 Ω
+    # Para audio musical, seleccionamos R = 50 Ω (damping zeta = 0.50, consistente con Figura 3 y el set nominal)
     # Con omega_n = 100 rad/s (f_n ~ 16 Hz), todas las frecuencias por encima de 40 Hz sufrirán
     # la caída de -40 dB/década, produciendo el característico sonido subacuático / amortiguado.
-    R_audio = 60.0
+    R_audio = 50.0
     dt = 1.0 / fs
     
     print(f"      -> Integrando {N} muestras con paso dt = {dt*1e6:.2f} µs mediante RK4...")
