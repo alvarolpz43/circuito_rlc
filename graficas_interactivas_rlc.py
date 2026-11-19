@@ -112,45 +112,58 @@ def rk4_integrador(f, y0, t_array, R, L, C, fuente_func):
 # =============================================================================
 # 2. SOLUCIÓN ANALÍTICA EXACTA (R = 10 Ω, E(t) = 12 V)
 # =============================================================================
-def solucion_analitica_vc(t_array, R=10.0, L=0.5, C=200e-6, E0=12.0):
+def solucion_analitica_vc(t_array, R=10.0, L=0.5, C=200e-6, E0=12.0, q0=0.0, i0=0.0):
     """
-    Fórmula formal deducida a mano:
+    Fórmula formal deducida a mano con descomposición canónica:
         alpha = R / (2L) = 10 s^-1
         omega_d = 30*sqrt(11) = 10*sqrt(99) rad/s
-        V_C(t) = E0 - exp(-alpha*t) * [E0 * cos(omega_d*t) + (E0*alpha / omega_d) * sin(omega_d*t)]
+        Q_perm = C * E0  ==>  V_C,perm = E0 = 12 V
+        C1 = q0 - Q_perm
+        C2 = (i0 + alpha * C1) / omega_d
+        V_C,trans(t) = exp(-alpha*t) * [(C1/C)*cos(omega_d*t) + (C2/C)*sin(omega_d*t)]
+        V_C(t) = V_C,perm + V_C,trans(t)
     """
     alpha = R / (2.0 * L)  # 10.0 s^-1
     omega_d = 30.0 * np.sqrt(11.0)  # 99.4987437 rad/s
+    q_perm = C * E0
+    c1 = q0 - q_perm
+    c2 = (i0 + alpha * c1) / omega_d
+
     decay = np.exp(-alpha * t_array)
-    osc = E0 * np.cos(omega_d * t_array) + (E0 * alpha / omega_d) * np.sin(omega_d * t_array)
-    vc_analit = E0 - decay * osc
-    return vc_analit, omega_d, alpha
+    q_trans = decay * (c1 * np.cos(omega_d * t_array) + c2 * np.sin(omega_d * t_array))
+    vc_trans = q_trans / C
+    vc_perm = E0 * np.ones_like(t_array)
+    vc_total = vc_perm + vc_trans
+    return vc_total, vc_perm, vc_trans, omega_d, alpha
 
 
 # =============================================================================
 # GRÁFICA 1: VALIDACIÓN (ANALÍTICA VS. NUMÉRICA RK4 CON UNIFIED HOVER)
 # =============================================================================
-def generar_grafica1_validacion(guardar_html=True, abrir=False):
-    print("-> Generando Gráfica Dinámica 1: Validación Analítica vs. Numérica RK4...")
+def generar_grafica1_validacion(guardar_html=True, abrir=False, q0=0.0, i0=0.0):
+    print(f"-> Generando Gráfica Dinámica 1: Validación Analítica vs. Numérica RK4 [Q(0)={q0*1e3:.2f} mC, I(0)={i0:.2f} A]...")
 
     t_span = np.linspace(0.0, 0.6, 3001)  # Intervalo t in [0, 0.6] s (dt = 0.2 ms)
-    y0 = [0.0, 0.0]
+    y0 = [q0, i0]
     fuente_escalon = lambda t: E_ESCALON
 
     # Solución Numérica RK4
     sol_rk4 = rk4_integrador(sistema_rlc_derivadas, y0, t_span, 10.0, L_NOMINAL, C_NOMINAL, fuente_escalon)
     vc_num = sol_rk4[:, 0] / C_NOMINAL
 
-    # Solución Analítica Exacta
-    vc_analit, omega_d, alpha = solucion_analitica_vc(t_span, 10.0, L_NOMINAL, C_NOMINAL, E_ESCALON)
+    # Solución Analítica Exacta y Descomposición
+    vc_analit, vc_perm, vc_trans, omega_d, alpha = solucion_analitica_vc(
+        t_span, 10.0, L_NOMINAL, C_NOMINAL, E_ESCALON, q0=q0, i0=i0
+    )
 
     # Error absoluto en nanovoltios (nV)
     error_abs_nv = np.abs(vc_num - vc_analit) * 1e9
     max_err_nv = np.max(error_abs_nv)
 
-    # Punto pico máximo teórico
-    t_peak = np.pi / omega_d
-    vc_peak = E_ESCALON * (1.0 + np.exp(-alpha * t_peak))
+    # Punto pico máximo numérico / teórico
+    idx_max = np.argmax(vc_analit)
+    t_peak = t_span[idx_max]
+    vc_peak = vc_analit[idx_max]
     overshoot_pct = ((vc_peak - E_ESCALON) / E_ESCALON) * 100.0
 
     # Crear figura con eje Y secundario para el error
@@ -186,14 +199,27 @@ def generar_grafica1_validacion(guardar_html=True, abrir=False):
         go.Scatter(
             x=[0, 0.6], y=[12.0, 12.0],
             mode='lines',
-            name='Tensión de Entrada E(t) = 12 V',
-            line=dict(color='rgba(255, 255, 255, 0.45)', width=1.5, dash='dash'),
-            hoverinfo='skip'
+            name='Parte Permanente V_C,perm = 12 V',
+            line=dict(color='rgba(56, 189, 248, 0.75)', width=1.8, dash='dash'),
+            hovertemplate='<b>Permanente</b>: 12.0000 V<extra></extra>'
         ),
         secondary_y=False
     )
 
-    # 4. Traza de Error Absoluto en nanovoltios (eje secundario)
+    # 4. Traza de componente transitoria V_C,trans(t) (inspección analítica)
+    fig.add_trace(
+        go.Scatter(
+            x=t_span, y=vc_trans,
+            mode='lines',
+            name='Parte Transitoria V_C,trans(t)',
+            line=dict(color='#a855f7', width=1.6, dash='dot'),
+            hovertemplate='<b>Transitoria</b>: %{y:.4f} V<extra></extra>',
+            visible='legendonly'  # Activable desde la leyenda
+        ),
+        secondary_y=False
+    )
+
+    # 5. Traza de Error Absoluto en nanovoltios (eje secundario)
     fig.add_trace(
         go.Scatter(
             x=t_span, y=error_abs_nv,

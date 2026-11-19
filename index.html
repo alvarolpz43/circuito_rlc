@@ -294,20 +294,146 @@
                         <h3 style="color: #fff; font-size: 1.05rem;">4. Solución Analítica Completa del Escalón de 12 V ($R = 10\,\Omega$)</h3>
                         <span class="step-badge">SOLUCIÓN EXACTA</span>
                     </div>
-                    <p>Con $E(t) = 12\text{ V}$ y reposo inicial $Q(0) = 0$, $I(0) = 0$:</p>
+                    <p>La ecuación diferencial no homogénea para el circuito excitado por un escalón constante $E(t) = 12\text{ V}$ es:</p>
                     <div class="math-block">
                         $$Q''(t) + 20 Q'(t) + 10000 Q(t) = 24$$
                     </div>
-                    <p>Por coeficientes indeterminados, $Q_p(t) = \frac{12}{5000} = 2.4 \times 10^{-3}\text{ C} = 2.4\text{ mC}$.</p>
-                    <p>Aplicando las condiciones iniciales para las constantes $C_1 = -0.0024\text{ C}$ y $C_2 = -\frac{0.0024}{\sqrt{99}}\text{ C}$, y dividiendo entre $C = 200\,\mu\text{F}$:</p>
-                    <div class="math-block">
-                        $$\mathbf{V_C(t) = 12 \left[ 1 - e^{-10 t} \left( \cos(10\sqrt{99} t) + \frac{1}{\sqrt{99}} \sin(10\sqrt{99} t) \right) \right]\text{ [V]}}$$
+                    
+                    <!-- Desglose Formal: Parte Permanente vs. Parte Transitoria -->
+                    <div class="solution-decomposition-grid">
+                        <!-- Tarjeta Permanente -->
+                        <div class="decomp-card decomp-perm">
+                            <div class="decomp-card-header">
+                                <span class="decomp-badge perm-badge"><i data-lucide="anchor"></i> 1. PARTE PERMANENTE (ESTADO ESTACIONARIO)</span>
+                                <span class="decomp-limit">$t \to \infty$</span>
+                            </div>
+                            <p class="decomp-card-desc">
+                                Originada por la excitación externa continua $E_0 = 12\text{ V}$. En régimen permanente de corriente continua, el condensador se carga por completo, la corriente cesa ($I = 0$) y toda la tensión cae en sus bornes:
+                            </p>
+                            <div class="math-block-decomp">
+                                $$Q_{\text{perm}} = C \cdot E_0 = (200 \times 10^{-6}\text{ F})(12\text{ V}) = \mathbf{2.4\text{ mC} = 2.4 \times 10^{-3}\text{ C}}$$
+                                $$V_{C,\text{perm}} = \frac{Q_{\text{perm}}}{C} = \mathbf{12.0\text{ V}}$$
+                            </div>
+                            <div class="decomp-card-footer">
+                                <i data-lucide="check-circle-2"></i> <span>Subsiste indefinidamente en el circuito sin atenuación.</span>
+                            </div>
+                        </div>
+
+                        <!-- Tarjeta Transitoria -->
+                        <div class="decomp-card decomp-trans">
+                            <div class="decomp-card-header">
+                                <span class="decomp-badge trans-badge"><i data-lucide="activity"></i> 2. PARTE TRANSITORIA (RESPUESTA NATURAL)</span>
+                                <span class="decomp-limit">$t \to 0^+ \implies \text{decae a } 0$</span>
+                            </div>
+                            <p class="decomp-card-desc">
+                                Proviene de la solución homogénea $Q_h(t)$. Representa el intercambio oscilatorio amortiguado entre el campo magnético del inductor y el electrostático del condensador, disipado en calor por $R$:
+                            </p>
+                            <div class="math-block-decomp">
+                                $$Q_{\text{trans}}(t) = e^{-10 t} \left[ C_1 \cos(10\sqrt{99} t) + C_2 \sin(10\sqrt{99} t) \right]$$
+                                $$V_{C,\text{trans}}(t) = e^{-10 t} \left[ \frac{C_1}{C} \cos(10\sqrt{99} t) + \frac{C_2}{C} \sin(10\sqrt{99} t) \right]$$
+                            </div>
+                            <div class="decomp-card-footer">
+                                <i data-lucide="trending-down"></i> <span>Se extingue exponencialmente debido al factor $e^{-\alpha t} = e^{-10t}$.</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="callout-box warn">
-                        <i data-lucide="alert-triangle" class="callout-icon"></i>
-                        <div>
-                            <strong>Pico Máximo de Sobreimpulso:</strong> Ocurre en $t_p = \frac{\pi}{\omega_d} = \frac{\pi}{10\sqrt{99}} \approx \mathbf{31.57\text{ ms}}$, alcanzando:
-                            $$V_{C,\max} = 12 \cdot \left(1 + e^{-\frac{\pi}{\sqrt{99}}}\right) \approx \mathbf{20.75\text{ V}} \quad \implies \text{Sobreimpulso del } \mathbf{72.9\%}$$
+
+                    <!-- Solución Canónica del Enunciado -->
+                    <div class="canonical-solution-box">
+                        <div class="canonical-header">
+                            <i data-lucide="file-check"></i>
+                            <strong>Respuesta del Enunciado Canónico: Reposo Inicial $Q(0) = 0\text{ C}$ y $Q'(0) = I(0) = 0\text{ A}$</strong>
+                        </div>
+                        <p style="font-size: 0.88rem; color: #cbd5e1; margin-bottom: 0.6rem;">
+                            Imponiendo reposo inicial en $t = 0$: $Q(0) = Q_{\text{perm}} + C_1 = 0 \implies C_1 = -2.4\text{ mC}$. De la derivada $Q'(0) = -10 C_1 + \omega_d C_2 = 0 \implies C_2 = \frac{10 C_1}{\omega_d} = -\frac{2.4}{\sqrt{99}}\text{ mC}$. Dividiendo entre $C = 200\,\mu\text{F}$:
+                        </p>
+                        <div class="math-block-highlighted">
+                            $$\mathbf{V_C(t) = \underbrace{12.0}_{\text{Parte Permanente}} + \underbrace{\left( -12.0 e^{-10 t} \left[ \cos(10\sqrt{99} t) + \frac{1}{\sqrt{99}} \sin(10\sqrt{99} t) \right] \right)}_{\text{Parte Transitoria}}\text{ [V]}}$$
+                        </div>
+                        <div class="callout-box warn" style="margin-top: 0.8rem;">
+                            <i data-lucide="alert-triangle" class="callout-icon"></i>
+                            <div>
+                                <strong>Pico Máximo de Sobreimpulso ($M_p$):</strong> Ocurre en $t_p = \frac{\pi}{\omega_d} = \frac{\pi}{10\sqrt{99}} \approx \mathbf{31.57\text{ ms}}$, alcanzando:
+                                $$V_{C,\max} = 12 \cdot \left(1 + e^{-\frac{\pi}{\sqrt{99}}}\right) \approx \mathbf{20.75\text{ V}} \quad \implies \text{Sobreimpulso del } \mathbf{72.9\%}$$
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========================================================
+                         EDITOR INTERACTIVO DE CONDICIONES INICIALES Q(0) e I(0)
+                         ======================================================== -->
+                    <div class="equation-editor-card">
+                        <div class="editor-header">
+                            <div class="editor-title-wrap">
+                                <i data-lucide="sliders-horizontal"></i>
+                                <div>
+                                    <h4 style="color: #fff; font-size: 1rem; margin: 0;">Editor Interactivo de Condiciones Iniciales: Carga $Q(0)$ Editable</h4>
+                                    <span style="font-size: 0.8rem; color: var(--accent-cyan);">Modifica $Q(0)$ e $I(0)$ para observar cómo cambian dinámicamente las constantes $C_1, C_2$ y la ecuación</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Presets de Carga Inicial -->
+                        <div class="editor-presets-row">
+                            <span class="editor-preset-label">PRESETS RÁPIDOS:</span>
+                            <div class="editor-presets-btns">
+                                <button type="button" class="btn-ci-preset active" data-q0="0" data-i0="0">1. Enunciado (Q = 0, I = 0)</button>
+                                <button type="button" class="btn-ci-preset" data-q0="1.2" data-i0="0">2. Pre-cargado 6V (Q = 1.2 mC)</button>
+                                <button type="button" class="btn-ci-preset" data-q0="2.4" data-i0="0">3. Permanente 12V (Q = 2.4 mC)</button>
+                                <button type="button" class="btn-ci-preset" data-q0="-2.4" data-i0="0">4. Invertido -12V (Q = -2.4 mC)</button>
+                            </div>
+                        </div>
+
+                        <!-- Controles de Deslizamiento -->
+                        <div class="editor-sliders-grid">
+                            <div class="editor-control-box">
+                                <div class="editor-label-row">
+                                    <span>Carga Inicial del Condensador $Q(0)$:</span>
+                                    <span id="dispEditQ0" class="editor-val-badge">0.00 mC (0.0 V)</span>
+                                </div>
+                                <input type="range" id="sliderEditQ0" min="-4.8" max="4.8" step="0.1" value="0.0" class="custom-range">
+                                <div class="slider-ticks-row">
+                                    <span>-4.8 mC (-24V)</span>
+                                    <span>0 mC (0V)</span>
+                                    <span>+4.8 mC (+24V)</span>
+                                </div>
+                            </div>
+
+                            <div class="editor-control-box">
+                                <div class="editor-label-row">
+                                    <span>Corriente Inicial en el Circuito $I(0) = Q'(0)$:</span>
+                                    <span id="dispEditI0" class="editor-val-badge">0.00 A</span>
+                                </div>
+                                <input type="range" id="sliderEditI0" min="-1.0" max="1.0" step="0.05" value="0.0" class="custom-range">
+                                <div class="slider-ticks-row">
+                                    <span>-1.0 A</span>
+                                    <span>0.0 A</span>
+                                    <span>+1.0 A</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel de Ecuación KaTeX Recalculada en Tiempo Real -->
+                        <div class="editor-math-output">
+                            <div class="output-meta-row">
+                                <span class="badge-tech"><i data-lucide="calculator"></i> Ecuación Dinámica Actualizada en Vivo</span>
+                                <span id="dispConstantsSummary" class="constants-pill">C₁ = -2.40 mC | C₂ = -0.24 mC</span>
+                            </div>
+                            <div id="katexDynamicEquation" class="dynamic-math-render">
+                                <!-- KaTeX dinámico inyectado por JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Mini Visualizador de Descomposición Temporal -->
+                        <div class="editor-plot-wrap">
+                            <div class="plot-legend-row">
+                                <span class="legend-item"><span class="legend-dot dot-perm"></span> <strong>Parte Permanente:</strong> V_perm = 12 V</span>
+                                <span class="legend-item"><span class="legend-dot dot-trans"></span> <strong>Parte Transitoria:</strong> V_trans(t)</span>
+                                <span class="legend-item"><span class="legend-dot dot-total"></span> <strong>Respuesta Total:</strong> V_C(t)</span>
+                            </div>
+                            <div class="decomp-canvas-container">
+                                <canvas id="canvasDecompPlot"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -370,6 +496,32 @@
                         <input id="sliderE" type="range" min="1" max="24" step="0.5" value="12" class="custom-range">
                     </div>
 
+                    <!-- Condiciones Iniciales Editables Q(0) e I(0) en el Simulador -->
+                    <div class="ci-control-panel">
+                        <div class="ci-panel-header">
+                            <span class="ci-title"><i data-lucide="sparkles"></i> CONDICIONES INICIALES EDITABLES:</span>
+                            <button type="button" id="btnResetCI" class="btn-ci-reset" title="Restablecer reposo Q(0)=0, I(0)=0">
+                                <i data-lucide="rotate-ccw"></i> <span>Reposo (0, 0)</span>
+                            </button>
+                        </div>
+
+                        <div class="control-group" style="margin-bottom: 0.6rem;">
+                            <div class="control-label">
+                                <span>Carga Inicial Q(0):</span>
+                                <span id="valQ0" class="control-val ci-val">0.00 mC (0.0 V)</span>
+                            </div>
+                            <input id="sliderQ0" type="range" min="-2.4" max="2.4" step="0.1" value="0.0" class="custom-range ci-range">
+                        </div>
+
+                        <div class="control-group" style="margin-bottom: 0.4rem;">
+                            <div class="control-label">
+                                <span>Corriente Inicial I(0):</span>
+                                <span id="valI0" class="control-val ci-val">0.00 A</span>
+                            </div>
+                            <input id="sliderI0" type="range" min="-0.5" max="0.5" step="0.02" value="0.0" class="custom-range ci-range">
+                        </div>
+                    </div>
+
                     <!-- Telemetría Dinámica -->
                     <div class="live-telemetry">
                         <div class="telemetry-item">
@@ -400,15 +552,25 @@
                     </div>
                 </div>
 
-                <!-- Gráfica Reactiva -->
+                <!-- Gráfica Reactiva y Plano de Fase 2D -->
                 <div class="chart-card-wrapper">
                     <div class="chart-header">
                         <div>
-                            <h3 style="font-size: 1.05rem; color: #fff; margin-bottom: 0.15rem;">Respuesta Temporal en Bornes del Condensador V<sub>C</sub>(t)</h3>
-                            <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-cyan);">RK4 • 60 FPS FIJOS</span>
+                            <h3 id="simChartTitle" style="font-size: 1.05rem; color: #fff; margin-bottom: 0.15rem;">Respuesta Temporal en Bornes del Condensador V<sub>C</sub>(t)</h3>
+                            <span id="simChartSubtitle" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-cyan);">RK4 • 60 FPS FIJOS</span>
                         </div>
 
                         <div class="chart-actions">
+                            <!-- Selector de Modo de Visualización: Temporal vs Plano de Fase -->
+                            <div class="btn-switch-group sim-mode-switch">
+                                <button id="btnViewWaveform" class="btn-switch-item active" title="Forma de onda temporal V_C(t) e I(t)">
+                                    <i data-lucide="line-chart"></i> <span>Onda Temporal</span>
+                                </button>
+                                <button id="btnViewPhasePortrait" class="btn-switch-item" title="Espacio de estados 2D de Lyapunov: Carga Q(t) vs Corriente I(t)">
+                                    <i data-lucide="compass"></i> <span>Plano de Fase 2D (Q vs I)</span>
+                                </button>
+                            </div>
+
                             <button id="btnToggleAnalytical" class="btn-compare-analytical" title="Superpone la solución analítica exacta calculada a mano y evalúa el error numérico">
                                 <i data-lucide="git-compare"></i> <span>Superponer Analítica</span>
                             </button>
@@ -420,6 +582,23 @@
                     </div>
                     <div class="chart-canvas-box">
                         <canvas id="chartRK4"></canvas>
+                        <canvas id="chartPhasePortrait" style="display: none;"></canvas>
+                    </div>
+
+                    <!-- Pie de Información del Plano de Fase 2D -->
+                    <div id="phasePortraitFooter" class="phase-portrait-footer" style="display: none;">
+                        <div class="phase-stat-chip">
+                            <span class="chip-lbl">Punto Fijo Atractor (Q*, I*):</span>
+                            <span id="phaseEquilibriumPt" class="chip-val" style="color: var(--accent-amber);">(2.40 mC, 0.00 A)</span>
+                        </div>
+                        <div class="phase-stat-chip">
+                            <span class="chip-lbl">Clasificación Topológica:</span>
+                            <span id="phaseClassification" class="chip-val" style="color: var(--accent-cyan);">Foco Estable (Espiral Convergente)</span>
+                        </div>
+                        <div class="phase-stat-chip">
+                            <span class="chip-lbl">Estabilidad de Lyapunov:</span>
+                            <span id="phaseLyapunov" class="chip-val" style="color: var(--accent-green);">Asintóticamente Estable (Re(λ) &lt; 0)</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -574,6 +753,73 @@
                     <div class="figure-canvas-wrap">
                         <canvas id="chartGaleriaFig4"></canvas>
                     </div>
+
+                    <!-- INNOVACIÓN ACÚSTICA: SONDA AUDITIVA INTERACTIVA DE BODE -->
+                    <div class="bode-probe-card">
+                        <div class="bode-probe-header">
+                            <div class="bode-probe-title">
+                                <i data-lucide="headphones"></i>
+                                <span>Sonda Auditiva de Frecuencia (Escucha la Atenuación en dB del Circuito)</span>
+                            </div>
+                            <span id="badgeBodeGain" class="bode-gain-badge">Ganancia: 0.00 dB (100.0%)</span>
+                        </div>
+
+                        <!-- Presets de frecuencia clave -->
+                        <div class="bode-preset-row">
+                            <button type="button" class="bode-pill-btn active" data-f="15.92">15.9 Hz (f_n Resonancia)</button>
+                            <button type="button" class="bode-pill-btn" data-f="50">50 Hz (Bajo Audible)</button>
+                            <button type="button" class="bode-pill-btn" data-f="100">100 Hz (Corte -12 dB)</button>
+                            <button type="button" class="bode-pill-btn" data-f="500">500 Hz (-28 dB)</button>
+                            <button type="button" class="bode-pill-btn" data-f="1000">1 kHz (-40 dB)</button>
+                            <button type="button" class="bode-pill-btn" data-f="5000">5 kHz (-68 dB)</button>
+                        </div>
+
+                        <!-- Deslizador de Frecuencia Continuo en Escala Logarítmica -->
+                        <div class="bode-slider-row">
+                            <div class="bode-slider-labels">
+                                <span>Frecuencia de Prueba f: <strong id="lblBodeProbeFreq" style="color: var(--accent-cyan); font-family: var(--font-mono);">15.92 Hz</strong></span>
+                                <span style="font-size: 0.72rem; color: var(--text-muted);">Rango: 1 Hz a 10,000 Hz</span>
+                            </div>
+                            <input type="range" id="sliderBodeFreq" min="0" max="1000" value="300" step="1" class="custom-range">
+                        </div>
+
+                        <!-- Controles de Audio: Entrada vs Salida -->
+                        <div class="bode-audio-buttons">
+                            <button type="button" id="btnPlayBodeIn" class="synth-btn probe-btn">
+                                <i data-lucide="volume-2"></i> <span>Escuchar Entrada E(t)</span>
+                            </button>
+                            <button type="button" id="btnPlayBodeOut" class="synth-btn probe-btn probe-btn-filtered">
+                                <i data-lucide="waves"></i> <span>Escuchar Salida V_C(t) [Atenuada]</span>
+                            </button>
+                            <button type="button" id="btnBodeToggleAB" class="synth-btn probe-btn-ab" title="Alterna automáticamente entre entrada y salida cada segundo">
+                                <i data-lucide="shuffle"></i> <span>Comparativa A/B</span>
+                            </button>
+                            <button type="button" id="btnStopBodeTone" class="synth-btn probe-btn-stop" style="display: none;">
+                                <i data-lucide="square"></i> <span>Detener Tono</span>
+                            </button>
+                        </div>
+
+                        <!-- Telemetría Matemática de la Función de Transferencia H(jω) -->
+                        <div class="bode-probe-readout">
+                            <div class="readout-col">
+                                <span class="readout-lbl">Magnitud Lineal |H|</span>
+                                <span id="bodeLinGainVal" class="readout-val">1.000 V/V</span>
+                            </div>
+                            <div class="readout-col">
+                                <span class="readout-lbl">Atenuación Logarítmica</span>
+                                <span id="bodedBVal" class="readout-val" style="color: var(--accent-amber);">0.00 dB</span>
+                            </div>
+                            <div class="readout-col">
+                                <span class="readout-lbl">Desfase Angular &phi;</span>
+                                <span id="bodePhaseVal" class="readout-val">-89.9°</span>
+                            </div>
+                            <div class="readout-col">
+                                <span class="readout-lbl">Energía Transmitida</span>
+                                <span id="bodePowerVal" class="readout-val" style="color: var(--accent-cyan);">100.0%</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="figure-caption">
                         <h4>Figura 4: Diagrama de Bode en Magnitud y Fase</h4>
                         <p>Función de transferencia $H(j\omega) = V_C/E$ en escala logarítmica. Demuestra rigurosamente la pendiente asintótica de caída de $\mathbf{-40\text{ dB/década}}$ ($-12\text{ dB/octava}$) y el desfase de $-90^\circ$ en la frecuencia de corte $f_n \approx 15.9\text{ Hz}$.</p>
@@ -601,7 +847,7 @@
                     <p style="font-size: 0.84rem; color: var(--text-muted);">
                         Acorde polifónico brillante con armónicos agudos (440 Hz a 3520 Hz) y chasquidos percusivos de 5 kHz.
                     </p>
-                    <audio controls class="native-audio" src="audio_original.wav"></audio>
+                    <audio id="nativeAudioOriginal" controls class="native-audio" src="audio_original.wav"></audio>
                 </div>
 
                 <!-- Reproductor Audio Filtrado -->
@@ -615,7 +861,68 @@
                     <p style="font-size: 0.84rem; color: var(--text-muted);">
                         Resultado de integrar muestra a muestra (154,350 pasos RK4, $dt = 22.7\,\mu\text{s}$) a través de la EDO del circuito. Pérdida total de agudos.
                     </p>
-                    <audio controls class="native-audio" src="audio_filtrado_submarino.wav"></audio>
+                    <audio id="nativeAudioFiltrado" controls class="native-audio" src="audio_filtrado_submarino.wav"></audio>
+                </div>
+            </div>
+
+            <!-- ================================================================
+                 INNOVACIÓN ACÚSTICA: ANIMACIÓN DE LA BOCINA SUMERGIBLE BAJO EL AGUA
+                 ================================================================ -->
+            <div class="glass-card underwater-speaker-card">
+                <div class="underwater-header">
+                    <div>
+                        <h3 style="font-size: 1.18rem; color: #fff; display: flex; align-items: center; gap: 0.55rem;">
+                            <i data-lucide="waves"></i> Simulación Física: Bocina Sumergible en Agua (Efecto Filtro Pasa-Bajos)
+                        </h3>
+                        <p style="font-size: 0.84rem; color: var(--text-muted); margin-top: 0.25rem; line-height: 1.55;">
+                            Demostración física intuitiva del filtro RLC: en el aire, el altavoz emite el espectro armónico completo (ondas rápidas y brillantes); al sumergirse en el medio acuático, la inercia ($\sim L$) y la fricción viscosa ($\sim R$) del agua disipan de inmediato las altas frecuencias (agudos), permitiendo el paso únicamente de las ondas lentas y profundas (graves).
+                        </p>
+                    </div>
+                    <div id="submergeBadge" class="submerge-badge submerged">
+                        <span class="pulse-bubble"></span>
+                        <span id="submergeBadgeText"><i data-lucide="waves"></i> Sumergida (Filtro RLC Activo - Pasa-Bajos)</span>
+                    </div>
+                </div>
+
+                <!-- Canvas de Animación a 60 FPS con Dinámica de Fluidos y Ondas -->
+                <div class="underwater-canvas-container">
+                    <canvas id="canvasUnderwaterSpeaker" width="900" height="360"></canvas>
+                </div>
+
+                <!-- Barra de Controles y Parámetros Físicos -->
+                <div class="underwater-controls-bar">
+                    <div class="underwater-btn-group">
+                        <button id="btnToggleSubmerge" class="synth-btn submerge-btn">
+                            <i data-lucide="arrow-down-circle"></i> <span id="btnSubmergeLabel">Emerger al Aire (Desactivar Filtro)</span>
+                        </button>
+                        <button id="btnAnimateSubmergeCycle" class="synth-btn btn-demo-cycle" title="Ejecuta una demostración automática de inmersión y emersión suave">
+                            <i data-lucide="repeat"></i> <span>Ciclo Demostrativo</span>
+                        </button>
+                    </div>
+
+                    <div class="depth-slider-container">
+                        <div class="depth-slider-header">
+                            <span class="depth-slider-title"><i data-lucide="gauge"></i> Nivel de Inmersión:</span>
+                            <span id="txtImmersionDepth" class="depth-slider-value">100% (Sumergida)</span>
+                        </div>
+                        <input type="range" id="sliderImmersionDepth" min="0" max="100" value="100" step="1" class="custom-range-slider depth-slider">
+                        <div class="depth-slider-ticks">
+                            <span>0% (Aire / 20 kHz)</span>
+                            <span>50% (Media Inmersión)</span>
+                            <span>100% (Fondo / 25 Hz)</span>
+                        </div>
+                    </div>
+
+                    <div class="underwater-stats-pills">
+                        <div class="uw-stat-pill">
+                            <span class="uw-stat-label">Medio Acústico</span>
+                            <span id="lblAcousticMedium" class="uw-stat-val" style="color: var(--accent-cyan);">Agua Líquida (ρ = 1000 kg/m³)</span>
+                        </div>
+                        <div class="uw-stat-pill">
+                            <span class="uw-stat-label">Frecuencia de Corte</span>
+                            <span id="lblAcousticCutoff" class="uw-stat-val" style="color: var(--accent-amber);">25 Hz (Graves Únicamente)</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -648,10 +955,11 @@
                     <span id="audioSourceText">Fuente activa: Sintetizador Polifónico</span>
                 </div>
 
-                <!-- Canvas del Espectro de Audio -->
+                <!-- Canvas del Espectro de Audio FFT -->
                 <div style="margin-top: 1rem;">
-                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.35rem; font-family: var(--font-mono);">
-                        ANALIZADOR DE ESPECTRO FFT EN TIEMPO REAL:
+                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.35rem; font-family: var(--font-mono); display: flex; align-items: center; gap: 0.4rem;">
+                        <i data-lucide="activity" style="width: 14px; height: 14px; color: var(--accent-cyan);"></i>
+                        <span>ANALIZADOR DE ESPECTRO FFT EN TIEMPO REAL:</span>
                     </div>
                     <canvas id="canvasSpectrum" class="spectrum-canvas" width="800" height="120"></canvas>
                 </div>
@@ -1217,6 +1525,8 @@ fig3.write_html(<span class="tok-str">"figura3_interactiva.html"</span>)</code><
     <!-- Scripts de la aplicación -->
     <script src="js/rlc_engine.js"></script>
     <script src="js/audio_lab.js"></script>
+    <script src="js/underwater_speaker.js"></script>
+    <script src="js/bode_probe.js"></script>
     <script src="js/analogia_canvas.js"></script>
     <script src="js/galeria_charts.js"></script>
     <script src="js/app.js"></script>

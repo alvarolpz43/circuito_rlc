@@ -129,46 +129,103 @@ def rk4_integrador(f, y0, t_array, R, L, C, fuente_func):
 
 
 # =============================================================================
-# 3. SOLUCIÓN ANALÍTICA EXACTA (Para R = 10 Ω, E(t) = 12 V, reposo inicial)
+# 3. SOLUCIÓN ANALÍTICA EXACTA Y DESCOMPOSICIÓN TRANSITORIA / PERMANENTE
 # =============================================================================
-def solucion_analitica_vc(t_array, R=10.0, L=0.5, C=200e-6, E0=12.0):
+def solucion_analitica_vc(t_array, R=10.0, L=0.5, C=200e-6, E0=12.0, q0=0.0, i0=0.0):
     """
     Calcula la solución analítica exacta de V_C(t) para el caso subamortiguado
-    ante un escalón de voltaje E0 con condiciones de reposo inicial Q(0)=0, I(0)=0.
+    ante un escalón de voltaje E0 con condiciones iniciales arbitrarias Q(0)=q0, I(0)=i0.
     
     Ecuación característica:
         L*r^2 + R*r + (1/C) = 0
         r = -alpha ± j*omega_d
         alpha = R / (2L) = 10 / (2 * 0.5) = 10 s^-1
-        omega_d = sqrt(omega_n^2 - alpha^2) = sqrt(10000 - 100) = sqrt(9900) = 10*sqrt(99) rad/s
+        omega_d = sqrt(omega_n^2 - alpha^2) = sqrt(10000 - 100) = 10*sqrt(99) rad/s
+        
+    Descomposición canónica:
+        Q(t) = Q_perm + Q_trans(t)
+        Q_perm = C * E0  ==>  V_C,perm = E0 = 12 V
+        Q_trans(t) = exp(-alpha*t) * [C1 * cos(omega_d*t) + C2 * sin(omega_d*t)]
+        
+        Condiciones iniciales:
+        C1 = q0 - Q_perm = q0 - C * E0
+        C2 = (i0 + alpha * C1) / omega_d
         
     Voltaje en el condensador:
-        V_C(t) = E0 * [1 - exp(-alpha*t) * (cos(omega_d*t) + (alpha/omega_d)*sin(omega_d*t))]
+        V_C(t) = V_C,perm + V_C,trans(t)
+        V_C,trans(t) = exp(-alpha*t) * [(C1/C)*cos(omega_d*t) + (C2/C)*sin(omega_d*t)]
     """
     alpha = R / (2.0 * L)
     omega_n_sq = 1.0 / (L * C)
     omega_d = np.sqrt(omega_n_sq - alpha**2)
     
+    q_perm = C * E0
+    c1 = q0 - q_perm
+    c2 = (i0 + alpha * c1) / omega_d
+    
     decay = np.exp(-alpha * t_array)
-    oscilacion = np.cos(omega_d * t_array) + (alpha / omega_d) * np.sin(omega_d * t_array)
-    vc = E0 * (1.0 - decay * oscilacion)
+    q_trans = decay * (c1 * np.cos(omega_d * t_array) + c2 * np.sin(omega_d * t_array))
+    q_total = q_perm + q_trans
     
-    # Carga Q(t) = C * V_C(t)
-    # Corriente I(t) = dQ/dt = (E0 / (omega_d * L)) * exp(-alpha*t) * sin(omega_d*t)
-    corriente = (E0 / (omega_d * L)) * decay * np.sin(omega_d * t_array)
+    vc_total = q_total / C
     
-    return vc, corriente, alpha, omega_d
+    # Corriente analítica I(t) = dQ/dt
+    # d/dt[decay * (c1*cos + c2*sin)] = decay * [(-alpha*c1 + omega_d*c2)*cos + (-alpha*c2 - omega_d*c1)*sin]
+    corriente = decay * ((-alpha * c1 + omega_d * c2) * np.cos(omega_d * t_array) + 
+                         (-alpha * c2 - omega_d * c1) * np.sin(omega_d * t_array))
+    
+    return vc_total, corriente, alpha, omega_d
+
+
+def descomposicion_transitoria_permanente(t_array, R=10.0, L=0.5, C=200e-6, E0=12.0, q0=0.0, i0=0.0):
+    """
+    Retorna explícitamente las componentes permanente y transitoria tanto para
+    el voltaje V_C(t) como para la carga Q(t), permitiendo su inspección analítica.
+    """
+    alpha = R / (2.0 * L)
+    omega_n_sq = 1.0 / (L * C)
+    omega_d = np.sqrt(omega_n_sq - alpha**2)
+    
+    q_perm = C * E0
+    vc_perm = E0 * np.ones_like(t_array)
+    
+    c1 = q0 - q_perm
+    c2 = (i0 + alpha * c1) / omega_d
+    
+    decay = np.exp(-alpha * t_array)
+    q_trans = decay * (c1 * np.cos(omega_d * t_array) + c2 * np.sin(omega_d * t_array))
+    vc_trans = q_trans / C
+    vc_total = vc_perm + vc_trans
+    
+    return {
+        'vc_perm': vc_perm,
+        'vc_trans': vc_trans,
+        'vc_total': vc_total,
+        'q_perm': q_perm,
+        'q_trans': q_trans,
+        'q_total': q_perm + q_trans,
+        'C1': c1,
+        'C2': c2,
+        'alpha': alpha,
+        'omega_d': omega_d
+    }
 
 
 # =============================================================================
 # 4. GENERACIÓN DE FIGURA 1: VALIDACIÓN ANALÍTICA VS. NUMÉRICA (R = 10 Ω)
 # =============================================================================
-def generar_figura1_validacion():
-    print("[1/4] Generando Figura 1: Validación Analítica vs. Numérica (RK4)...")
+def generar_figura1_validacion(q0=0.0, i0=0.0):
+    print(f"[1/4] Generando Figura 1: Validación Analítica vs. Numérica (RK4) [Q(0)={q0*1e3:.2f} mC, I(0)={i0:.2f} A]...")
     t_span = np.linspace(0.0, 0.4, 4001)  # dt = 0.0001 s = 0.1 ms
     
+    # Descomposición Teórica Formal
+    decomp = descomposicion_transitoria_permanente(t_span, R=10.0, L=L_NOMINAL, C=C_NOMINAL, E0=E_ESCALON, q0=q0, i0=i0)
+    print(f"      -> PARTE PERMANENTE: V_C,perm = {E_ESCALON:.2f} V | Q_perm = {decomp['q_perm']*1e3:.2f} mC")
+    print(f"      -> PARTE TRANSITORIA: C1 = {decomp['C1']*1e3:.4f} mC, C2 = {decomp['C2']*1e3:.4f} mC")
+    print(f"         V_C,trans(0) = {decomp['vc_trans'][0]:.2f} V | Decaimiento: exp(-{decomp['alpha']:.1f}*t), omega_d = {decomp['omega_d']:.4f} rad/s")
+    
     # Simulación numérica RK4
-    y0 = [0.0, 0.0]  # Q(0) = 0, I(0) = 0
+    y0 = [q0, i0]
     fuente_escalon = lambda t: E_ESCALON
     sol_rk4 = rk4_integrador(
         sistema_rlc_derivadas, y0, t_span,
@@ -177,9 +234,7 @@ def generar_figura1_validacion():
     vc_num = sol_rk4[:, 0] / C_NOMINAL
     
     # Solución analítica exacta
-    vc_analit, _, alpha, omega_d = solucion_analitica_vc(
-        t_span, R=10.0, L=L_NOMINAL, C=C_NOMINAL, E0=E_ESCALON
-    )
+    vc_analit = decomp['vc_total']
     
     # Residuos y métricas de error
     error_absoluto = np.abs(vc_num - vc_analit)
@@ -197,7 +252,9 @@ def generar_figura1_validacion():
     ax1.plot(t_span * 1000, vc_analit, 'b-', label=r'Solución Analítica Exacta $V_C(t)$', linewidth=2.5)
     ax1.plot(t_span[::40] * 1000, vc_num[::40], 'ro', markersize=4.5, 
              label=r'Simulación Numérica RK4 ($h = 0.1$ ms)', alpha=0.85)
-    ax1.axhline(E_ESCALON, color='k', linestyle=':', label=r'Tensión en Permanente $E_0 = 12$ V')
+    ax1.axhline(E_ESCALON, color='k', linestyle=':', label=r'Parte Permanente $V_{C,\mathrm{perm}} = 12$ V')
+    ax1.plot(t_span * 1000, decomp['vc_trans'], 'g--', linewidth=1.2, alpha=0.7, 
+             label=r'Parte Transitoria $V_{C,\mathrm{trans}}(t)$')
     
     # Anotación del pico de sobreimpulso
     idx_max = np.argmax(vc_analit)
@@ -216,7 +273,7 @@ def generar_figura1_validacion():
     ax1.set_ylabel(r"Voltaje en el Condensador $V_C(t)$ [V]")
     ax1.legend(loc='lower right', framealpha=0.9)
     ax1.grid(True)
-    ax1.set_ylim(-1, 23)
+    ax1.set_ylim(-13 if q0 != 0 else -1, 23)
     
     # Panel inferior: Error / Residuo numérico
     ax2.plot(t_span * 1000, error_absoluto, 'r-', linewidth=1.5, label=r'Error Absoluto $|V_{C,\mathrm{num}} - V_{C,\mathrm{analit}}|$')

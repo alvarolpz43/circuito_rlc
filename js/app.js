@@ -53,14 +53,25 @@ document.addEventListener("DOMContentLoaded", () => {
     // 7. Inicializar Canvas de Analogía Electromecánica
     AnalogiaCanvas.init();
 
-    // 8. Inicializar Laboratorio de Audio (Sintetizador, Micrófono y Archivo)
+    // 8. Inicializar Laboratorio de Audio y Altavoz Sumergible
+    if (typeof UnderwaterSpeaker !== 'undefined') {
+        UnderwaterSpeaker.init();
+    }
     initAudioStudio();
+
+    // 8.5 Inicializar Sonda Auditiva Interactiva de Bode
+    if (typeof BodeProbe !== 'undefined') {
+        BodeProbe.init();
+    }
 
     // 9. Inicializar Visor de Código Científico y Selector de Galería
     initGalleryViewSwitcher();
     initCodeViewer();
 
-    // 10. Modo Presentación Magistral y Atajos de Teclado
+    // 10. Inicializar Editor Interactivo de Ecuación y Descomposición
+    initEquationEditor();
+
+    // 11. Modo Presentación Magistral y Atajos de Teclado
     initPresentationMode();
     initKeyboardShortcuts();
 });
@@ -104,6 +115,14 @@ function initTabNavigation() {
                 }, 50);
             }
 
+            // Si entramos a Deducción, redimensionar mini-canvas de descomposición
+            if (targetId === "tab-deduccion" && typeof decompChart !== 'undefined' && decompChart) {
+                setTimeout(() => {
+                    decompChart.resize();
+                    decompChart.update('none');
+                }, 50);
+            }
+
             // Si entramos a Código Científico, renderizar KaTeX
             if (targetId === "tab-codigo" && window.renderMathInElement) {
                 renderMathInElement(targetPane, {
@@ -115,9 +134,24 @@ function initTabNavigation() {
                 });
             }
 
-            // Si salimos de tab-audio, detener audio si está sonando
-            if (targetId !== "tab-audio" && AudioLab.isPlaying) {
-                AudioLab.stopAllAudio();
+            // Si salimos de tab-audio, detener audio si está sonando y pausar altavoz sumergible
+            if (targetId !== "tab-audio") {
+                if (AudioLab.isPlaying) {
+                    AudioLab.stopAllAudio();
+                }
+                if (typeof UnderwaterSpeaker !== 'undefined') {
+                    UnderwaterSpeaker.pause();
+                }
+            } else if (targetId === "tab-audio") {
+                if (typeof UnderwaterSpeaker !== 'undefined') {
+                    UnderwaterSpeaker.resize();
+                    UnderwaterSpeaker.start();
+                }
+            }
+
+            // Si salimos de tab-galeria, detener sonda de Bode si está sonando
+            if (targetId !== "tab-galeria" && typeof BodeProbe !== 'undefined' && BodeProbe.isPlaying) {
+                BodeProbe.stopTone();
             }
         });
     });
@@ -137,11 +171,16 @@ function initSimulator() {
     const sliderL = document.getElementById("sliderL");
     const sliderC = document.getElementById("sliderC");
     const sliderE = document.getElementById("sliderE");
+    const sliderQ0 = document.getElementById("sliderQ0");
+    const sliderI0 = document.getElementById("sliderI0");
+    const btnResetCI = document.getElementById("btnResetCI");
 
     const valR = document.getElementById("valR");
     const valL = document.getElementById("valL");
     const valC = document.getElementById("valC");
     const valE = document.getElementById("valE");
+    const valQ0 = document.getElementById("valQ0");
+    const valI0 = document.getElementById("valI0");
 
     const btnToggleAnalytical = document.getElementById("btnToggleAnalytical");
     const badgeResidualError = document.getElementById("badgeResidualError");
@@ -253,17 +292,128 @@ function initSimulator() {
         });
     }
 
+    // Inicialización del Plano de Fase 2D (Espacio de Estados de Lyapunov Q vs I)
+    let phaseChart = null;
+    const canvasPhase = document.getElementById("chartPhasePortrait");
+    if (canvasPhase) {
+        phaseChart = new Chart(canvasPhase.getContext("2d"), {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: 'Trayectoria Espacio de Estados (Q, I)',
+                        data: [],
+                        showLine: true,
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.06)',
+                        borderWidth: 2.2,
+                        pointRadius: 0,
+                        tension: 0.15
+                    },
+                    {
+                        label: 'Condición Inicial (Q_0, I_0)',
+                        data: [],
+                        borderColor: '#22c55e',
+                        backgroundColor: '#22c55e',
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    },
+                    {
+                        label: 'Punto Fijo Atractor (Q*, I*)',
+                        data: [],
+                        borderColor: '#f59e0b',
+                        backgroundColor: '#f59e0b',
+                        pointRadius: 7,
+                        pointHoverRadius: 9,
+                        pointStyle: 'rectRot'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Carga en el Condensador Q(t) [mC]', color: '#38bdf8' },
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#94a3b8' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Corriente en la Malla I(t) = dQ/dt [A]', color: '#10b981' },
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#94a3b8' }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: '#f1f5f9', font: { family: 'Inter', size: 11 }, boxWidth: 14 }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                return `${ctx.dataset.label}: Q = ${ctx.parsed.x.toFixed(2)} mC, I = ${ctx.parsed.y.toFixed(3)} A`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Selector de Modo de Gráfica: Forma de Onda vs Plano de Fase 2D
+    const btnWave = document.getElementById("btnViewWaveform");
+    const btnPhase = document.getElementById("btnViewPhasePortrait");
+    const canvasRK4 = document.getElementById("chartRK4");
+    const footerPhase = document.getElementById("phasePortraitFooter");
+    const titleSim = document.getElementById("simChartTitle");
+    const subSim = document.getElementById("simChartSubtitle");
+
+    if (btnWave && btnPhase) {
+        btnWave.addEventListener("click", () => {
+            btnWave.classList.add("active");
+            btnPhase.classList.remove("active");
+            if (canvasRK4) canvasRK4.style.display = "block";
+            if (canvasPhase) canvasPhase.style.display = "none";
+            if (footerPhase) footerPhase.style.display = "none";
+            if (titleSim) titleSim.innerHTML = 'Respuesta Temporal en Bornes del Condensador V<sub>C</sub>(t)';
+            if (subSim) subSim.textContent = 'RK4 • 60 FPS FIJOS';
+            rk4Chart.resize();
+        });
+
+        btnPhase.addEventListener("click", () => {
+            btnPhase.classList.add("active");
+            btnWave.classList.remove("active");
+            if (canvasRK4) canvasRK4.style.display = "none";
+            if (canvasPhase) canvasPhase.style.display = "block";
+            if (footerPhase) footerPhase.style.display = "flex";
+            if (titleSim) titleSim.innerHTML = 'Plano de Fase 2D en el Espacio de Estados: Carga Q(t) vs Corriente I(t)';
+            if (subSim) subSim.textContent = 'ESPACIO DE ESTADOS DE LYAPUNOV • 60 FPS';
+            if (phaseChart) phaseChart.resize();
+        });
+    }
+
     // Función de actualización real ejecutada a 60 FPS
     const executeSimulation = () => {
         const R = parseFloat(sliderR.value);
         const L = parseFloat(sliderL.value);
         const C = parseFloat(sliderC.value) * 1e-6; // µF a F
         const E0 = parseFloat(sliderE.value);
+        const q0 = sliderQ0 ? parseFloat(sliderQ0.value) * 1e-3 : 0.0; // mC a C
+        const i0 = sliderI0 ? parseFloat(sliderI0.value) : 0.0;        // A
 
         valR.textContent = `${R.toFixed(1)} Ω`;
         valL.textContent = `${L.toFixed(2)} H`;
         valC.textContent = `${(C * 1e6).toFixed(0)} µF`;
         valE.textContent = `${E0.toFixed(1)} V`;
+
+        if (valQ0) {
+            const v0 = q0 / C;
+            valQ0.textContent = `${(q0 * 1e3).toFixed(2)} mC (${v0.toFixed(1)} V)`;
+        }
+        if (valI0) {
+            valI0.textContent = `${i0.toFixed(2)} A`;
+        }
 
         // Telemetría matemática
         const p = RLCEngine.calculateParameters(R, L, C);
@@ -284,8 +434,8 @@ function initSimulator() {
             ? `${(p.t_p * 1000).toFixed(1)} ms` 
             : 'N/A';
 
-        // Solución RK4 con paso fino (dt = 0.5 ms -> 600 puntos)
-        const sol = RLCEngine.solveRK4(R, L, C, E0, 0.30, 0.0005);
+        // Solución RK4 con paso fino (dt = 0.5 ms -> 600 puntos) con condiciones iniciales editables
+        const sol = RLCEngine.solveRK4(R, L, C, E0, 0.30, 0.0005, q0, i0);
 
         // Decimación a ~120 puntos para dibujo ultra-rápido (< 1 ms de render)
         const stride = Math.max(1, Math.floor(sol.t.length / 120));
@@ -295,10 +445,10 @@ function initSimulator() {
         const refData = [];
         const analitData = [];
 
-        // Si la comparativa analítica está activa, calcular valores analíticos
+        // Si la comparativa analítica está activa, calcular valores analíticos con q0 e i0
         let analitFull = null;
         if (showAnalytical) {
-            const errRes = RLCEngine.calculateResidualError(sol.t, sol.Vc, R, L, C, E0);
+            const errRes = RLCEngine.calculateResidualError(sol.t, sol.Vc, R, L, C, E0, q0, i0);
             analitFull = errRes.Vc_analit;
             if (valResidualError) {
                 const err = errRes.maxError;
@@ -332,6 +482,42 @@ function initSimulator() {
 
         rk4Chart.update('none');
 
+        // Actualizar Plano de Fase 2D (Espacio de Estados Q vs I)
+        if (phaseChart) {
+            const phaseData = [];
+            for (let i = 0; i < sol.t.length; i += stride) {
+                phaseData.push({ x: sol.Q[i] * 1000.0, y: sol.I[i] });
+            }
+            phaseChart.data.datasets[0].data = phaseData;
+            phaseChart.data.datasets[1].data = [{ x: q0 * 1000.0, y: i0 }];
+
+            const qPerm = C * E0 * 1000.0;
+            phaseChart.data.datasets[2].data = [{ x: qPerm, y: 0.0 }];
+            phaseChart.update('none');
+
+            // Actualizar chips de telemetría del plano de fase
+            const lblEq = document.getElementById("phaseEquilibriumPt");
+            const lblClass = document.getElementById("phaseClassification");
+            const lblLyap = document.getElementById("phaseLyapunov");
+
+            if (lblEq) lblEq.textContent = `(${qPerm.toFixed(2)} mC, 0.00 A)`;
+            if (lblClass) {
+                if (p.zeta < 0.999) {
+                    lblClass.textContent = "Foco Estable (Espiral Convergente al Atractor)";
+                    lblClass.style.color = "var(--accent-cyan)";
+                } else if (p.zeta > 1.001) {
+                    lblClass.textContent = "Nodo Estable (Convergencia Asintótica Directa)";
+                    lblClass.style.color = "var(--accent-purple)";
+                } else {
+                    lblClass.textContent = "Nodo Degenerado Crítico (Amortiguamiento Crítico)";
+                    lblClass.style.color = "var(--accent-amber)";
+                }
+            }
+            if (lblLyap) {
+                lblLyap.textContent = `Asintóticamente Estable (Re(λ) = -${p.alpha.toFixed(1)} < 0)`;
+            }
+        }
+
         // Actualizar Diagrama de Polos en el Plano Complejo s
         renderSPlane(p);
 
@@ -357,6 +543,16 @@ function initSimulator() {
     sliderL.addEventListener("input", queueSimulationUpdate);
     sliderC.addEventListener("input", queueSimulationUpdate);
     sliderE.addEventListener("input", queueSimulationUpdate);
+    if (sliderQ0) sliderQ0.addEventListener("input", queueSimulationUpdate);
+    if (sliderI0) sliderI0.addEventListener("input", queueSimulationUpdate);
+
+    if (btnResetCI) {
+        btnResetCI.addEventListener("click", () => {
+            if (sliderQ0) sliderQ0.value = 0;
+            if (sliderI0) sliderI0.value = 0;
+            queueSimulationUpdate();
+        });
+    }
 
     // Botones de presets obligatorios
     const presetButtons = document.querySelectorAll(".btn-preset");
@@ -705,6 +901,26 @@ function initAudioStudio() {
         });
     }
 
+    // Enlazar reproductores nativos WAV con la animación del altavoz sumergible
+    const nativeOrig = document.getElementById("nativeAudioOriginal");
+    const nativeFilt = document.getElementById("nativeAudioFiltrado");
+    if (nativeOrig) {
+        nativeOrig.addEventListener("play", () => {
+            if (nativeFilt) nativeFilt.pause();
+            if (typeof UnderwaterSpeaker !== 'undefined') {
+                UnderwaterSpeaker.surface();
+            }
+        });
+    }
+    if (nativeFilt) {
+        nativeFilt.addEventListener("play", () => {
+            if (nativeOrig) nativeOrig.pause();
+            if (typeof UnderwaterSpeaker !== 'undefined') {
+                UnderwaterSpeaker.submerge();
+            }
+        });
+    }
+
     // Controles de la analogía masa-resorte
     const btnPlayAnalogia = document.getElementById("btnPlayAnalogia");
     const btnResetAnalogia = document.getElementById("btnResetAnalogia");
@@ -875,4 +1091,195 @@ function initCodeViewer() {
             }
         });
     });
+}
+
+/**
+ * ==============================================================================
+ * 12. EDITOR INTERACTIVO DE ECUACIÓN Y DESCOMPOSICIÓN TRANSITORIA / PERMANENTE
+ * ==============================================================================
+ */
+let decompChart = null;
+
+function initEquationEditor() {
+    const sliderQ0 = document.getElementById("sliderEditQ0");
+    const sliderI0 = document.getElementById("sliderEditI0");
+    const dispQ0 = document.getElementById("dispEditQ0");
+    const dispI0 = document.getElementById("dispEditI0");
+    const dispConsts = document.getElementById("dispConstantsSummary");
+    const katexContainer = document.getElementById("katexDynamicEquation");
+    const presetBtns = document.querySelectorAll(".btn-ci-preset");
+    const canvas = document.getElementById("canvasDecompPlot");
+
+    if (!sliderQ0 || !sliderI0 || !katexContainer || !canvas) return;
+
+    // Inicializar Chart.js para el mini visualizador de descomposición
+    const ctx = canvas.getContext("2d");
+    decompChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: 'Parte Permanente V_perm (12 V)',
+                    data: [],
+                    borderColor: '#f59e0b',
+                    borderWidth: 1.8,
+                    borderDash: [5, 4],
+                    pointRadius: 0,
+                    fill: false
+                },
+                {
+                    label: 'Parte Transitoria V_trans(t)',
+                    data: [],
+                    borderColor: '#f43f5e',
+                    backgroundColor: 'rgba(244, 63, 94, 0.08)',
+                    borderWidth: 2.0,
+                    pointRadius: 0,
+                    fill: true
+                },
+                {
+                    label: 'Respuesta Total V_C(t)',
+                    data: [],
+                    borderColor: '#38bdf8',
+                    borderWidth: 2.5,
+                    pointRadius: 0,
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(8, 12, 22, 0.94)',
+                    titleColor: '#38bdf8',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 1,
+                    callbacks: {
+                        title: (items) => `Tiempo t = ${items[0].label} ms`,
+                        label: (item) => ` ${item.dataset.label}: ${parseFloat(item.formattedValue).toFixed(2)} V`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: { display: true, text: 'Tiempo t [milisegundos, ms]', color: '#94a3b8', font: { size: 10.5 } },
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                    ticks: { color: '#94a3b8', maxTicksLimit: 9 }
+                },
+                y: {
+                    title: { display: true, text: 'Voltaje [V]', color: '#38bdf8', font: { size: 10.5 } },
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                    ticks: { color: '#94a3b8', maxTicksLimit: 6 }
+                }
+            }
+        }
+    });
+
+    const updateEquationAndPlot = () => {
+        const Q0_mC = parseFloat(sliderQ0.value); // mC
+        const q0 = Q0_mC * 1e-3;                  // C
+        const i0 = parseFloat(sliderI0.value);    // A
+
+        const R = 10.0;
+        const L = 0.5;
+        const C = 200e-6;
+        const E0 = 12.0;
+        const alpha = R / (2.0 * L); // 10.0
+        const omega_d = 10.0 * Math.sqrt(99.0); // ~99.4987 rad/s
+        const V0 = q0 / C; // Voltaje inicial
+
+        // Actualizar badges numéricos
+        dispQ0.textContent = `${Q0_mC >= 0 ? '+' : ''}${Q0_mC.toFixed(2)} mC (${V0 >= 0 ? '+' : ''}${V0.toFixed(1)} V)`;
+        dispI0.textContent = `${i0 >= 0 ? '+' : ''}${i0.toFixed(2)} A`;
+
+        // Constantes en Coulombs y mC
+        const Q_perm_C = C * E0; // 0.0024 C = 2.4 mC
+        const C1_C = q0 - Q_perm_C;
+        const C2_C = (i0 + alpha * C1_C) / omega_d;
+
+        const C1_mC = C1_C * 1e3;
+        const C2_mC = C2_C * 1e3;
+
+        // Constantes en Voltios para V_C(t)
+        const A_V = V0 - E0;
+        const B_V = (i0 / C + alpha * (V0 - E0)) / omega_d;
+
+        dispConsts.textContent = `C₁ = ${C1_mC.toFixed(2)} mC | C₂ = ${C2_mC.toFixed(2)} mC | V(0) = ${V0.toFixed(1)} V`;
+
+        // Generar formato KaTeX
+        const signC2 = C2_mC >= 0 ? `+ ${C2_mC.toFixed(2)}` : `- ${Math.abs(C2_mC).toFixed(2)}`;
+        const signB = B_V >= 0 ? `+ ${B_V.toFixed(2)}` : `- ${Math.abs(B_V).toFixed(2)}`;
+
+        const latexCode = `
+        $$\\begin{aligned}
+        Q(t) &= \\underbrace{2.40\\text{ mC}}_{Q_{\\text{perm}} \\text{ (Permanente)}} + \\underbrace{e^{-10t} \\left[ (${C1_mC.toFixed(2)}) \\cos(10\\sqrt{99} t) ${signC2} \\sin(10\\sqrt{99} t) \\right]}_{Q_{\\text{trans}}(t) \\text{ (Transitoria [mC])}} \\\\[8pt]
+        V_C(t) &= \\underbrace{12.00\\text{ V}}_{V_{C,\\text{perm}} \\text{ (Permanente)}} + \\underbrace{e^{-10t} \\left[ (${A_V.toFixed(2)}) \\cos(10\\sqrt{99} t) ${signB} \\sin(10\\sqrt{99} t) \\right]}_{V_{C,\\text{trans}}(t) \\text{ (Transitoria [V])}}
+        \\end{aligned}$$
+        `;
+
+        katexContainer.innerHTML = latexCode;
+        if (window.renderMathInElement) {
+            renderMathInElement(katexContainer, {
+                delimiters: [
+                    { left: "$$", right: "$$", display: true },
+                    { left: "$", right: "$", display: false }
+                ],
+                throwOnError: false
+            });
+        }
+
+        // Generar datos para la mini-gráfica en [0, 0.40] s
+        const N = 120;
+        const tMax = 0.40;
+        const labels = [];
+        const dataPerm = [];
+        const dataTrans = [];
+        const dataTotal = [];
+
+        for (let idx = 0; idx < N; idx++) {
+            const t = (idx / (N - 1)) * tMax;
+            const decay = Math.exp(-alpha * t);
+            const vTrans = decay * (A_V * Math.cos(omega_d * t) + B_V * Math.sin(omega_d * t));
+            const vTotal = E0 + vTrans;
+
+            labels.push((t * 1000).toFixed(0));
+            dataPerm.push(E0);
+            dataTrans.push(vTrans);
+            dataTotal.push(vTotal);
+        }
+
+        decompChart.data.labels = labels;
+        decompChart.data.datasets[0].data = dataPerm;
+        decompChart.data.datasets[1].data = dataTrans;
+        decompChart.data.datasets[2].data = dataTotal;
+        decompChart.update('none');
+    };
+
+    sliderQ0.addEventListener("input", () => {
+        presetBtns.forEach(b => b.classList.remove("active"));
+        updateEquationAndPlot();
+    });
+
+    sliderI0.addEventListener("input", () => {
+        presetBtns.forEach(b => b.classList.remove("active"));
+        updateEquationAndPlot();
+    });
+
+    presetBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            presetBtns.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            sliderQ0.value = btn.getAttribute("data-q0");
+            sliderI0.value = btn.getAttribute("data-i0");
+            updateEquationAndPlot();
+        });
+    });
+
+    // Ejecución inicial
+    updateEquationAndPlot();
 }

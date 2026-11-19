@@ -252,6 +252,15 @@ const AudioLab = {
             const targetFreq = this.filterEnabled ? this.getCutoffFreq() : 18000.0;
             this.filterNode.frequency.setTargetAtTime(targetFreq, this.audioCtx.currentTime, 0.06);
         }
+
+        // Sincronizar la animación de inmersión del altavoz submarino
+        if (typeof UnderwaterSpeaker !== 'undefined') {
+            if (this.filterEnabled) {
+                UnderwaterSpeaker.submerge();
+            } else {
+                UnderwaterSpeaker.surface();
+            }
+        }
     },
 
     routeAudio(sourceNode) {
@@ -281,7 +290,7 @@ const AudioLab = {
     },
 
     startSpectrumVisualizer() {
-        if (!this.canvasCtx || !this.canvas) return;
+        if (!this.canvasCtx || !this.canvas || !this.analyserNode) return;
         const ctx = this.canvasCtx;
         const bufferLength = this.analyserNode.frequencyBinCount;
         const dataArray = this.dataArray;
@@ -312,7 +321,6 @@ const AudioLab = {
                 const index = Math.floor(Math.pow(i / numBars, 1.8) * (bufferLength / 2));
                 const barHeight = Math.max(2, (dataArray[index] / 255) * (h - 10));
 
-                // Gradiente vertical científico de alta precisión (Cobalt -> Sky -> Pure Ice)
                 const barGrad = ctx.createLinearGradient(0, h, 0, h - barHeight);
                 barGrad.addColorStop(0, "rgba(2, 132, 199, 0.85)");
                 barGrad.addColorStop(0.6, "rgba(56, 189, 248, 0.95)");
@@ -321,7 +329,6 @@ const AudioLab = {
                 ctx.fillStyle = barGrad;
                 ctx.fillRect(i * barWidth, h - barHeight, barWidth - 1.5, barHeight);
 
-                // Cap de pico superior sutil
                 ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
                 ctx.fillRect(i * barWidth, h - barHeight, barWidth - 1.5, 1.5);
             }

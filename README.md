@@ -10,7 +10,7 @@
 
 ---
 
-## 📁 ESTRUCTURA Y CONTENIDO DEL REPOSITORIO
+## 1. ESTRUCTURA Y CONTENIDO DEL REPOSITORIO
 
 Este proyecto contiene la deducción analítica matemática completa, el código fuente en Python, la suite interactiva web, las figuras científicas en alta resolución (300 DPI), los archivos de audio sintético y procesado, el informe académico formal y el guion cronometrado para la sustentación oral de 15 minutos:
 
@@ -47,7 +47,7 @@ circuito_rlc/
 
 ---
 
-## 🌐 APLICACIÓN WEB INTERACTIVA (MODO EXPOSICIÓN)
+## 2. APLICACIÓN WEB INTERACTIVA (MODO EXPOSICIÓN)
 
 Para abrir la plataforma de sustentación interactiva y el simulador en tiempo real:
 - Haz doble clic sobre `index.html` en el explorador de archivos, o ábrelo en Google Chrome, Microsoft Edge o Firefox.
@@ -70,7 +70,7 @@ Para abrir la plataforma de sustentación interactiva y el simulador en tiempo r
 
 ---
 
-## 🚀 REQUISITOS Y EJECUCIÓN (PYTHON)
+## 3. REQUISITOS Y EJECUCIÓN (PYTHON)
 
 ### Requisitos de Python:
 El proyecto requiere Python 3.9 o superior y las siguientes bibliotecas de computación científica:
@@ -86,7 +86,7 @@ python circuito_rlc.py
 
 ---
 
-## 📊 RESUMEN DE RESULTADOS CLAVE
+## 4. RESUMEN DE RESULTADOS CLAVE
 
 1. **Parámetros Característicos:**
    - Frecuencia angular natural: $\omega_n = \frac{1}{\sqrt{LC}} = 100.0\text{ rad/s}$ ($f_n \approx 15.92\text{ Hz}$)

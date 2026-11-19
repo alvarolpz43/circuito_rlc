@@ -95,8 +95,8 @@ const RLCEngine = {
     /**
      * Calcula la solución analítica exacta y el error residual infinito L_inf = max |V_num - V_exacta|.
      */
-    calculateResidualError(tArray, Vc_num, R, L, C, E0) {
-        const Vc_analit = this.solveAnalytical(R, L, C, E0, tArray);
+    calculateResidualError(tArray, Vc_num, R, L, C, E0, q0 = 0.0, i0 = 0.0) {
+        const Vc_analit = this.solveAnalytical(R, L, C, E0, tArray, q0, i0);
         let maxError = 0.0;
         const N = tArray.length;
         for (let i = 0; i < N; i++) {
@@ -108,17 +108,18 @@ const RLCEngine = {
 
     /**
      * Integrador numérico Runge-Kutta de 4to orden (RK4) para el circuito RLC serie.
+     * Admite condiciones iniciales editables de carga q0 [C] y corriente i0 [A].
      * EDO: L*Q'' + R*Q' + (1/C)*Q = E0 (Escalón)
      */
-    solveRK4(R, L, C, E0 = 12.0, tMax = 0.35, dt = 0.0001) {
+    solveRK4(R, L, C, E0 = 12.0, tMax = 0.35, dt = 0.0001, q0 = 0.0, i0 = 0.0) {
         const N = Math.floor(tMax / dt) + 1;
         const t = new Float64Array(N);
         const Vc = new Float64Array(N);
         const I = new Float64Array(N);
         const Q = new Float64Array(N);
 
-        let q = 0.0;
-        let i = 0.0;
+        let q = q0;
+        let i = i0;
         const invL = 1.0 / L;
         const invC = 1.0 / C;
 
@@ -164,39 +165,101 @@ const RLCEngine = {
     },
 
     /**
-     * Solución analítica exacta ante un escalón de voltaje E0 con condiciones de reposo.
+     * Solución analítica exacta generalizada ante escalón E0 para condiciones iniciales arbitrarias Q(0) = q0 e I(0) = i0.
      */
-    solveAnalytical(R, L, C, E0, tArray) {
+    solveAnalytical(R, L, C, E0, tArray, q0 = 0.0, i0 = 0.0) {
+        const decomp = this.decomposeAnalytical(R, L, C, E0, tArray, q0, i0);
+        return decomp.Vc_total;
+    },
+
+    /**
+     * Descompone formalmente la solución analítica en Respuesta Permanente y Respuesta Transitoria.
+     * Retorna { Vc_total, Vc_perm, Vc_trans, Q_perm, Q_trans, C1, C2, alpha, omega_d }
+     */
+    decomposeAnalytical(R, L, C, E0, tArray, q0 = 0.0, i0 = 0.0) {
         const p = this.calculateParameters(R, L, C);
         const N = tArray.length;
-        const Vc = new Float64Array(N);
+        const Vc_total = new Float64Array(N);
+        const Vc_trans = new Float64Array(N);
+        const Vc_perm = new Float64Array(N);
+
+        const Q_perm_val = C * E0; // Carga en régimen permanente [C]
+        const V_perm_val = E0;      // Voltaje en régimen permanente [V]
+        const V0 = q0 / C;          // Voltaje inicial [V]
+
+        let C1 = 0;
+        let C2 = 0;
 
         if (p.delta < -1e-7) {
-            // Subamortiguado
-            for (let i = 0; i < N; i++) {
-                const t = tArray[i];
+            // ==========================================
+            // Régimen Subamortiguado (Oscilatorio)
+            // ==========================================
+            C1 = q0 - Q_perm_val; // En Coulombs
+            C2 = (i0 + p.alpha * C1) / p.omega_d;
+
+            const A = V0 - V_perm_val; // Coeficiente cos en V
+            const B = (i0 / C + p.alpha * (V0 - V_perm_val)) / p.omega_d; // Coeficiente sin en V
+
+            for (let idx = 0; idx < N; idx++) {
+                const t = tArray[idx];
                 const decay = Math.exp(-p.alpha * t);
-                const osc = Math.cos(p.omega_d * t) + (p.alpha / p.omega_d) * Math.sin(p.omega_d * t);
-                Vc[i] = E0 * (1.0 - decay * osc);
+                const trans = decay * (A * Math.cos(p.omega_d * t) + B * Math.sin(p.omega_d * t));
+                Vc_perm[idx] = V_perm_val;
+                Vc_trans[idx] = trans;
+                Vc_total[idx] = V_perm_val + trans;
             }
         } else if (Math.abs(p.delta) <= 1e-7) {
-            // Críticamente amortiguado
-            for (let i = 0; i < N; i++) {
-                const t = tArray[i];
-                Vc[i] = E0 * (1.0 - Math.exp(-p.alpha * t) * (1.0 + p.alpha * t));
+            // ==========================================
+            // Régimen Críticamente Amortiguado
+            // ==========================================
+            C1 = q0 - Q_perm_val;
+            C2 = i0 + p.alpha * C1;
+
+            const A = V0 - V_perm_val;
+            const B = i0 / C + p.alpha * (V0 - V_perm_val);
+
+            for (let idx = 0; idx < N; idx++) {
+                const t = tArray[idx];
+                const decay = Math.exp(-p.alpha * t);
+                const trans = decay * (A + B * t);
+                Vc_perm[idx] = V_perm_val;
+                Vc_trans[idx] = trans;
+                Vc_total[idx] = V_perm_val + trans;
             }
         } else {
-            // Sobreamortiguado
+            // ==========================================
+            // Régimen Sobreamortiguado
+            // ==========================================
             const s1 = -p.alpha + Math.sqrt(p.delta) / (2.0 * L);
             const s2 = -p.alpha - Math.sqrt(p.delta) / (2.0 * L);
-            for (let i = 0; i < N; i++) {
-                const t = tArray[i];
-                const term = (s2 * Math.exp(s1 * t) - s1 * Math.exp(s2 * t)) / (s2 - s1);
-                Vc[i] = E0 * (1.0 - term);
+            const diff_s = s1 - s2;
+
+            C1 = (i0 - s2 * (q0 - Q_perm_val)) / diff_s;
+            C2 = (s1 * (q0 - Q_perm_val) - i0) / diff_s;
+
+            const A = (i0 / C - s2 * (V0 - V_perm_val)) / diff_s;
+            const B = (s1 * (V0 - V_perm_val) - i0 / C) / diff_s;
+
+            for (let idx = 0; idx < N; idx++) {
+                const t = tArray[idx];
+                const trans = A * Math.exp(s1 * t) + B * Math.exp(s2 * t);
+                Vc_perm[idx] = V_perm_val;
+                Vc_trans[idx] = trans;
+                Vc_total[idx] = V_perm_val + trans;
             }
         }
 
-        return Vc;
+        return {
+            Vc_total,
+            Vc_perm,
+            Vc_trans,
+            Q_perm: Q_perm_val,
+            V_perm: V_perm_val,
+            C1,
+            C2,
+            alpha: p.alpha,
+            omega_d: p.omega_d
+        };
     },
 
     /**

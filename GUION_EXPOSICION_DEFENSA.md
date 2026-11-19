@@ -71,29 +71,33 @@
 **Rol:** Solución analítica detallada del escalón de 12 V y tabla de analogía física  
 **Tiempo Asignado:** Minuto 03:45 a 07:30 (Duración: 3 min 45 s)
 
-#### [03:45 - 04:50] Solución Homogénea y Particular de la EDO ($R = 10\,\Omega$)
-> *"Muchas gracias Jessica. Continuando con el desarrollo analítico a mano para $R = 10\,\Omega$ ante un escalón de voltaje $E(t) = 12\text{ V}$ con condiciones de reposo inicial $Q(0) = 0\text{ C}$ e $I(0) = 0\text{ A}$, sustituimos los coeficientes en la EDO mónic:  
+#### [03:45 - 04:50] Solución Homogénea, Particular e Identificación Permanente vs. Transitorio ($R = 10\,\Omega$)
+> *"Muchas gracias Jessica. Continuando con el desarrollo analítico a mano para $R = 10\,\Omega$ ante un escalón de voltaje $E(t) = 12\text{ V}$ con condiciones de reposo inicial $Q(0) = 0\text{ C}$ e $I(0) = 0\text{ A}$, sustituimos los coeficientes en la EDO mónica:  
 > $$Q''(t) + 20 Q'(t) + 10000 Q(t) = 24$$  
 > Planteamos la ecuación característica $r^2 + 20r + 10000 = 0$, cuyas raíces complejas son:  
 > $$r = -10 \pm j 10\sqrt{99} \approx -10 \pm j 99.50\text{ rad/s}$$  
-> De aquí extraemos la tasa de atenuación exponencial $\alpha = 10\text{ s}^{-1}$ y la frecuencia amortiguada $\omega_d = 10\sqrt{99}\text{ rad/s}$. La solución homogénea o respuesta transitoria es:  
-> $$Q_h(t) = e^{-10t} \left[ C_1 \cos(10\sqrt{99} t) + C_2 \sin(10\sqrt{99} t) \right]$$  
-> Para la solución particular $Q_p(t)$, como la fuente es una constante de $12\text{ V}$, proponemos por coeficientes indeterminados $Q_p(t) = A$. Al sustituir sus derivadas nulas en la ecuación original, encontramos:  
-> $$5000 A = 12 \implies A = \frac{12}{5000} = 2.4 \times 10^{-3}\text{ C} = 2.4\text{ mC}$$  
-> Esto concuerda con la electrostática básica: en estado permanente de corriente continua, el condensador se carga a $12\text{ V}$ y $Q = C \cdot E = 200\,\mu\text{F} \times 12\text{ V} = 2.4\text{ mC}$."*
+> De aquí extraemos la tasa de atenuación exponencial $\alpha = 10\text{ s}^{-1}$ y la frecuencia amortiguada $\omega_d = 10\sqrt{99}\text{ rad/s}$.  
+> La solución completa es la superposición directa de dos componentes físicas fundamentales:  
+> $$Q(t) = Q_{\text{perm}}(t) + Q_{\text{trans}}(t) \quad \Longleftrightarrow \quad V_C(t) = V_{C,\text{perm}}(t) + V_{C,\text{trans}}(t)$$  
+> **1. La Parte Permanente o Estado Estacionario:** Proviene de la solución particular ante la fuente continua $E(t) = 12\text{ V}$. Al proponer $Q_p(t) = A$, sus derivadas se anulan y obtenemos:  
+> $$Q_{\text{perm}} = C \cdot E_0 = 200\,\mu\text{F} \times 12\text{ V} = 2.4\text{ mC} \implies V_{C,\text{perm}} = \frac{Q_{\text{perm}}}{C} = 12.0\text{ V}$$  
+> Representa el valor asintótico al que converge el circuito cuando $t \to \infty$.  
+> **2. La Parte Transitoria:** Proviene de la solución homogénea $Q_h(t)$ y modela la redistribución y disipación oscilatoria de energía:  
+> $$Q_{\text{trans}}(t) = e^{-10t} \left[ C_1 \cos(10\sqrt{99} t) + C_2 \sin(10\sqrt{99} t) \right]$$  
+> Debido al factor $e^{-10t}$, esta componente decae irreversiblemente hacia cero en aproximadamente $5\tau = \frac{5}{10} = 0.5\text{ s}$."*
 
-#### [04:50 - 05:55] Condiciones Iniciales y Expresión Exacta de $V_C(t)$
-> *"Sumando la parte homogénea y la particular, tenemos la solución general:  
-> $$Q(t) = 0.0024 + e^{-10t}\left[ C_1 \cos(\omega_d t) + C_2 \sin(\omega_d t) \right]$$  
-> Aplicamos la primera condición inicial, $Q(0) = 0$:  
-> $$0 = 0.0024 + C_1 \implies C_1 = -0.0024\text{ C}$$  
-> Para la segunda condición, derivamos respecto al tiempo para hallar la corriente $I(t) = Q'(t)$:  
-> $$Q'(t) = -10 e^{-10t}[C_1 \cos + C_2 \sin] + e^{-10t}[-C_1 \omega_d \sin + C_2 \omega_d \cos]$$  
-> Evaluando en $t = 0$ con $I(0) = 0$:  
-> $$-10 C_1 + \omega_d C_2 = 0 \implies C_2 = \frac{10 C_1}{\omega_d} = -\frac{0.0024}{\sqrt{99}}\text{ C} \approx -2.412 \times 10^{-4}\text{ C}$$  
-> Al dividir toda la carga $Q(t)$ entre la capacitancia $C = 200 \times 10^{-6}\text{ F}$, obtenemos la expresión analítica exacta para el voltaje en el condensador:  
-> $$V_C(t) = 12 \left[ 1 - e^{-10t} \left( \cos(10\sqrt{99} t) + \frac{1}{\sqrt{99}} \sin(10\sqrt{99} t) \right) \right]\text{ [V]}$$  
-> Calculando el primer pico de esta función, encontramos que ocurre en $t_p = \frac{\pi}{\omega_d} \approx 31.57\text{ ms}$, alcanzando una tensión de **$20.75\text{ V}$**. ¡Esto representa un enorme sobreimpulso del **$72.9\%$** por encima de los $12\text{ V}$ de la fuente!"*
+#### [04:50 - 05:55] Deducción con Condiciones Iniciales Editables y Generalización
+> *"Ahora aplicamos las condiciones de frontera para determinar las constantes $C_1$ y $C_2$.  
+> En el caso canónico de reposo $Q(0) = 0\text{ C}$ e $I(0) = 0\text{ A}$:  
+> $$Q(0) = Q_{\text{perm}} + C_1 = 0 \implies C_1 = -Q_{\text{perm}} = -2.4\text{ mC} = -0.0024\text{ C}$$  
+> Derivando para la corriente $I(t) = Q'(t)$ y evaluando en $t = 0$:  
+> $$I(0) = -10 C_1 + \omega_d C_2 = 0 \implies C_2 = \frac{10 C_1}{\omega_d} = -\frac{0.0024}{\sqrt{99}}\text{ C} \approx -0.2412\text{ mC}$$  
+> Al dividir toda la carga $Q(t)$ entre $C = 200\,\mu\text{F}$, obtenemos la expresión analítica exacta del voltaje:  
+> $$V_C(t) = \underbrace{12.0}_{V_{C,\text{perm}}} \underbrace{- 12.0\, e^{-10t} \left( \cos(10\sqrt{99} t) + \frac{1}{\sqrt{99}} \sin(10\sqrt{99} t) \right)}_{V_{C,\text{trans}}(t)}\text{ [V]}$$  
+> El primer pico ocurre en $t_p = \frac{\pi}{\omega_d} \approx 31.57\text{ ms}$, alcanzando **$20.75\text{ V}$** (un sobreimpulso del **$72.9\%$**).  
+> **Importante para la defensa:** En nuestra plataforma interactiva y en el código Python no dejamos $Q(0)$ estático en cero. Si el condensador tuviese una carga inicial preexistente $Q(0) = Q_0$ y corriente $I(0) = I_0$, dedujimos la solución analítica generalizada:  
+> $$C_1 = Q_0 - C E_0, \qquad C_2 = \frac{I_0 + \alpha(Q_0 - C E_0)}{\omega_d}$$  
+> En nuestra web implementamos un **Editor Interactivo de Condiciones Iniciales**: si movemos el deslizador a $Q(0) = +2.4\text{ mC}$ ($V_0 = 12\text{ V}$), $C_1$ y $C_2$ se anulan exactamente ($V_{C,\text{trans}}(t) \equiv 0$) y el circuito entra en estado estacionario instantáneamente sin transitorio alguno. Si iniciamos con carga negativa invertida $Q(0) = -2.4\text{ mC}$ ($-12\text{ V}$), el salto es de $24\text{ V}$ y la oscilación transitoria se duplica."*
 
 #### [05:55 - 07:30] Tabla de Analogía Física (Sistema Mecánico vs. Circuito RLC)
 > *"Un aporte conceptual fundamental de las ecuaciones diferenciales de segundo orden es la profunda analogía física entre el sistema mecánico amortiguado Masa-Resorte y el circuito RLC serie. Matemáticamente ambas ecuaciones son exactamente idénticas:  
