@@ -233,6 +233,18 @@ function initSimulator() {
                     tension: 0,
                     pointRadius: 0,
                     hidden: true
+                },
+                {
+                    label: 'Pico Máximo (t_p, V_C,max)',
+                    data: [],
+                    borderColor: '#f43f5e',
+                    backgroundColor: '#f43f5e',
+                    borderWidth: 0,
+                    showLine: false,
+                    pointRadius: 6,
+                    pointHoverRadius: 9,
+                    pointStyle: 'triangle',
+                    order: 0
                 }
             ]
         },
@@ -273,7 +285,15 @@ function initSimulator() {
                     backgroundColor: 'rgba(8, 12, 22, 0.94)',
                     titleColor: '#38bdf8',
                     borderColor: 'rgba(255, 255, 255, 0.1)',
-                    borderWidth: 1
+                    borderWidth: 1,
+                    callbacks: {
+                        label: function(context) {
+                            if (context.datasetIndex === 4 && context.parsed.y !== null) {
+                                return `⚡ Cúspide: Vc,max = ${context.parsed.y.toFixed(2)} V en t_p = ${context.label} ms`;
+                            }
+                            return `${context.dataset.label}: ${context.parsed.y !== null ? context.parsed.y.toFixed(2) : ''}`;
+                        }
+                    }
                 }
             }
         }
@@ -418,6 +438,13 @@ function initSimulator() {
         // Telemetría matemática
         const p = RLCEngine.calculateParameters(R, L, C);
 
+        const overshootStr = p.overshootPct > 0 
+            ? `+${p.overshootPct.toFixed(1)}%` 
+            : '0.0%';
+        const peakTimeStr = p.t_p > 0 
+            ? `${(p.t_p * 1000).toFixed(1)} ms` 
+            : 'N/A';
+
         document.getElementById("telDelta").textContent = p.delta.toFixed(1);
         document.getElementById("telZeta").textContent = p.zeta.toFixed(3);
         document.getElementById("telWn").textContent = `${p.omega_n.toFixed(1)} rad/s`;
@@ -427,15 +454,52 @@ function initSimulator() {
         pill.textContent = p.regimeName;
         pill.className = `regime-pill ${p.regimeClass}`;
 
-        document.getElementById("telOvershoot").textContent = p.overshootPct > 0 
-            ? `+${p.overshootPct.toFixed(1)}%` 
-            : '0.0%';
-        document.getElementById("telPeakTime").textContent = p.t_p > 0 
-            ? `${(p.t_p * 1000).toFixed(1)} ms` 
-            : 'N/A';
+        document.getElementById("telOvershoot").textContent = overshootStr;
+        document.getElementById("telPeakTime").textContent = peakTimeStr;
+
+        // Sincronizar simultáneamente la Barra HUD tipo Instrumentación sobre la Gráfica RK4
+        const chartTelDelta = document.getElementById("chartTelDelta");
+        const chartTelWn = document.getElementById("chartTelWn");
+        const chartTelZeta = document.getElementById("chartTelZeta");
+        const chartTelRcr = document.getElementById("chartTelRcr");
+        const chartTelOvershoot = document.getElementById("chartTelOvershoot");
+        const chartTelPeakTime = document.getElementById("chartTelPeakTime");
+        const chartTelRegime = document.getElementById("chartTelRegime");
+
+        if (chartTelDelta) chartTelDelta.textContent = p.delta.toFixed(1);
+        if (chartTelWn) chartTelWn.textContent = `${p.omega_n.toFixed(1)} rad/s`;
+        if (chartTelZeta) chartTelZeta.textContent = p.zeta.toFixed(3);
+        if (chartTelRcr) chartTelRcr.textContent = `${p.R_cr.toFixed(1)} Ω`;
+        if (chartTelOvershoot) chartTelOvershoot.textContent = overshootStr;
+        if (chartTelPeakTime) chartTelPeakTime.textContent = peakTimeStr;
+        if (chartTelRegime) {
+            chartTelRegime.textContent = p.regimeName.split(' ')[0];
+            chartTelRegime.className = `regime-pill ${p.regimeClass}`;
+        }
 
         // Solución RK4 con paso fino (dt = 0.5 ms -> 600 puntos) con condiciones iniciales editables
         const sol = RLCEngine.solveRK4(R, L, C, E0, 0.30, 0.0005, q0, i0);
+
+        // Identificar la coordenada del primer pico máximo (cúspide) en caso de régimen subamortiguado
+        let peakSampleIdx = -1;
+        let peakMaxVc = -Infinity;
+        if (p.delta < -1e-7 && p.t_p > 0) {
+            for (let i = 1; i < sol.Vc.length - 1; i++) {
+                if (sol.Vc[i] >= sol.Vc[i - 1] && sol.Vc[i] > sol.Vc[i + 1]) {
+                    peakSampleIdx = i;
+                    peakMaxVc = sol.Vc[i];
+                    break;
+                }
+            }
+            if (peakSampleIdx === -1) {
+                for (let i = 0; i < sol.Vc.length; i++) {
+                    if (sol.Vc[i] > peakMaxVc) {
+                        peakMaxVc = sol.Vc[i];
+                        peakSampleIdx = i;
+                    }
+                }
+            }
+        }
 
         // Decimación a ~120 puntos para dibujo ultra-rápido (< 1 ms de render)
         const stride = Math.max(1, Math.floor(sol.t.length / 120));
@@ -444,6 +508,7 @@ function initSimulator() {
         const iData = [];
         const refData = [];
         const analitData = [];
+        const peakData = [];
 
         // Si la comparativa analítica está activa, calcular valores analíticos con q0 e i0
         let analitFull = null;
@@ -462,13 +527,34 @@ function initSimulator() {
             }
         }
 
+        // Encontrar índice decimado más cercano al instante del pico
+        let nearestDecimatedIdx = -1;
+        if (peakSampleIdx !== -1) {
+            const peakTimeSec = sol.t[peakSampleIdx];
+            let minDiff = Infinity;
+            for (let i = 0; i < sol.t.length; i += stride) {
+                const diff = Math.abs(sol.t[i] - peakTimeSec);
+                const decIdx = Math.floor(i / stride);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    nearestDecimatedIdx = decIdx;
+                }
+            }
+        }
+
         for (let i = 0; i < sol.t.length; i += stride) {
+            const decIdx = Math.floor(i / stride);
             labels.push((sol.t[i] * 1000).toFixed(0));
             vcData.push(sol.Vc[i]);
             iData.push(sol.I[i] * 10.0);
             refData.push(E0);
             if (showAnalytical && analitFull) {
                 analitData.push(analitFull[i]);
+            }
+            if (decIdx === nearestDecimatedIdx) {
+                peakData.push(peakMaxVc);
+            } else {
+                peakData.push(null);
             }
         }
 
@@ -479,6 +565,7 @@ function initSimulator() {
         if (showAnalytical) {
             rk4Chart.data.datasets[3].data = analitData;
         }
+        rk4Chart.data.datasets[4].data = peakData;
 
         rk4Chart.update('none');
 

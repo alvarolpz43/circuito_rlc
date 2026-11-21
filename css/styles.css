@@ -902,6 +902,69 @@ html, body {
   margin-bottom: 0.8rem;
 }
 
+/* ==============================================================================
+   CINTA HUD DE TELEMETRÍA DIRECTA EN EL VISOR RK4
+   ============================================================================== */
+.chart-telemetry-hud {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 0.75rem;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  border-radius: var(--radius-sm);
+  backdrop-filter: blur(8px);
+}
+
+.chart-telemetry-hud .hud-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.25rem 0.55rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.chart-telemetry-hud .hud-lbl {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.chart-telemetry-hud .hud-val {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.chart-telemetry-hud .hud-highlight-rose .hud-val {
+  color: var(--accent-rose);
+}
+
+.chart-telemetry-hud .hud-highlight-cyan .hud-val {
+  color: var(--accent-cyan);
+}
+
+@media (max-width: 640px) {
+  .chart-telemetry-hud {
+    gap: 0.35rem;
+    padding: 0.4rem 0.5rem;
+  }
+  .chart-telemetry-hud .hud-item {
+    padding: 0.2rem 0.4rem;
+  }
+  .chart-telemetry-hud .hud-lbl {
+    font-size: 0.7rem;
+  }
+  .chart-telemetry-hud .hud-val {
+    font-size: 0.76rem;
+  }
+}
+
 .chart-canvas-box {
   position: relative;
   width: 100%;

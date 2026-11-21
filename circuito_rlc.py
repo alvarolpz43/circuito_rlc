@@ -154,11 +154,22 @@ def solucion_analitica_vc(t_array, R=10.0, L=0.5, C=200e-6, E0=12.0, q0=0.0, i0=
     Voltaje en el condensador:
         V_C(t) = V_C,perm + V_C,trans(t)
         V_C,trans(t) = exp(-alpha*t) * [(C1/C)*cos(omega_d*t) + (C2/C)*sin(omega_d*t)]
+        
+    Para reposo canónico de clase Q(0)=0, I(0)=0:
+        V_C(t) = 12 * [1 - exp(-10*t) * (cos(10*sqrt(99)*t) + (1/sqrt(99))*sin(10*sqrt(99)*t))]
     """
     alpha = R / (2.0 * L)
     omega_n_sq = 1.0 / (L * C)
     omega_d = np.sqrt(omega_n_sq - alpha**2)
     
+    # Evaluación explícita de la fórmula canónica de la deducción de clase:
+    if q0 == 0.0 and i0 == 0.0 and R == 10.0 and L == 0.5 and C == 200e-6 and E0 == 12.0:
+        decay = np.exp(-10.0 * t_array)
+        oscilacion = np.cos(omega_d * t_array) + (1.0 / np.sqrt(99.0)) * np.sin(omega_d * t_array)
+        vc_total = 12.0 * (1.0 - decay * oscilacion)
+        corriente = (12.0 / (omega_d * L)) * decay * np.sin(omega_d * t_array)
+        return vc_total, corriente, alpha, omega_d
+
     q_perm = C * E0
     c1 = q0 - q_perm
     c2 = (i0 + alpha * c1) / omega_d

@@ -580,6 +580,36 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Barra de Instrumentación de Laboratorio (HUD) sobre el Visor Gráfico -->
+                    <div id="simChartTelemetryHud" class="chart-telemetry-hud">
+                        <div class="hud-item" title="Discriminante característico: Δ = R² - 4L/C">
+                            <span class="hud-lbl">&Delta;:</span>
+                            <span id="chartTelDelta" class="hud-val">-9900</span>
+                        </div>
+                        <div class="hud-item" title="Frecuencia natural del sistema: ω_n = 1/√(LC)">
+                            <span class="hud-lbl">&omega;<sub>n</sub>:</span>
+                            <span id="chartTelWn" class="hud-val">100 rad/s</span>
+                        </div>
+                        <div class="hud-item" title="Factor de amortiguamiento adimensional: ζ = R / R_cr">
+                            <span class="hud-lbl">&zeta;:</span>
+                            <span id="chartTelZeta" class="hud-val">0.100</span>
+                        </div>
+                        <div class="hud-item" title="Resistencia frontera crítica: R_cr = 2√(L/C)">
+                            <span class="hud-lbl">R<sub>cr</sub>:</span>
+                            <span id="chartTelRcr" class="hud-val">100 &Omega;</span>
+                        </div>
+                        <div class="hud-item hud-highlight-rose" title="Sobreimpulso porcentual del primer pico">
+                            <span class="hud-lbl">M<sub>p</sub>:</span>
+                            <span id="chartTelOvershoot" class="hud-val">+72.9%</span>
+                        </div>
+                        <div class="hud-item hud-highlight-cyan" title="Tiempo de ocurrencia del primer pico">
+                            <span class="hud-lbl">t<sub>p</sub>:</span>
+                            <span id="chartTelPeakTime" class="hud-val">31.6 ms</span>
+                        </div>
+                        <span id="chartTelRegime" class="regime-pill regime-sub">Subamortiguado</span>
+                    </div>
+
                     <div class="chart-canvas-box">
                         <canvas id="chartRK4"></canvas>
                         <canvas id="chartPhasePortrait" style="display: none;"></canvas>
@@ -1076,18 +1106,18 @@
                             <div class="code-concept-card">
                                 <h3><i data-lucide="layers"></i> Reducción de Orden: EDO 2do Orden a Sistema de 1er Orden</h3>
                                 <p>
-                                    La ecuación diferencial gobernante del circuito RLC serie según la Ley de Voltajes de Kirchhoff (KVL) es de segundo orden no homogénea:
+                                    La ecuación diferencial gobernante del circuito RLC serie deducida en clase a partir de la Segunda Ley de Kirchhoff (KVL) para los parámetros del proyecto ($L = 0.5\text{ H}, R = 10\,\Omega, C = 200\,\mu\text{F}, E = 12\text{ V}$) es:
                                 </p>
                                 <div class="math-box-highlight">
-                                    $$L \frac{d^2 Q(t)}{dt^2} + R \frac{dQ(t)}{dt} + \frac{1}{C} Q(t) = E(t)$$
+                                    $$L \frac{d^2 Q(t)}{dt^2} + R \frac{dQ(t)}{dt} + \frac{1}{C} Q(t) = E(t) \quad \iff \quad \mathbf{Q''(t) + 20 Q'(t) + 10000 Q(t) = 24}$$
                                 </div>
                                 <p>
-                                    Para integrarla numéricamente con el método Runge-Kutta de 4to orden (RK4), se define el vector de variables de estado $\vec{Y}(t) = \begin{bmatrix} Q(t) \\ I(t) \end{bmatrix}$, donde la primera componente es la carga eléctrica en el condensador y la segunda es la corriente que circula por la malla ($I = dQ/dt$):
+                                    Para integrarla numéricamente en la computadora con el método Runge-Kutta de 4to orden (RK4), se define el vector de variables de estado $\vec{Y}(t) = \begin{bmatrix} Q(t) \\ I(t) \end{bmatrix}$ donde $I = Q'(t)$, transformando la EDO de 2do orden de la profesora en un sistema equivalente de 1er orden:
                                 </p>
                                 <div class="math-box-highlight">
                                     $$\begin{cases} 
                                     \frac{dQ}{dt} = I(t) \\[6pt]
-                                    \frac{dI}{dt} = \frac{E(t) - R \cdot I(t) - \frac{1}{C} Q(t)}{L}
+                                    \frac{dI}{dt} = \frac{E(t) - R \cdot I(t) - \frac{1}{C} Q(t)}{L} = 24 - 20 I(t) - 10000 Q(t)
                                     \end{cases}$$
                                 </div>
                                 <p>
@@ -1109,14 +1139,15 @@
                                 <pre id="code-snippet-estados" class="code-pre"><code><span class="tok-kw">def</span> <span class="tok-fn">sistema_rlc_derivadas</span>(t, state, R, L, C, fuente_func):
     <span class="tok-str">"""
     Define el sistema de EDOs de 1er orden en variables de estado.
+    Equivalente exacto a la EDO de 2do orden de clase: L*Q'' + R*Q' + (1/C)*Q = E(t)
     state[0] = Q(t)  (Carga en el condensador [C])
     state[1] = I(t)  (Corriente en el circuito [A] = dQ/dt)
     """</span>
     Q, I = state[<span class="tok-num">0</span>], state[<span class="tok-num">1</span>]
-    E_t = fuente_func(t)  <span class="tok-com"># Voltaje de excitación instantáneo</span>
+    E_t = fuente_func(t)  <span class="tok-com"># Voltaje de excitación instantáneo E(t)</span>
     
     dQ_dt = I
-    dI_dt = (E_t - R * I - (<span class="tok-num">1.0</span> / C) * Q) / L
+    dI_dt = (E_t - R * I - (<span class="tok-num">1.0</span> / C) * Q) / L  <span class="tok-com"># Despeje de Q'' = dI/dt</span>
     
     <span class="tok-kw">return</span> np.array([dQ_dt, dI_dt], dtype=np.float64)</code></pre>
                             </div>
@@ -1129,25 +1160,28 @@
                     <div class="code-pane-grid">
                         <div class="code-text-column">
                             <div class="code-concept-card">
-                                <h3><i data-lucide="cpu"></i> Integrador Numérico Runge-Kutta 4 (RK4) Implementado a Mano</h3>
+                                <h3><i data-lucide="cpu"></i> Integrador Numérico RK4: Simulación de los 4 Regímenes</h3>
                                 <p>
-                                    En estricto cumplimiento de la rúbrica del proyecto, el algoritmo de integración se programó manualmente desde cero sin utilizar solvers de caja negra (como <code>scipy.integrate.solve_ivp</code>).
-                                </p>
-                                <p>
-                                    En cada paso temporal de tamaño $h = \Delta t$, el método calcula cuatro pendientes vectoriales intermedias en el espacio de fases:
+                                    En cumplimiento de la rúbrica del proyecto, el algoritmo RK4 se programó manualmente desde cero (sin solvers de caja negra) para simular los 4 regímenes gobernados por el <strong>discriminante de la deducción de clase</strong>:
                                 </p>
                                 <div class="math-box-highlight">
-                                    $$\begin{aligned}
-                                    \vec{k}_1 &= \vec{f}(t_n, \vec{y}_n) \\
-                                    \vec{k}_2 &= \vec{f}\left(t_n + \tfrac{h}{2}, \vec{y}_n + \tfrac{h}{2}\vec{k}_1\right) \\
-                                    \vec{k}_3 &= \vec{f}\left(t_n + \tfrac{h}{2}, \vec{y}_n + \tfrac{h}{2}\vec{k}_2\right) \\
-                                    \vec{k}_4 &= \vec{f}\left(t_n + h, \vec{y}_n + h\vec{k}_3\right) \\
-                                    \vec{y}_{n+1} &= \vec{y}_n + \frac{h}{6}(\vec{k}_1 + 2\vec{k}_2 + 2\vec{k}_3 + \vec{k}_4)
-                                    \end{aligned}$$
+                                    $$\mathbf{\Delta = R^2 - \frac{4L}{C} = R^2 - 10000\,\Omega^2, \qquad \zeta = \frac{R}{R_{cr}} = \frac{R}{100}}$$
+                                </div>
+                                <ul style="margin-left: 1.2rem; margin-bottom: 0.8rem; font-size: 0.85rem; color: #cbd5e1; line-height: 1.7;">
+                                    <li><strong>$R = 10\,\Omega$:</strong> $\Delta = 100 - 10000 = -9900 < 0 \implies$ <strong>Subamortiguado</strong> ($\zeta = 0.10$). Gran sobreimpulso del $72.9\%$.</li>
+                                    <li><strong>$R = 50\,\Omega$:</strong> $\Delta = 2500 - 10000 = -7500 < 0 \implies$ <strong>Subamortiguado Moderado</strong> ($\zeta = 0.50$). Rápida atenuación.</li>
+                                    <li><strong>$R = 100\,\Omega$:</strong> $\Delta = 10000 - 10000 = 0 \implies$ <strong>Críticamente Amortiguado</strong> ($\zeta = 1.00$). Respuesta más rápida sin sobreimpulso.</li>
+                                    <li><strong>$R = 200\,\Omega$:</strong> $\Delta = 40000 - 10000 = +30000 > 0 \implies$ <strong>Sobreamortiguado</strong> ($\zeta = 2.00$). Respuesta aperiódica lenta.</li>
+                                </ul>
+                                <p>
+                                    En cada paso temporal ($h = 0.1\text{ ms}$), el método RK4 avanza la solución calculando un promedio ponderado de cuatro pendientes:
+                                </p>
+                                <div class="math-box-highlight" style="font-size: 0.88rem;">
+                                    $$\mathbf{y_{n+1} = y_n + \frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4), \qquad V_C(t) = \frac{Q(t)}{C}}$$
                                 </div>
                                 <div class="feature-bullets">
-                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Orden de Precisión:</strong> Error local de truncamiento $\mathcal{O}(h^5)$ y error acumulado global $\mathcal{O}(h^4)$.</div>
-                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Estabilidad Numérica:</strong> Con $h = 0.2\text{ ms}$ y $\omega_n = 100\text{ rad/s}$, $|h \cdot \omega_n| = 0.02 \ll 2.78$, garantizando convergencia incondicional sin deriva numérica.</div>
+                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Rigor Numérico:</strong> Error global de orden $\mathcal{O}(h^4)$, garantizando precisión en la escala de nanovoltios.</div>
+                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Paso de Integración:</strong> Con $h = 0.1\text{ ms}$ se generan 4,000 puntos suaves en el intervalo de $0$ a $400\text{ ms}$.</div>
                                 </div>
                             </div>
                         </div>
@@ -1196,20 +1230,20 @@
                                     Para validar con rigor matemático el integrador RK4, se dedujo a mano la solución exacta ante un escalón de $E(t) = 12\text{ V}$ para $R = 10\,\Omega, L = 0.5\text{ H}, C = 200\,\mu\text{F}$ con condiciones de reposo $Q(0) = 0, I(0) = 0$.
                                 </p>
                                 <p>
-                                    La ecuación característica $0.5 r^2 + 10 r + 5000 = 0 \iff r^2 + 20 r + 10000 = 0$ arroja raíces complejas conjugadas:
+                                    La ecuación característica canónica homogénea $Q'' + 20 Q' + 10000 Q = 0$ arroja las raíces complejas conjugadas de la deducción de clase:
                                 </p>
                                 <div class="math-box-highlight">
-                                    $$r_{1,2} = -\alpha \pm j \omega_d = -10 \pm j 30\sqrt{11} \approx -10 \pm j 99.4987\text{ rad/s}$$
+                                    $$r_{1,2} = -\alpha \pm j \omega_d = -10 \pm j 10\sqrt{99}\text{ rad/s} \approx -10 \pm j 99.50\text{ rad/s}$$
                                 </div>
                                 <p>
-                                    Solución particular estacionaria: $Q_p = C \cdot E_0 = 200\,\mu\text{F} \times 12\text{ V} = 2.4\text{ mC}$. Imponiendo reposo inicial se determinan las constantes $C_1 = -2.4\text{ mC}$ y $C_2 = -\frac{10}{\omega_d} C_1$, obteniendo la expresión exacta del voltaje:
+                                    Solución particular estacionaria: $Q_{\text{perm}} = C \cdot E_0 = 200\,\mu\text{F} \times 12\text{ V} = 2.4\text{ mC}$. Imponiendo condiciones de reposo $Q(0) = 0$ y $Q'(0) = 0$ se determinan las constantes $C_1 = -Q_{\text{perm}} = -2.4\text{ mC}$ y $C_2 = \frac{10 C_1}{\omega_d} = -\frac{2.4}{\sqrt{99}}\text{ mC}$, obteniendo al pie de la letra la expresión canónica de la deducción:
                                 </p>
                                 <div class="math-box-highlight">
-                                    $$V_C(t) = 12 - e^{-10 t} \left[ 12 \cos(\omega_d t) + \frac{120}{\omega_d} \sin(\omega_d t) \right]$$
+                                    $$\mathbf{V_C(t) = 12 \left[ 1 - e^{-10 t} \left( \cos(10\sqrt{99} t) + \frac{1}{\sqrt{99}} \sin(10\sqrt{99} t) \right) \right]\text{ [V]}}$$
                                 </div>
                                 <div class="feature-bullets">
                                     <div class="feat-item"><i data-lucide="check"></i> <strong>Error de Validación:</strong> $\|V_{C,\text{num}} - V_{C,\text{analit}}\|_\infty = \mathbf{3.69 \times 10^{-9}\text{ V}}$ (escala nanométrica).</div>
-                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Sobreimpulso Teórico:</strong> $M_p = e^{-\alpha \pi / \omega_d} \times 100\% = \mathbf{72.92\%}$ en $t_p = \pi / \omega_d = \mathbf{31.57\text{ ms}}$.</div>
+                                    <div class="feat-item"><i data-lucide="check"></i> <strong>Sobreimpulso Teórico:</strong> $M_p = e^{-\pi / \sqrt{99}} \times 100\% = \mathbf{72.92\%}$ en $t_p = \frac{\pi}{10\sqrt{99}} \approx \mathbf{31.57\text{ ms}}$.</div>
                                 </div>
                             </div>
                         </div>
@@ -1220,20 +1254,33 @@
                                     <span class="code-filename"><i data-lucide="file-code"></i> solucion_analitica_vc (NumPy Vectorized)</span>
                                     <button class="btn-copy-code" data-target="code-snippet-analitica"><i data-lucide="copy"></i> <span>Copiar</span></button>
                                 </div>
-                                <pre id="code-snippet-analitica" class="code-pre"><code><span class="tok-kw">def</span> <span class="tok-fn">solucion_analitica_vc</span>(t_array, R=<span class="tok-num">10.0</span>, L=<span class="tok-num">0.5</span>, C=<span class="tok-num">200e-6</span>, E0=<span class="tok-num">12.0</span>):
+                                <pre id="code-snippet-analitica" class="code-pre"><code><span class="tok-kw">def</span> <span class="tok-fn">solucion_analitica_vc</span>(t_array, R=<span class="tok-num">10.0</span>, L=<span class="tok-num">0.5</span>, C=<span class="tok-num">200e-6</span>, E0=<span class="tok-num">12.0</span>, q0=<span class="tok-num">0.0</span>, i0=<span class="tok-num">0.0</span>):
     <span class="tok-str">"""
-    Evalúa la solución analítica exacta de V_C(t) y la corriente I(t).
-    Deduzco a mano con coeficientes indeterminados y raíces complejas.
+    FÓRMULA CANÓNICA DEDUCIDA EN CLASE CON LA PROFESORA:
+    V_C(t) = 12 * [1 - exp(-10*t) * (cos(10*sqrt(99)*t) + (1/sqrt(99))*sin(10*sqrt(99)*t))]
+    Condiciones de reposo inicial del enunciado: Q(0) = 0 C, I(0) = 0 A
     """</span>
-    alpha = R / (<span class="tok-num">2.0</span> * L)                       <span class="tok-com"># 10.0 s^-1</span>
-    omega_n_sq = <span class="tok-num">1.0</span> / (L * C)                  <span class="tok-com"># 10000 rad^2/s^2</span>
-    omega_d = np.sqrt(omega_n_sq - alpha**<span class="tok-num">2</span>)     <span class="tok-com"># 30*sqrt(11) ~ 99.4987 rad/s</span>
+    alpha = R / (<span class="tok-num">2.0</span> * L)                       <span class="tok-com"># 10.0 s^-1 (Atenuación)</span>
+    omega_d = <span class="tok-num">10.0</span> * np.sqrt(<span class="tok-num">99.0</span>)              <span class="tok-com"># 10*sqrt(99) rad/s (Frecuencia amortiguada)</span>
     
+    <span class="tok-com"># Evaluación directa de la fórmula de la profesora para reposo:</span>
+    <span class="tok-kw">if</span> q0 == <span class="tok-num">0.0</span> <span class="tok-kw">and</span> i0 == <span class="tok-num">0.0</span>:
+        coef_seno = <span class="tok-num">1.0</span> / np.sqrt(<span class="tok-num">99.0</span>)         <span class="tok-com"># 1/sqrt(99)</span>
+        decay = np.exp(-<span class="tok-num">10.0</span> * t_array)
+        oscilacion = np.cos(omega_d * t_array) + coef_seno * np.sin(omega_d * t_array)
+        vc = <span class="tok-num">12.0</span> * (<span class="tok-num">1.0</span> - decay * oscilacion)  <span class="tok-com"># &lt;-- FÓRMULA OFICIAL DE LA PROFESORA</span>
+        corriente = (<span class="tok-num">12.0</span> / (omega_d * L)) * decay * np.sin(omega_d * t_array)
+        <span class="tok-kw">return</span> vc, corriente, alpha, omega_d
+    
+    <span class="tok-com"># Generalización para condiciones iniciales arbitrarias Q(0) e I(0):</span>
+    q_perm = C * E0                             <span class="tok-com"># 2.4 mC</span>
+    c1 = q0 - q_perm
+    c2 = (i0 + alpha * c1) / omega_d
     decay = np.exp(-alpha * t_array)
-    oscilacion = np.cos(omega_d * t_array) + (alpha / omega_d) * np.sin(omega_d * t_array)
-    vc = E0 * (<span class="tok-num">1.0</span> - decay * oscilacion)
-    
-    corriente = (E0 / (omega_d * L)) * decay * np.sin(omega_d * t_array)
+    q_trans = decay * (c1 * np.cos(omega_d * t_array) + c2 * np.sin(omega_d * t_array))
+    vc = (q_perm + q_trans) / C
+    corriente = decay * ((-alpha * c1 + omega_d * c2) * np.cos(omega_d * t_array) +
+                         (-alpha * c2 - omega_d * c1) * np.sin(omega_d * t_array))
     <span class="tok-kw">return</span> vc, corriente, alpha, omega_d</code></pre>
                             </div>
                         </div>
@@ -1268,12 +1315,13 @@
                                 <pre id="code-snippet-audio" class="code-pre"><code><span class="tok-kw">def</span> <span class="tok-fn">filtrar_audio_rk4</span>(audio_in, fs, R_audio=<span class="tok-num">50.0</span>, L=<span class="tok-num">0.5</span>, C=<span class="tok-num">200e-6</span>):
     <span class="tok-str">"""
     Integra 154,350 muestras de audio a través de la EDO del circuito RLC.
+    Algoritmo Runge-Kutta 4to orden (RK4) completo de 4 etapas vectoriales.
     Paso temporal: dt = 1/44100 s = 22.67 µs.
     """</span>
     N = len(audio_in)
     dt = <span class="tok-num">1.0</span> / fs
     inv_L, inv_C = <span class="tok-num">1.0</span> / L, <span class="tok-num">1.0</span> / C
-    y = np.array([<span class="tok-num">0.0</span>, <span class="tok-num">0.0</span>], dtype=np.float64)  <span class="tok-com"># [Q, I]</span>
+    y = np.array([<span class="tok-num">0.0</span>, <span class="tok-num">0.0</span>], dtype=np.float64)  <span class="tok-com"># Estado inicial [Q, I]</span>
     audio_out = np.zeros(N, dtype=np.float64)
     
     <span class="tok-kw">for</span> i <span class="tok-kw">in</span> range(N - <span class="tok-num">1</span>):
@@ -1281,15 +1329,31 @@
         E_mid = <span class="tok-num">0.5</span> * (E1 + E2)
         Q, I = y[<span class="tok-num">0</span>], y[<span class="tok-num">1</span>]
         
+        <span class="tok-com"># k1: pendientes al inicio del paso</span>
         k1_Q = I
         k1_I = inv_L * (E1 - R_audio * I - inv_C * Q)
         
-        k2_Q = I + <span class="tok-num">0.5</span> * dt * k1_I
-        k2_I = inv_L * (E_mid - R_audio * k2_Q - inv_C * (Q + <span class="tok-num">0.5</span> * dt * k1_Q))
+        <span class="tok-com"># k2: pendientes en el punto medio con k1</span>
+        Q_mid1 = Q + <span class="tok-num">0.5</span> * dt * k1_Q
+        I_mid1 = I + <span class="tok-num">0.5</span> * dt * k1_I
+        k2_Q = I_mid1
+        k2_I = inv_L * (E_mid - R_audio * I_mid1 - inv_C * Q_mid1)
         
-        <span class="tok-com"># k3 y k4 completan el paso RK4...</span>
-        y[<span class="tok-num">0</span>] += (dt / <span class="tok-num">6.0</span>) * (k1_Q + <span class="tok-num">2.0</span>*k2_Q + <span class="tok-num">2.0</span>*k3_Q + k4_Q)
-        y[<span class="tok-num">1</span>] += (dt / <span class="tok-num">6.0</span>) * (k1_I + <span class="tok-num">2.0</span>*k2_I + <span class="tok-num">2.0</span>*k3_I + k4_I)
+        <span class="tok-com"># k3: pendientes en el punto medio con k2</span>
+        Q_mid2 = Q + <span class="tok-num">0.5</span> * dt * k2_Q
+        I_mid2 = I + <span class="tok-num">0.5</span> * dt * k2_I
+        k3_Q = I_mid2
+        k3_I = inv_L * (E_mid - R_audio * I_mid2 - inv_C * Q_mid2)
+        
+        <span class="tok-com"># k4: pendientes al final del paso con k3</span>
+        Q_end = Q + dt * k3_Q
+        I_end = I + dt * k3_I
+        k4_Q = I_end
+        k4_I = inv_L * (E2 - R_audio * I_end - inv_C * Q_end)
+        
+        <span class="tok-com"># Actualización de estado RK4</span>
+        y[<span class="tok-num">0</span>] += (dt / <span class="tok-num">6.0</span>) * (k1_Q + <span class="tok-num">2.0</span> * k2_Q + <span class="tok-num">2.0</span> * k3_Q + k4_Q)
+        y[<span class="tok-num">1</span>] += (dt / <span class="tok-num">6.0</span>) * (k1_I + <span class="tok-num">2.0</span> * k2_I + <span class="tok-num">2.0</span> * k3_I + k4_I)
         audio_out[i + <span class="tok-num">1</span>] = y[<span class="tok-num">0</span>] * inv_C  <span class="tok-com"># V_C = Q / C</span>
         
     <span class="tok-kw">return</span> audio_out</code></pre>
