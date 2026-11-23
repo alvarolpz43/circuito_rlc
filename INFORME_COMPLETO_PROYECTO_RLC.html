@@ -246,38 +246,133 @@
     color: #0f2942;
   }
 
-  /* Bloques de código con estilo editorial */
-  .code-block {
-    background-color: #0f172a;
-    color: #e2e8f0;
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 7.4pt;
-    line-height: 1.32;
-    padding: 7px 9px;
-    border-radius: 5px;
-    margin: 5px 0;
+  /* =========================================================================
+     VENTANAS DE CÓDIGO TIPO IDE / EDITOR MODERNO CON NÚMEROS DE LÍNEA
+     ========================================================================= */
+  .code-window {
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    margin: 8px 0 10px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+    overflow: hidden;
     page-break-inside: avoid;
-    overflow-x: hidden;
-    border: 1px solid #1e293b;
   }
 
-  .code-block .keyword { color: #f43f5e; font-weight: bold; }
-  .code-block .func { color: #38bdf8; }
-  .code-block .string { color: #a3e635; }
-  .code-block .comment { color: #64748b; font-style: italic; }
-  .code-block .number { color: #fbbf24; }
+  .code-window-bar {
+    background: #161b22;
+    padding: 4px 9px;
+    border-bottom: 1px solid #30363d;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
-  .code-title {
-    font-size: 7.8pt;
-    font-weight: 700;
-    color: #38bdf8;
-    background: #1e293b;
-    padding: 2px 7px;
-    border-radius: 4px 4px 0 0;
-    margin-bottom: -5px;
-    border: 1px solid #334155;
-    border-bottom: none;
+  .window-dots {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .window-dots .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
     display: inline-block;
+  }
+
+  .dot-red { background: #ff5f56; border: 1px solid #e0443e; }
+  .dot-yellow { background: #ffbd2e; border: 1px solid #dea123; }
+  .dot-green { background: #27c93f; border: 1px solid #1aab29; }
+
+  .window-tab {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Consolas', monospace;
+    font-size: 7.2pt;
+    font-weight: 600;
+    color: #cbd5e1;
+  }
+
+  .window-tab svg {
+    color: #38bdf8;
+  }
+
+  .code-lang-badge {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 6.2pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .code-body {
+    padding: 6px 10px;
+    background: #0d1117;
+    overflow-x: hidden;
+  }
+
+  .code-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Consolas', 'Fira Code', 'Courier New', monospace;
+    font-size: 7.3pt;
+    line-height: 1.38;
+  }
+
+  .code-table td {
+    padding: 0;
+    vertical-align: top;
+  }
+
+  .code-table .gutter {
+    width: 22px;
+    text-align: right;
+    padding-right: 8px;
+    color: #484f58;
+    user-select: none;
+    border-right: 1px solid #21262d;
+    font-weight: 500;
+  }
+
+  .code-table .source {
+    padding-left: 10px;
+    color: #e6edf3;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  /* Tokens de resaltado sintáctico tipo GitHub Dark / VS Code */
+  .tok-kw { color: #ff7b72; font-weight: bold; }       /* def, return, for, in, if */
+  .tok-fn { color: #79c0ff; font-weight: 600; }        /* funciones */
+  .tok-num { color: #ffa657; }                         /* números */
+  .tok-str { color: #a5d6ff; }                         /* cadenas */
+  .tok-com { color: #8b949e; font-style: italic; }     /* comentarios */
+  .tok-op { color: #ff7b72; }                          /* operadores */
+  .tok-var { color: #e6edf3; }                         /* variables */
+  .tok-type { color: #d2a8ff; }                        /* np.float64, tipos */
+
+  /* Iconos SVG para Callouts */
+  .callout-icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.08);
+    margin-right: 5px;
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+  .callout-icon-wrap svg {
+    display: block;
   }
 
   /* Ecuaciones destacadas */
@@ -356,32 +451,32 @@
   <div class="team-grid">
     <div class="team-member">
       <strong>ACOSTA GALINDEZ JESSICA VANESA</strong>
-      Código: 1061798321 &bull; Facultad de Ingeniería
+      Código: 90125041 &bull; Facultad de Ingeniería
     </div>
     <div class="team-member">
       <strong>BERMUDEZ ZAMORA KEVIN DANIEL</strong>
-      Código: 1061799450 &bull; Facultad de Ingeniería
+      Código: 90125059 &bull; Facultad de Ingeniería
     </div>
     <div class="team-member">
       <strong>LOPEZ QUIRA ALVARO JOSE</strong>
-      Código: 1061801234 &bull; Facultad de Ingeniería
+      Código: 90125048 &bull; Facultad de Ingeniería
     </div>
     <div class="team-member">
       <strong>MUÑOZ DULCEY JORGE ENRIQUE</strong>
-      Código: 1061803567 &bull; Facultad de Ingeniería
+      Código: 90125037 &bull; Facultad de Ingeniería
     </div>
   </div>
 
   <div class="meta-bar">
     <div><strong>Grupo:</strong> 3 &bull; Proyecto 2 (Filtro RLC)</div>
-    <div><strong>Docente:</strong> Departamento de Ciencias Básicas / Matemáticas</div>
+    <div><strong>Docente:</strong> DIANA MARCELA MENDEZ ASTUDILLO</div>
     <div><strong>Ubicación:</strong> Popayán, Cauca &bull; 2026</div>
   </div>
 </div>
 
 <div class="callout callout-blue">
   <div class="callout-title">
-    <span>📌</span> RESUMEN EJECUTIVO Y OBJETIVO DEL PROYECTO
+    <span class="callout-icon-wrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span> RESUMEN EJECUTIVO Y OBJETIVO DEL PROYECTO
   </div>
   <p>
     El presente documento constituye el informe técnico, matemático y computacional exhaustivo del <strong>Proyecto 2: El Circuito RLC como Filtro de Audio</strong>. En esta investigación se modela la dinámica transitoria y en régimen permanente de una malla eléctrica RLC serie que opera como filtro pasa-bajo de segundo orden. Se deduce formalmente la EDO gobernante a partir de las leyes físicas fundamentales (Kirchhoff, Faraday-Lenz, Ohm y Gauss), se resuelve de manera analítica exacta ante un escalón de voltaje de $12\text{ V}$ para el caso subamortiguado ($R = 10\,\Omega$), y se implementa un integrador numérico Runge-Kutta de cuarto orden (RK4) en Python y JavaScript.
@@ -460,6 +555,18 @@
 <!-- ========================================================================= -->
 <div class="page-break"></div>
 <h2 class="chapter-title">1. Deducción Analítica Formal: Origen Físico de la EDO</h2>
+
+<div class="callout callout-amber" style="margin-bottom: 12px;">
+  <div class="callout-title"><span class="callout-icon-wrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="2" y1="20" x2="22" y2="20"></line><polygon points="12 2 2 7 22 7 12 2"></polygon><line x1="6" y1="7" x2="6" y2="20"></line><line x1="10" y1="7" x2="10" y2="20"></line><line x1="14" y1="7" x2="14" y2="20"></line><line x1="18" y1="7" x2="18" y2="20"></line></svg></span> Contexto Histórico: Gustav Robert Kirchhoff (1824–1887) y el Origen de la Ecuación</div>
+  <p>
+    En <strong>1845</strong>, cuando era un joven estudiante universitario de apenas <strong>21 años</strong> en la Universidad de Königsberg, el físico alemán <strong>Gustav Kirchhoff</strong> formuló las dos leyes fundamentales que rigen la totalidad de los circuitos eléctricos modernos: la <em>Ley de Corrientes (LCK, conservación de la carga eléctrica)</em> y la <em>Ley de Voltajes (LVK, conservación de la energía en una trayectoria cerrada)</em>.
+  </p>
+  <p>
+    <strong>¿Por qué Kirchhoff es el pilar de este proyecto?</strong> Los componentes de nuestro filtro provienen de descubrimientos físicos independientes y aislados: Faraday descubrió en 1831 la inducción electromagnética de la bobina ($v_L = L \frac{dI}{dt}$), Ohm demostró en 1827 la disipación térmica en la resistencia ($v_R = R I$), y Gauss y Coulomb caracterizaron el almacenamiento electrostático en el condensador ($v_C = \frac{Q}{C}$). Fue la <strong>Segunda Ley de Kirchhoff (LVK)</strong> la que permitió tomar estas tres leyes dispares y fusionarlas en una única ecuación diferencial cerrada:
+    $$\sum v_k(t) = 0 \implies v_L(t) + v_R(t) + v_C(t) = E(t) \iff L Q''(t) + R Q'(t) + \frac{1}{C} Q(t) = E(t)$$
+    Sin el principio de conservación de energía de Kirchhoff, no existiría la EDO de segundo orden ni la posibilidad de diseñar filtros analógicos de audio.
+  </p>
+</div>
 
 <p>
   El punto de partida del modelado matemático es un circuito serie compuesto por una fuente de voltaje $E(t)$, un inductor ideal de inductancia $L$, un resistor lineal de resistencia $R$, y un condensador ideal de capacitancia $C$, conectados en un lazo cerrado simple. Al estar conectados en serie, la misma corriente eléctrica instantánea $I(t)$ recorre cada uno de los elementos pasivos.
@@ -812,7 +919,7 @@
 
 <div class="callout callout-amber">
   <div class="callout-title">
-    <span>⚙️</span> ORDEN DE PRECISIÓN Y ESTABILIDAD NUMÉRICA
+    <span class="callout-icon-wrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span> ORDEN DE PRECISIÓN Y ESTABILIDAD NUMÉRICA
   </div>
   <p>
     El error de truncamiento local del método RK4 es $\mathcal{O}(h^5)$, y el error global acumulado es $\mathcal{O}(h^4)$. Con nuestro paso $h = 0.1\text{ ms} = 10^{-4}\text{ s}$, el error teórico es menor a $10^{-16}$, viéndose acotado únicamente por el redondeo IEEE 754 de 64 bits. En la simulación se verificó un error residual real de apenas $3.69\text{ nV}$.
@@ -829,53 +936,167 @@
   El software del proyecto se estructura en dos entornos complementarios: el pipeline científico en Python (`circuito_rlc.py`) y el motor interactivo web (`rlc_engine.js` y `audio_lab.js`). A continuación se desglosan las rutinas nucleares:
 </p>
 
-<div class="code-title">Fragmento 1: Definición del Sistema de Ecuaciones Diferenciales (`circuito_rlc.py`)</div>
-<div class="code-block">
-<span class="keyword">def</span> <span class="func">sistema_rlc_derivadas</span>(t, state, R, L, C, fuente_func):
-    Q, I = state[<span class="number">0</span>], state[<span class="number">1</span>]  <span class="comment"># Desempaqueta carga Q e intensidad I</span>
-    E_t = fuente_func(t)        <span class="comment"># Tensión instantánea de excitación</span>
-    dQ_dt = I                   <span class="comment"># Definición física: dQ/dt = corriente</span>
-    dI_dt = (E_t - R * I - (<span class="number">1.0</span> / C) * Q) / L  <span class="comment"># EDO de Kirchhoff</span>
-    <span class="keyword">return</span> np.array([dQ_dt, dI_dt], dtype=np.float64)
+<!-- Fragmento 1: Sistema RLC Derivadas -->
+<div class="code-window">
+  <div class="code-window-bar">
+    <div class="window-dots">
+      <span class="dot dot-red"></span>
+      <span class="dot dot-yellow"></span>
+      <span class="dot dot-green"></span>
+    </div>
+    <div class="window-tab">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+      <span>circuito_rlc.py &bull; Fragmento 1: Ecuación Diferencial en Espacio de Estados</span>
+    </div>
+    <span class="code-lang-badge">PYTHON 3.12</span>
+  </div>
+  <div class="code-body">
+    <table class="code-table">
+      <tr>
+        <td class="gutter">1<br>2<br>3<br>4<br>5<br>6</td>
+        <td class="source"><span class="tok-kw">def</span> <span class="tok-fn">sistema_rlc_derivadas</span>(t, state, R, L, C, fuente_func):
+    Q, I <span class="tok-op">=</span> state[<span class="tok-num">0</span>], state[<span class="tok-num">1</span>]  <span class="tok-com"># Desempaqueta carga Q [C] e intensidad I [A]</span>
+    E_t <span class="tok-op">=</span> fuente_func(t)        <span class="tok-com"># Tensión instantánea de excitación E(t)</span>
+    dQ_dt <span class="tok-op">=</span> I                   <span class="tok-com"># Relación física constitutiva: dQ/dt = I</span>
+    dI_dt <span class="tok-op">=</span> (E_t <span class="tok-op">-</span> R <span class="tok-op">*</span> I <span class="tok-op">-</span> (<span class="tok-num">1.0</span> <span class="tok-op">/</span> C) <span class="tok-op">*</span> Q) <span class="tok-op">/</span> L  <span class="tok-com"># Aceleración de carga (LVK)</span>
+    <span class="tok-kw">return</span> np.array([dQ_dt, dI_dt], dtype<span class="tok-op">=</span>np.float64)</td>
+      </tr>
+    </table>
+  </div>
 </div>
-<p><strong>Explicación:</strong> Modela el campo vectorial $\vec{f}(t, \vec{y})$. Recibe el estado actual y retorna el vector de derivadas instantáneas $[dQ/dt, dI/dt]$.</p>
+<p style="font-size: 8.2pt; color: #475569; margin-top: 2px;"><strong>Explicación:</strong> Modela el campo vectorial $\vec{f}(t, \vec{y})$. Recibe el estado actual y retorna el vector de derivadas instantáneas $[dQ/dt, dI/dt]$.</p>
 
-<div class="code-title">Fragmento 2: Integrador Numérico RK4 Modular (`circuito_rlc.py`)</div>
-<div class="code-block">
-<span class="keyword">def</span> <span class="func">rk4_integrador</span>(f, y0, t_array, R, L, C, fuente_func):
-    N = len(t_array);  dt = t_array[<span class="number">1</span>] - t_array[<span class="number">0</span>]
-    solucion = np.zeros((N, <span class="number">2</span>), dtype=np.float64)
-    solucion[<span class="number">0</span>] = y0;  y = np.array(y0, dtype=np.float64)
-    <span class="keyword">for</span> i <span class="keyword">in</span> range(N - <span class="number">1</span>):
-        t_c = t_array[i]
-        k1 = f(t_c, y, R, L, C, fuente_func)
-        k2 = f(t_c + <span class="number">0.5</span>*dt, y + <span class="number">0.5</span>*dt*k1, R, L, C, fuente_func)
-        k3 = f(t_c + <span class="number">0.5</span>*dt, y + <span class="number">0.5</span>*dt*k2, R, L, C, fuente_func)
-        k4 = f(t_c + dt, y + dt*k3, R, L, C, fuente_func)
-        y = y + (dt / <span class="number">6.0</span>) * (k1 + <span class="number">2.0</span>*k2 + <span class="number">2.0</span>*k3 + k4)
-        solucion[i + <span class="number">1</span>] = y
-    <span class="keyword">return</span> solucion
+<!-- Fragmento 2: Integrador RK4 -->
+<div class="code-window">
+  <div class="code-window-bar">
+    <div class="window-dots">
+      <span class="dot dot-red"></span>
+      <span class="dot dot-yellow"></span>
+      <span class="dot dot-green"></span>
+    </div>
+    <div class="window-tab">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+      <span>circuito_rlc.py &bull; Fragmento 2: Integrador Runge-Kutta de 4to Orden</span>
+    </div>
+    <span class="code-lang-badge">ALGORITMO RK4</span>
+  </div>
+  <div class="code-body">
+    <table class="code-table">
+      <tr>
+        <td class="gutter">01<br>02<br>03<br>04<br>05<br>06<br>07<br>08<br>09<br>10<br>11<br>12<br>13</td>
+        <td class="source"><span class="tok-kw">def</span> <span class="tok-fn">rk4_integrador</span>(f, y0, t_array, R, L, C, fuente_func):
+    N <span class="tok-op">=</span> len(t_array);  dt <span class="tok-op">=</span> t_array[<span class="tok-num">1</span>] <span class="tok-op">-</span> t_array[<span class="tok-num">0</span>]
+    solucion <span class="tok-op">=</span> np.zeros((N, <span class="tok-num">2</span>), dtype<span class="tok-op">=</span>np.float64)
+    solucion[<span class="tok-num">0</span>] <span class="tok-op">=</span> y0;  y <span class="tok-op">=</span> np.array(y0, dtype<span class="tok-op">=</span>np.float64)
+    <span class="tok-kw">for</span> i <span class="tok-kw">in</span> range(N <span class="tok-op">-</span> <span class="tok-num">1</span>):
+        t_c <span class="tok-op">=</span> t_array[i]
+        k1 <span class="tok-op">=</span> f(t_c, y, R, L, C, fuente_func)
+        k2 <span class="tok-op">=</span> f(t_c <span class="tok-op">+</span> <span class="tok-num">0.5</span><span class="tok-op">*</span>dt, y <span class="tok-op">+</span> <span class="tok-num">0.5</span><span class="tok-op">*</span>dt<span class="tok-op">*</span>k1, R, L, C, fuente_func)
+        k3 <span class="tok-op">=</span> f(t_c <span class="tok-op">+</span> <span class="tok-num">0.5</span><span class="tok-op">*</span>dt, y <span class="tok-op">+</span> <span class="tok-num">0.5</span><span class="tok-op">*</span>dt<span class="tok-op">*</span>k2, R, L, C, fuente_func)
+        k4 <span class="tok-op">=</span> f(t_c <span class="tok-op">+</span> dt, y <span class="tok-op">+</span> dt<span class="tok-op">*</span>k3, R, L, C, fuente_func)
+        y <span class="tok-op">=</span> y <span class="tok-op">+</span> (dt <span class="tok-op">/</span> <span class="tok-num">6.0</span>) <span class="tok-op">*</span> (k1 <span class="tok-op">+</span> <span class="tok-num">2.0</span><span class="tok-op">*</span>k2 <span class="tok-op">+</span> <span class="tok-num">2.0</span><span class="tok-op">*</span>k3 <span class="tok-op">+</span> k4)
+        solucion[i <span class="tok-op">+</span> <span class="tok-num">1</span>] <span class="tok-op">=</span> y
+    <span class="tok-kw">return</span> solucion</td>
+      </tr>
+    </table>
+  </div>
 </div>
-<p><strong>Explicación:</strong> Itera en el tiempo evaluando las 4 pendientes intermedias ponderadas con regla de Simpson. Almacena la trayectoria completa en memoria.</p>
+<p style="font-size: 8.2pt; color: #475569; margin-top: 2px;"><strong>Explicación:</strong> Itera en el tiempo evaluando las 4 pendientes intermedias ponderadas con regla de Simpson. Almacena la trayectoria completa en memoria.</p>
 
-<div class="code-title">Fragmento 3: Bucle Acelerado para Audio Real Muestra a Muestra (`circuito_rlc.py`)</div>
-<div class="code-block">
-inv_L, inv_C = <span class="number">1.0</span> / L_NOMINAL, <span class="number">1.0</span> / C_NOMINAL
-<span class="keyword">for</span> i <span class="keyword">in</span> range(N - <span class="number">1</span>):
-    E1, E_mid, E2 = audio_in[i], <span class="number">0.5</span>*(audio_in[i] + audio_in[i+<span class="number">1</span>]), audio_in[i+<span class="number">1</span>]
-    Q, I = y[<span class="number">0</span>], y[<span class="number">1</span>]
-    k1_Q = I;  k1_I = inv_L * (E1 - R_audio*I - inv_C*Q)
-    Q2, I2 = Q + <span class="number">0.5</span>*dt*k1_Q, I + <span class="number">0.5</span>*dt*k1_I
-    k2_Q = I2; k2_I = inv_L * (E_mid - R_audio*I2 - inv_C*Q2)
-    Q3, I3 = Q + <span class="number">0.5</span>*dt*k2_Q, I + <span class="number">0.5</span>*dt*k2_I
-    k3_Q = I3; k3_I = inv_L * (E_mid - R_audio*I3 - inv_C*Q3)
-    Q4, I4 = Q + dt*k3_Q, I + dt*k3_I
-    k4_Q = I4; k4_I = inv_L * (E2 - R_audio*I4 - inv_C*Q4)
-    y[<span class="number">0</span>] += (dt/<span class="number">6.0</span>)*(k1_Q + <span class="number">2.0</span>*k2_Q + <span class="number">2.0</span>*k3_Q + k4_Q)
-    y[<span class="number">1</span>] += (dt/<span class="number">6.0</span>)*(k1_I + <span class="number">2.0</span>*k2_I + <span class="number">2.0</span>*k3_I + k4_I)
-    audio_out[i + <span class="number">1</span>] = y[<span class="number">0</span>] * inv_C  <span class="comment"># Salida V_C = Q / C</span>
+<!-- Fragmento 3: Filtrado de Audio -->
+<div class="code-window">
+  <div class="code-window-bar">
+    <div class="window-dots">
+      <span class="dot dot-red"></span>
+      <span class="dot dot-yellow"></span>
+      <span class="dot dot-green"></span>
+    </div>
+    <div class="window-tab">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+      <span>circuito_rlc.py &bull; Fragmento 3: Pipeline de Filtrado Acústico Desenrollado</span>
+    </div>
+    <span class="code-lang-badge">DSP &bull; AUDIO WAV</span>
+  </div>
+  <div class="code-body">
+    <table class="code-table">
+      <tr>
+        <td class="gutter">01<br>02<br>03<br>04<br>05<br>06<br>07<br>08<br>09<br>10<br>11<br>12<br>13<br>14</td>
+        <td class="source">inv_L, inv_C <span class="tok-op">=</span> <span class="tok-num">1.0</span> <span class="tok-op">/</span> L_NOMINAL, <span class="tok-num">1.0</span> <span class="tok-op">/</span> C_NOMINAL
+<span class="tok-kw">for</span> i <span class="tok-kw">in</span> range(N <span class="tok-op">-</span> <span class="tok-num">1</span>):
+    E1, E_mid, E2 <span class="tok-op">=</span> audio_in[i], <span class="tok-num">0.5</span><span class="tok-op">*</span>(audio_in[i] <span class="tok-op">+</span> audio_in[i<span class="tok-op">+</span><span class="tok-num">1</span>]), audio_in[i<span class="tok-op">+</span><span class="tok-num">1</span>]
+    Q, I <span class="tok-op">=</span> y[<span class="tok-num">0</span>], y[<span class="tok-num">1</span>]
+    k1_Q <span class="tok-op">=</span> I;   k1_I <span class="tok-op">=</span> inv_L <span class="tok-op">*</span> (E1 <span class="tok-op">-</span> R_audio<span class="tok-op">*</span>I <span class="tok-op">-</span> inv_C<span class="tok-op">*</span>Q)
+    Q2, I2 <span class="tok-op">=</span> Q <span class="tok-op">+</span> <span class="tok-num">0.5</span><span class="tok-op">*</span>dt<span class="tok-op">*</span>k1_Q, I <span class="tok-op">+</span> <span class="tok-num">0.5</span><span class="tok-op">*</span>dt<span class="tok-op">*</span>k1_I
+    k2_Q <span class="tok-op">=</span> I2;  k2_I <span class="tok-op">=</span> inv_L <span class="tok-op">*</span> (E_mid <span class="tok-op">-</span> R_audio<span class="tok-op">*</span>I2 <span class="tok-op">-</span> inv_C<span class="tok-op">*</span>Q2)
+    Q3, I3 <span class="tok-op">=</span> Q <span class="tok-op">+</span> <span class="tok-num">0.5</span><span class="tok-op">*</span>dt<span class="tok-op">*</span>k2_Q, I <span class="tok-op">+</span> <span class="tok-num">0.5</span><span class="tok-op">*</span>dt<span class="tok-op">*</span>k2_I
+    k3_Q <span class="tok-op">=</span> I3;  k3_I <span class="tok-op">=</span> inv_L <span class="tok-op">*</span> (E_mid <span class="tok-op">-</span> R_audio<span class="tok-op">*</span>I3 <span class="tok-op">-</span> inv_C<span class="tok-op">*</span>Q3)
+    Q4, I4 <span class="tok-op">=</span> Q <span class="tok-op">+</span> dt<span class="tok-op">*</span>k3_Q, I <span class="tok-op">+</span> dt<span class="tok-op">*</span>k3_I
+    k4_Q <span class="tok-op">=</span> I4;  k4_I <span class="tok-op">=</span> inv_L <span class="tok-op">*</span> (E2 <span class="tok-op">-</span> R_audio<span class="tok-op">*</span>I4 <span class="tok-op">-</span> inv_C<span class="tok-op">*</span>Q4)
+    y[<span class="tok-num">0</span>] <span class="tok-op">+=</span> (dt<span class="tok-op">/</span><span class="tok-num">6.0</span>)<span class="tok-op">*</span>(k1_Q <span class="tok-op">+</span> <span class="tok-num">2.0</span><span class="tok-op">*</span>k2_Q <span class="tok-op">+</span> <span class="tok-num">2.0</span><span class="tok-op">*</span>k3_Q <span class="tok-op">+</span> k4_Q)
+    y[<span class="tok-num">1</span>] <span class="tok-op">+=</span> (dt<span class="tok-op">/</span><span class="tok-num">6.0</span>)<span class="tok-op">*</span>(k1_I <span class="tok-op">+</span> <span class="tok-num">2.0</span><span class="tok-op">*</span>k2_I <span class="tok-op">+</span> <span class="tok-num">2.0</span><span class="tok-op">*</span>k3_I <span class="tok-op">+</span> k4_I)
+    audio_out[i <span class="tok-op">+</span> <span class="tok-num">1</span>] <span class="tok-op">=</span> y[<span class="tok-num">0</span>] <span class="tok-op">*</span> inv_C  <span class="tok-com"># Tensión filtrada V_C = Q / C</span></td>
+      </tr>
+    </table>
+  </div>
 </div>
-<p><strong>Explicación:</strong> Desenrolla las ecuaciones en variables escalares locales para filtrar $154,350$ muestras de audio a $44.1\text{ kHz}$ en menos de 0.8 s sin overhead de llamadas a función.</p>
+<p style="font-size: 8.2pt; color: #475569; margin-top: 2px;"><strong>Explicación:</strong> Desenrolla las ecuaciones en variables escalares locales para filtrar $154,350$ muestras de audio a $44.1\text{ kHz}$ en menos de 0.8 s sin overhead de llamadas a función.</p>
+
+<h3 class="section-title">4.2. Arquitectura de la Plataforma Web Interactiva (`rlc_engine.js` y `audio_lab.js`)</h3>
+<p>
+  La plataforma web interactiva traslada el modelo físico al navegador del usuario a 60 cuadros por segundo (FPS) sin requerir servidor backend ni librerías pesadas:
+</p>
+<ul>
+  <li><strong>Motor Numérico (`rlc_engine.js`):</strong> Implementa el integrador RK4 interactivo en JavaScript Vanilla y resuelve en tiempo real el lugar geométrico de las raíces en el plano complejo $s$ ($s_{1,2} = -\alpha \pm \sqrt{\alpha^2 - \omega_n^2}$), evaluando el criterio de estabilidad de Lyapunov en el semiplano izquierdo abierto (LHP).</li>
+  <li><strong>Laboratorio Acústico (`audio_lab.js`):</strong> Utiliza la <code>Web Audio API</code> nativa mediante un grafo de nodos en tiempo real: sintetizador polifónico virtual de 7 osciladores (<code>OscillatorNode</code>), filtro digital bicuadrático IIR de 2do orden (<code>BiquadFilterNode</code> con tipo <code>lowpass</code>) y captura de micrófono en vivo (<code>MediaStreamAudioSourceNode</code>) para reproducir el efecto de inmersión acústica marina.</li>
+  <li><strong>Analogía Electromecánica (`analogia_canvas.js`):</strong> Dibuja en un elemento <code>&lt;canvas&gt;</code> HTML5 acelerado por hardware la correspondencia exacta entre la oscilación del resorte mecánico amortiguado y el flujo armónico de electrones.</li>
+</ul>
+
+<h3 class="section-title">4.3. Tecnologías, Librerías de Software e Inteligencia Artificial Utilizada</h3>
+<div class="callout callout-blue" style="margin-bottom: 8px;">
+  <div class="callout-title">
+    <span class="callout-icon-wrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg></span> Asistencia con Inteligencia Artificial (Google DeepMind)
+  </div>
+  <p>
+    Para la concepción técnica, deducción analítica y desarrollo computacional se empleó <strong>Antigravity AI</strong>, entorno de ingeniería agéntica de <strong>Google DeepMind</strong>, potenciado por los modelos multimodales <strong>Google Gemini (Gemini 3.8 Flash / Gemini Pro)</strong>. La IA asistió en la formalización de la EDO desde la ley de Kirchhoff, la optimización vectorial del algoritmo RK4 en Python y JavaScript, el diseño del pipeline de audio subacuático y la compilación automatizada del presente informe.
+  </p>
+</div>
+
+<table class="eng-table" style="margin-top: 6px; margin-bottom: 8px;">
+  <thead>
+    <tr>
+      <th>Entorno</th>
+      <th>Biblioteca / Tecnología</th>
+      <th>Función y Aporte al Proyecto</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Python</strong></td>
+      <td><code>numpy</code>, <code>scipy</code></td>
+      <td>Álgebra lineal vectorizada, solver RK4, transformada FFT, respuesta en frecuencia y audio WAV.</td>
+    </tr>
+    <tr>
+      <td><strong>Python</strong></td>
+      <td><code>matplotlib</code>, <code>pypdf</code></td>
+      <td>Generación de figuras científicas a 300 DPI y validación estructural del PDF compilado.</td>
+    </tr>
+    <tr>
+      <td><strong>Frontend Web</strong></td>
+      <td><code>Web Audio API</code></td>
+      <td>Procesamiento digital de audio en tiempo real y emulación acústica de inmersión marina.</td>
+    </tr>
+    <tr>
+      <td><strong>Frontend Web</strong></td>
+      <td><code>KaTeX</code> & <code>Chart.js</code></td>
+      <td>Renderizado matemático ultrarrápido y gráficos interactivos reactivos en el navegador.</td>
+    </tr>
+    <tr>
+      <td><strong>Compilación</strong></td>
+      <td><code>Microsoft Edge Headless</code></td>
+      <td>Renderizado print de alta fidelidad desde HTML/CSS hacia PDF vectorial nativo de calidad editorial.</td>
+    </tr>
+  </tbody>
+</table>
 
 <!-- ========================================================================= -->
 <!-- PÁGINA 7: FIGURA 1 - VALIDACIÓN RK4 VS ANALÍTICA -->
@@ -1007,7 +1228,7 @@ inv_L, inv_C = <span class="number">1.0</span> / L_NOMINAL, <span class="number"
 
 <div class="callout callout-purple">
   <div class="callout-title">
-    <span>🌊</span> EQUIVALENCIA EXACTA ENTRE LA FÍSICA ACÚSTICA Y EL CIRCUITO RLC
+    <span class="callout-icon-wrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 12c2-2 4-2 6 0s4 2 6 0 4-2 6 0"></path><path d="M2 17c2-2 4-2 6 0s4 2 6 0 4-2 6 0"></path><path d="M2 7c2-2 4-2 6 0s4 2 6 0 4-2 6 0"></path></svg></span> EQUIVALENCIA EXACTA ENTRE LA FÍSICA ACÚSTICA Y EL CIRCUITO RLC
   </div>
   <p>
     Dado que nuestro circuito RLC serie configurado con $L = 0.5\text{ H}$ y $C = 200\,\mu\text{F}$ tiene una frecuencia natural de corte de $f_n \approx 15.9\text{ Hz}$ y una pendiente de atenuación de $-40\text{ dB/década}$, al pasar una señal de audio musical a través de él:
@@ -1038,7 +1259,7 @@ inv_L, inv_C = <span class="number">1.0</span> / L_NOMINAL, <span class="number"
     <tr>
       <th>Modo de Entrada</th>
       <th>Mecanismo Técnico (Web Audio API)</th>
-      <th>Propósito y Experiencia en la Sustentación</th>
+      <th>Propósito y Experiencia Práctica</th>
     </tr>
   </thead>
   <tbody>
@@ -1122,7 +1343,7 @@ inv_L, inv_C = <span class="number">1.0</span> / L_NOMINAL, <span class="number"
 
 <div class="callout callout-green">
   <div class="callout-title">
-    <span>🏆</span> DICTAMEN TÉCNICO FINAL DEL GRUPO 3
+    <span class="callout-icon-wrap"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg></span> DICTAMEN TÉCNICO FINAL DEL GRUPO 3
   </div>
   <p>
     Si el objetivo del proyecto es diseñar un ecualizador musical o filtro de tono de alta fidelidad (Hi-Fi), la resistencia óptima a implementar en el circuito es <strong>$R \approx 70.7\,\Omega$</strong> (alineación Butterworth con $\zeta = 0.707$), o en su defecto <strong>$R = 100\,\Omega$</strong> si se requiere absoluta garantía de cero sobreimpulso transitorio. El valor de $10\,\Omega$ queda formalmente desestimado por distorsión resonante destructiva, y el de $200\,\Omega$ por degradación espectral prematura.

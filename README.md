@@ -2,22 +2,24 @@
 ### Institución Universitaria Colegio Mayor del Cauca
 **Facultad de Ingeniería — Programa de Ingeniería Informática**  
 **Asignatura:** Ecuaciones Diferenciales (Unidad 3: EDOs de Orden Superior)  
+**Docente:** DIANA MARCELA MENDEZ ASTUDILLO  
+
 **Grupo 3:**
-* ACOSTA GALINDEZ JESSICA VANESA
-* BERMUDEZ ZAMORA KEVIN DANIEL
-* LOPEZ QUIRA ALVARO JOSE
-* MUÑOZ DULCEY JORGE ENRIQUE
+* ACOSTA GALINDEZ JESSICA VANESA (Código: 90125041)
+* BERMUDEZ ZAMORA KEVIN DANIEL (Código: 90125059)
+* LOPEZ QUIRA ALVARO JOSE (Código: 90125048)
+* MUÑOZ DULCEY JORGE ENRIQUE (Código: 90125037)
 
 ---
 
 ## 1. ESTRUCTURA Y CONTENIDO DEL REPOSITORIO
 
-Este proyecto contiene la deducción analítica matemática completa, el código fuente en Python, la suite interactiva web, las figuras científicas en alta resolución (300 DPI), los archivos de audio sintético y procesado, el informe académico formal y el guion cronometrado para la sustentación oral de 15 minutos:
+Este proyecto contiene la deducción analítica matemática completa, el código fuente en Python, la suite interactiva web, las figuras científicas en alta resolución (300 DPI), los archivos de audio sintético y procesado y el informe académico formal:
 
 ```
 circuito_rlc/
 │
-├── index.html                                      # Plataforma Web Interactiva de Simulación y Defensa
+├── index.html                                      # Plataforma Web Interactiva de Simulación RLC
 ├── css/
 │   └── styles.css                                  # Estilos maestros (Glassmorphism 2.0, Paleta Institucional)
 ├── js/
@@ -33,7 +35,6 @@ circuito_rlc/
 │
 ├── circuito_rlc.py                                 # Pipeline científico modular en Python (RK4, FFT, Bode y WAV)
 ├── INFORME_PROYECTO_RLC.md                         # Informe académico formal exhaustivo (Paper de ingeniería)
-├── GUION_EXPOSICION_DEFENSA.md                     # Guion de sustentación oral (15 min repartidos) + Preguntas
 ├── README.md                                       # Este archivo descriptivo del proyecto
 │
 ├── figura1_validacion_rk4_vs_analitica.png         # Superposición analítica vs RK4 (Error: 3.69 nV)
@@ -47,9 +48,9 @@ circuito_rlc/
 
 ---
 
-## 2. APLICACIÓN WEB INTERACTIVA (MODO EXPOSICIÓN)
+## 2. APLICACIÓN WEB INTERACTIVA
 
-Para abrir la plataforma de sustentación interactiva y el simulador en tiempo real:
+Para abrir la plataforma de simulación interactiva en tiempo real:
 - Haz doble clic sobre `index.html` en el explorador de archivos, o ábrelo en Google Chrome, Microsoft Edge o Firefox.
 - **Modo 100% Offline:** Todas las librerías vectoriales y motores matemáticos operan localmente sin depender de internet en el aula.
 
@@ -63,10 +64,8 @@ Para abrir la plataforma de sustentación interactiva y el simulador en tiempo r
    - Sintetizador polifónico en vivo con corte acústico instantáneo.
    - **Micrófono en Vivo:** Permite hablar y escuchar la voz en tiempo real filtrada "bajo el agua".
    - **Carga de Archivo Propio:** Permite subir canciones MP3/WAV para procesarlas por el filtro RLC.
-4. **Teleprónter Oficial de 15 Minutos:**
-   - Cronómetro regresivo con barra de progreso y cambio automático del expositor en turno.
-5. **Control por Teclado:**
-   - `←` / `→` Cambiar pestañas • `Espacio` Pausar/Iniciar cronómetro • `P` Modo Presentación Pantalla Completa • `R` Reiniciar 15:00.
+4. **Control por Teclado:**
+   - `←` / `→` Cambiar pestañas • `P` Modo Presentación Pantalla Completa.
 
 ---
 
@@ -101,3 +100,45 @@ python circuito_rlc.py
    - Componente de $500\text{ Hz}$: atenuada en **$-60.0\text{ dB}$** (al $0.1\%$)
 4. **Elección de Ingeniería:**
    - La resistencia óptima recomendada para ecualización de audio es **$R \approx 70.7\,\Omega$** (alineación Butterworth, $\zeta = 0.707$) o **$R = 100\,\Omega$** (amortiguamiento crítico sin sobreimpulso ni ringing).
+
+---
+
+## 5. TECNOLOGÍAS, LIBRERÍAS E INTELIGENCIA ARTIFICIAL UTILIZADA
+
+### 5.1. Asistencia con Inteligencia Artificial
+Para la conceptualización, formulación analítica y desarrollo de software de este proyecto se utilizó **Antigravity AI**, el entorno de desarrollo agéntico avanzado de **Google DeepMind**, impulsado por los modelos de lenguaje y razonamiento multimodal **Google Gemini (Gemini 3.8 Flash / Gemini Pro)**.
+
+La IA intervino en los siguientes aspectos del proyecto:
+* **Deducción Matemática y Rigor Teórico:** Asistencia en el planteamiento formal a partir de la Segunda Ley de Kirchhoff (LVK), cálculo analítico exacto de la respuesta al escalón mediante coeficientes indeterminados y caracterización de los discriminantes de los cuatro regímenes de amortiguamiento.
+* **Computación Científica y Algorítmica (Python):** Implementación del integrador numérico Runge-Kutta de 4to orden (RK4), algoritmos de transformada rápida de Fourier (FFT), trazado de diagramas de Bode y bucles optimizados de procesamiento de audio muestra a muestra.
+* **Desarrollo de la Suite Web Interactiva:** Arquitectura frontend modular basada en HTML5, CSS3 con Glassmorphism 2.0 y JavaScript Vanilla; integración del motor de simulación a 60 FPS, diagrama dinámico de polos en el plano complejo $s$ y canvas interactivo de la analogía electromecánica masa-resorte.
+* **Laboratorio de Audio Sensorial (Web Audio API):** Configuración del pipeline de audio en tiempo real con nodos `BiquadFilterNode`, sintetizador polifónico virtual y captura de micrófono en vivo para reproducir el efecto de inmersión acústica marina.
+* **Generación de Documentación y Reportes:** Redacción técnica del informe académico, generación automatizada de figuras a 300 DPI y pipeline de compilación a PDF de alta resolución con tipografía KaTeX.
+
+---
+
+### 5.2. Librerías y Ecosistema de Software Utilizado
+
+#### A. Entorno Científico y Pipeline de Audio (Python):
+| Biblioteca / Módulo | Versión Recomendada | Propósito en el Proyecto |
+| :--- | :---: | :--- |
+| **`numpy`** | `^1.24.0` | Álgebra lineal, cálculo matricial vectorizado, discretización temporal y arrays numéricos para el solver RK4. |
+| **`scipy`** (`signal`, `io.wavfile`) | `^1.10.0` | Transformada Rápida de Fourier (FFT), respuesta frecuencial de Bode y codificación/exportación de audio WAV a 44.1 kHz de 16 bits. |
+| **`matplotlib`** | `^3.7.0` | Generación de las 4 figuras científicas en alta resolución (300 DPI) con estilos publication-ready. |
+| **`plotly`** | `^5.14.0` | Renderizado interactivo y exportación del panel consolidado en HTML. |
+| **`pypdf`** | `^4.0.0` | Inspección de integridad, recuento de páginas y verificación estructural del documento PDF final. |
+
+#### B. Plataforma Web Interactiva y Motor Acústico (Frontend):
+| Tecnología / Biblioteca | Modo de Uso | Propósito en el Proyecto |
+| :--- | :---: | :--- |
+| **`Web Audio API`** | Nativo (W3C Standard) | Procesamiento digital de audio en tiempo real en el navegador (`AudioContext`, `BiquadFilterNode`, `OscillatorNode`, `AnalyserNode`). |
+| **`HTML5 Canvas API`** | Nativo | Motor gráfico 2D acelerado por GPU a 60 FPS para la analogía masa-resorte y el plano complejo $s$. |
+| **`KaTeX`** | CDN / Local | Motor tipográfico ultrarrápido para renderizar ecuaciones matemáticas complejas en formato LaTeX sin demoras. |
+| **`Chart.js`** | `v4.x` | Gráficos interactivos responsivos para la visualización de señales temporales y espectro FFT en la Galería. |
+| **`Lucide Icons`** | `lucide.min.js` (Offline) | Conjunto de iconos vectoriales SVG para una interfaz moderna, limpia y funcional sin requerir conexión a internet. |
+
+#### C. Herramientas de Compilación Documental:
+| Herramienta | Mecanismo | Propósito en el Proyecto |
+| :--- | :--- | :--- |
+| **`Microsoft Edge Headless`** | `--headless=new --print-to-pdf` | Compilación del informe técnico desde HTML/CSS print hacia PDF vectorial de calidad de imprenta. |
+

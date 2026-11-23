@@ -39,13 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 3. Inicializar Simulador RK4, Superposición y Plano s
     initSimulator();
 
-    // 4. Inicializar Temporizador de Defensa de 15 Minutos
-    initDefenseTimer();
-
-    // 5. Acordeón de Preguntas
-    initQuestionsAccordion();
-
-    // 6. Inicializar Gráficas Científicas Interactivas de Galería
+    // 4. Inicializar Gráficas Científicas Interactivas de Galería
     if (typeof GaleriaCharts !== 'undefined') {
         GaleriaCharts.init();
     }
@@ -811,102 +805,7 @@ function renderSPlane(p) {
 
 /**
  * ==============================================================================
- * 3. TEMPORIZADOR DE DEFENSA DE 15 MINUTOS CON BARRA DE PROGRESO
- * ==============================================================================
- */
-let timerInterval = null;
-let secondsRemaining = 15 * 60; // 900 s
-let isTimerRunning = false;
-
-function initDefenseTimer() {
-    const display = document.getElementById("timerDisplay");
-    const btnToggle = document.getElementById("btnTimerToggle");
-    const btnReset = document.getElementById("btnTimerReset");
-    const progressBar = document.getElementById("defenseProgressBar");
-    const speakerCards = document.querySelectorAll(".speaker-card");
-
-    const updateDisplay = () => {
-        const mins = Math.floor(secondsRemaining / 60);
-        const secs = secondsRemaining % 60;
-        display.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-
-        // Barra de progreso y cálculo de intervalos
-        const elapsed = 900 - secondsRemaining;
-        if (progressBar) {
-            const pct = Math.min(100, Math.max(0, (elapsed / 900) * 100));
-            progressBar.style.width = `${pct}%`;
-        }
-
-        // 4 intervalos de 225 segundos (3m 45s c/u)
-        const activeIndex = Math.min(3, Math.floor(elapsed / 225));
-
-        speakerCards.forEach((card, idx) => {
-            if (idx === activeIndex) {
-                card.classList.add("active-speaker");
-            } else {
-                card.classList.remove("active-speaker");
-            }
-        });
-    };
-
-    btnToggle.addEventListener("click", () => {
-        if (isTimerRunning) {
-            clearInterval(timerInterval);
-            isTimerRunning = false;
-            btnToggle.innerHTML = '<i data-lucide="play"></i> <span>Continuar</span>';
-            if (window.lucide) lucide.createIcons();
-        } else {
-            isTimerRunning = true;
-            btnToggle.innerHTML = '<i data-lucide="pause"></i> <span>Pausar</span>';
-            if (window.lucide) lucide.createIcons();
-            timerInterval = setInterval(() => {
-                if (secondsRemaining > 0) {
-                    secondsRemaining--;
-                    updateDisplay();
-                } else {
-                    clearInterval(timerInterval);
-                    isTimerRunning = false;
-                    btnToggle.innerHTML = '<i data-lucide="check-circle-2"></i> <span>Tiempo Cumplido</span>';
-                    if (window.lucide) lucide.createIcons();
-                }
-            }, 1000);
-        }
-    });
-
-    btnReset.addEventListener("click", () => {
-        clearInterval(timerInterval);
-        isTimerRunning = false;
-        secondsRemaining = 15 * 60;
-        btnToggle.innerHTML = '<i data-lucide="play"></i> <span>Iniciar Defensa</span>';
-        if (window.lucide) lucide.createIcons();
-        updateDisplay();
-    });
-
-    updateDisplay();
-}
-
-/**
- * ==============================================================================
- * 4. ACORDEÓN DE PREGUNTAS DEL JURADO
- * ==============================================================================
- */
-function initQuestionsAccordion() {
-    const headers = document.querySelectorAll(".question-header");
-    headers.forEach(header => {
-        header.addEventListener("click", () => {
-            const item = header.parentElement;
-            const wasOpen = item.classList.contains("open");
-            document.querySelectorAll(".question-item").forEach(i => i.classList.remove("open"));
-            if (!wasOpen) {
-                item.classList.add("open");
-            }
-        });
-    });
-}
-
-/**
- * ==============================================================================
- * 5. MODAL DE ZOOM DE FIGURAS
+ * 3. MODAL DE ZOOM DE FIGURAS
  * ==============================================================================
  */
 function initImageModal() {
@@ -1070,18 +969,10 @@ function initKeyboardShortcuts() {
             e.preventDefault();
             const prevIndex = (currentIndex - 1 + tabButtons.length) % tabButtons.length;
             tabButtons[prevIndex].click();
-        } else if (e.code === "Space") {
-            e.preventDefault();
-            const btnToggle = document.getElementById("btnTimerToggle");
-            if (btnToggle) btnToggle.click();
         } else if (e.key === "p" || e.key === "P") {
             e.preventDefault();
             const btnPres = document.getElementById("btnPresentationMode");
             if (btnPres) btnPres.click();
-        } else if (e.key === "r" || e.key === "R") {
-            e.preventDefault();
-            const btnReset = document.getElementById("btnTimerReset");
-            if (btnReset) btnReset.click();
         }
     });
 }

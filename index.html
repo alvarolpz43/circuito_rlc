@@ -76,9 +76,6 @@
                     <button class="tab-btn" data-tab="tab-codigo">
                         <i data-lucide="code-2"></i> <span>Código Científico</span>
                     </button>
-                    <button class="tab-btn" data-tab="tab-defensa">
-                        <i data-lucide="mic"></i> <span>Defensa 15m</span>
-                    </button>
                 </nav>
             </div>
         </div>
@@ -125,17 +122,162 @@
                 </div>
             </div>
 
+            <!-- ================================================================
+                 SECCIÓN: INTRODUCCIÓN GENERAL DEL PROYECTO & FUNDAMENTO HISTÓRICO
+                 ================================================================ -->
+            <div class="intro-project-section">
+                <h3 class="section-title"><i data-lucide="compass"></i> Introducción al Proyecto & Fundamento Histórico</h3>
+                <p class="section-subtitle">Contexto general del desarrollo, hoja de ruta de la presentación y el pilar físico detrás de las ecuaciones:</p>
+
+                <div class="intro-cards-grid">
+                    <!-- Tarjeta 1: ¿De qué trata el proyecto y qué se hizo? -->
+                    <div class="glass-card intro-card">
+                        <div class="intro-card-header">
+                            <div class="intro-card-icon cyan-glow">
+                                <i data-lucide="layers"></i>
+                            </div>
+                            <div>
+                                <h4 class="intro-card-title">¿De qué trata el proyecto y qué se hizo?</h4>
+                                <span class="intro-card-tag">PROPÓSITO & ALCANCE</span>
+                            </div>
+                        </div>
+                        <p class="intro-card-desc">
+                            En ingeniería de sonido y comunicaciones, las señales acústicas suelen venir contaminadas con ruidos e interferencias agudas. En este proyecto diseñamos y analizamos un <strong>filtro de audio pasa-bajo analógico</strong> basado en un <strong>circuito RLC serie</strong> ($L = 0.5\text{ H}$, $C = 200\,\mu\text{F}$).
+                        </p>
+                        <ul class="intro-card-list">
+                            <li><i data-lucide="check-circle-2"></i> <strong>Modelado Físico:</strong> Planteamiento de la EDO de 2º orden desde la física fundamental.</li>
+                            <li><i data-lucide="check-circle-2"></i> <strong>Deducción a Mano:</strong> Solución exacta del transitorio ante un escalón de 12V y caracterización de los 4 regímenes de amortiguamiento ($R = 10, 50, 100, 200\,\Omega$).</li>
+                            <li><i data-lucide="check-circle-2"></i> <strong>Simulación Numérica RK4:</strong> Integración computacional paso a paso con error de sólo <strong>3.69 nV</strong> frente a la teoría analítica.</li>
+                            <li><i data-lucide="check-circle-2"></i> <strong>Aplicación Acústica Real:</strong> Demostración auditiva interactiva del <em>"efecto bajo el agua"</em> con atenuación de -40 dB/década.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Tarjeta 2: Hoja de Ruta de la Presentación -->
+                    <div class="glass-card intro-card">
+                        <div class="intro-card-header">
+                            <div class="intro-card-icon purple-glow">
+                                <i data-lucide="play-circle"></i>
+                            </div>
+                            <div>
+                                <h4 class="intro-card-title">¿Qué se va a presentar en la plataforma?</h4>
+                                <span class="intro-card-tag purple-tag">HOJA DE RUTA</span>
+                            </div>
+                        </div>
+                        <p class="intro-card-desc">
+                            La plataforma interactiva está organizada en 6 módulos técnicos para recorrer de forma clara y dinámica todo el proyecto:
+                        </p>
+                        <div class="roadmap-grid">
+                            <div class="roadmap-item">
+                                <span class="roadmap-step">1</span>
+                                <div>
+                                    <strong>Deducción Analítica:</strong>
+                                    <p>Paso a paso matemático a mano, ecuación característica y discriminante $\Delta$.</p>
+                                </div>
+                            </div>
+                            <div class="roadmap-item">
+                                <span class="roadmap-step">2</span>
+                                <div>
+                                    <strong>Simulador RK4:</strong>
+                                    <p>Control de parámetros a 60 FPS con superposición analítica y plano s.</p>
+                                </div>
+                            </div>
+                            <div class="roadmap-item">
+                                <span class="roadmap-step">3</span>
+                                <div>
+                                    <strong>Galería & Bode:</strong>
+                                    <p>Comparativa de los 4 regímenes y respuesta en frecuencia en dB y fase.</p>
+                                </div>
+                            </div>
+                            <div class="roadmap-item">
+                                <span class="roadmap-step">4</span>
+                                <div>
+                                    <strong>Audio Lab:</strong>
+                                    <p>Sintetizador, micrófono en vivo y filtrado con simulación acústica marina.</p>
+                                </div>
+                            </div>
+                            <div class="roadmap-item">
+                                <span class="roadmap-step">5</span>
+                                <div>
+                                    <strong>Analogía Física:</strong>
+                                    <p>Simulador sincronizado del sistema masa-resorte-amortiguador vs RLC.</p>
+                                </div>
+                            </div>
+                            <div class="roadmap-item">
+                                <span class="roadmap-step">6</span>
+                                <div>
+                                    <strong>Código Científico:</strong>
+                                    <p>Implementación limpia en Python y fórmulas LaTeX documentadas.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta Destacada: ¿Quién fue Gustav Kirchhoff y por qué es el pilar del proyecto? -->
+                <div class="glass-card kirchhoff-card">
+                    <div class="kirchhoff-header">
+                        <div class="kirchhoff-avatar-wrap">
+                            <div class="kirchhoff-avatar">
+                                <i data-lucide="award"></i>
+                            </div>
+                            <div class="kirchhoff-years">1824 — 1887</div>
+                        </div>
+                        <div class="kirchhoff-title-group">
+                            <div class="kirchhoff-tag"><i data-lucide="sparkles"></i> PILAR FÍSICO HISTÓRICO</div>
+                            <h4 class="kirchhoff-name">Gustav Robert Kirchhoff: El Científico Detrás de la Ecuación</h4>
+                            <p class="kirchhoff-subtitle">Físico y matemático alemán • Pionero de la teoría de circuitos eléctricos, la radiación térmica y la espectroscopía</p>
+                        </div>
+                    </div>
+
+                    <div class="kirchhoff-body">
+                        <div class="kirchhoff-bio-col">
+                            <p>
+                                En <strong>1845</strong>, cuando era un estudiante universitario de apenas <strong>21 años</strong> en la Universidad de Königsberg, Gustav Kirchhoff formuló dos leyes universales que cambiaron la ingeniería para siempre:
+                            </p>
+                            <div class="kirchhoff-laws-box">
+                                <div class="law-item">
+                                    <span class="law-badge lck-badge">1ª LEY (LCK)</span>
+                                    <div><strong>Ley de Corrientes (Nodos):</strong> Principio de conservación de la carga eléctrica. En todo nodo de un circuito, $\sum I_{\text{entran}} = \sum I_{\text{salen}}$.</div>
+                                </div>
+                                <div class="law-item">
+                                    <span class="law-badge lvk-badge">2ª LEY (LVK)</span>
+                                    <div><strong>Ley de Voltajes (Mallas):</strong> Principio de <strong>conservación de la energía</strong> en un lazo cerrado. La suma algebraica de diferencias de potencial es cero: $\sum \Delta V = 0$.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kirchhoff-why-col">
+                            <div class="why-card">
+                                <div class="why-title"><i data-lucide="help-circle"></i> ¿Por qué Kirchhoff es la base indispensable de este proyecto?</div>
+                                <p>
+                                    Los tres componentes pasivos de nuestro circuito provienen de leyes físicas aisladas e independientes:
+                                </p>
+                                <ul class="why-list">
+                                    <li><strong>Faraday (1831):</strong> Descubrió que una bobina reacciona a cambios de corriente: $v_L = L \frac{dI}{dt}$.</li>
+                                    <li><strong>Ohm (1827):</strong> Demostró que una resistencia disipa calor por fricción eléctrica: $v_R = R I$.</li>
+                                    <li><strong>Gauss & Coulomb (1785):</strong> Definieron cómo se almacena la carga en un condensador: $v_C = \frac{Q}{C}$.</li>
+                                </ul>
+                                <div class="why-conclusion">
+                                    <strong>El puente unificador:</strong> Fue la <strong>Segunda Ley de Kirchhoff (LVK)</strong> la que permitió tomar esas tres leyes físicas y enlazarlas en una única ecuación cerrada:
+                                    $$v_L(t) + v_R(t) + v_C(t) = E(t) \iff L Q''(t) + R Q'(t) + \frac{1}{C} Q(t) = E(t)$$
+                                    <em>Sin la ley de mallas de Kirchhoff, no existiría la EDO de segundo orden que gobierna este filtro de audio.</em>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Integrantes del Grupo 3 -->
-            <h3 class="section-title">Integrantes del Grupo 3 & Roles de Sustentación</h3>
-            <p class="section-subtitle">Equipo responsable del desarrollo matemático, implementación algorítmica y defensa oral:</p>
+            <h3 class="section-title">Integrantes del Grupo 3</h3>
+            <p class="section-subtitle">Equipo responsable del desarrollo matemático, implementación algorítmica y experimentación acústica:</p>
 
             <div class="team-grid">
                 <div class="member-card">
                     <div class="member-avatar">JA</div>
                     <div class="member-info">
                         <h4>Jessica Vanesa Acosta Galindez</h4>
-                        <div class="member-role">Planteamiento Físico & Deducción</div>
-                        <div class="member-time"><i data-lucide="clock"></i> Minuto 00:00 - 03:45</div>
+                        <div class="member-role">Código: 90125041 &bull; Planteamiento Físico & Deducción</div>
                     </div>
                 </div>
 
@@ -143,8 +285,7 @@
                     <div class="member-avatar">JM</div>
                     <div class="member-info">
                         <h4>Jorge Enrique Muñoz Dulcey</h4>
-                        <div class="member-role">Solución Analítica & Analogía</div>
-                        <div class="member-time"><i data-lucide="clock"></i> Minuto 03:45 - 07:30</div>
+                        <div class="member-role">Código: 90125037 &bull; Solución Analítica & Analogía</div>
                     </div>
                 </div>
 
@@ -152,8 +293,7 @@
                     <div class="member-avatar">AL</div>
                     <div class="member-info">
                         <h4>Alvaro Jose Lopez Quira</h4>
-                        <div class="member-role">Computación Científica & RK4</div>
-                        <div class="member-time"><i data-lucide="clock"></i> Minuto 07:30 - 11:15</div>
+                        <div class="member-role">Código: 90125048 &bull; Computación Científica & RK4</div>
                     </div>
                 </div>
 
@@ -161,8 +301,7 @@
                     <div class="member-avatar">KB</div>
                     <div class="member-info">
                         <h4>Kevin Daniel Bermudez Zamora</h4>
-                        <div class="member-role">Análisis de Audio, Bode & Cierre</div>
-                        <div class="member-time"><i data-lucide="clock"></i> Minuto 11:15 - 15:00</div>
+                        <div class="member-role">Código: 90125059 &bull; Análisis de Audio, Bode & Cierre</div>
                     </div>
                 </div>
             </div>
@@ -1136,20 +1275,31 @@
                                     <span class="code-filename"><i data-lucide="file-code"></i> sistema_rlc_derivadas (Python / NumPy)</span>
                                     <button class="btn-copy-code" data-target="code-snippet-estados"><i data-lucide="copy"></i> <span>Copiar</span></button>
                                 </div>
-                                <pre id="code-snippet-estados" class="code-pre"><code><span class="tok-kw">def</span> <span class="tok-fn">sistema_rlc_derivadas</span>(t, state, R, L, C, fuente_func):
+                                <pre id="code-snippet-estados" class="code-pre"><code><span class="tok-kw">def</span> <span class="tok-fn">sistema_rlc_derivadas</span>(t, state, R=<span class="tok-num">10.0</span>, L=<span class="tok-num">0.5</span>, C=<span class="tok-num">200e-6</span>, fuente_func=<span class="tok-kw">lambda</span> t: <span class="tok-num">12.0</span>):
     <span class="tok-str">"""
-    Define el sistema de EDOs de 1er orden en variables de estado.
-    Equivalente exacto a la EDO de 2do orden de clase: L*Q'' + R*Q' + (1/C)*Q = E(t)
-    state[0] = Q(t)  (Carga en el condensador [C])
-    state[1] = I(t)  (Corriente en el circuito [A] = dQ/dt)
+    Sistema de EDOs de 1er orden en variables de estado [Q, I].
+    Equivalente exacto a la EDO deducida en clase:
+    Q''(t) + 20*Q'(t) + 10000*Q(t) = 24
+    
+    Variables de estado:
+      state[0] = Q(t)  (Carga en el condensador [C])
+      state[1] = I(t)  (Corriente en el circuito [A] = dQ/dt)
     """</span>
     Q, I = state[<span class="tok-num">0</span>], state[<span class="tok-num">1</span>]
-    E_t = fuente_func(t)  <span class="tok-com"># Voltaje de excitación instantáneo E(t)</span>
+    E_t = fuente_func(t)  <span class="tok-com"># Voltaje de excitación E(t) = 12.0 V</span>
     
+    <span class="tok-com"># 1. Primera ecuación de estado: dQ/dt = I(t)</span>
     dQ_dt = I
-    dI_dt = (E_t - R * I - (<span class="tok-num">1.0</span> / C) * Q) / L  <span class="tok-com"># Despeje de Q'' = dI/dt</span>
     
-    <span class="tok-kw">return</span> np.array([dQ_dt, dI_dt], dtype=np.float64)</code></pre>
+    <span class="tok-com"># 2. Segunda ecuación: dI/dt = [E(t) - R*I(t) - (1/C)*Q(t)] / L</span>
+    <span class="tok-com"># Sustituyendo L = 0.5 H, R = 10 Ω, C = 200 µF, E = 12 V:</span>
+    <span class="tok-com"># dI/dt = (12 - 10*I - 5000*Q) / 0.5 = 24 - 20*I - 10000*Q</span>
+    dI_dt = (E_t - R * I - (<span class="tok-num">1.0</span> / C) * Q) / L
+    
+    <span class="tok-kw">return</span> np.array([dQ_dt, dI_dt], dtype=np.float64)
+
+<span class="tok-com"># Recuperación del voltaje de salida en el condensador:</span>
+<span class="tok-com"># V_C(t) = Q(t) / C</span></code></pre>
                             </div>
                         </div>
                     </div>
@@ -1192,29 +1342,43 @@
                                     <span class="code-filename"><i data-lucide="file-code"></i> rk4_integrador (Python / Algoritmo Manual)</span>
                                     <button class="btn-copy-code" data-target="code-snippet-rk4"><i data-lucide="copy"></i> <span>Copiar</span></button>
                                 </div>
-                                <pre id="code-snippet-rk4" class="code-pre"><code><span class="tok-kw">def</span> <span class="tok-fn">rk4_integrador</span>(f, y0, t_array, R, L, C, fuente_func):
-    <span class="tok-str">"""
-    Integrador numérico manual Runge-Kutta de 4to orden (RK4).
-    Retorna la trayectoria de estado [Q(t), I(t)] en cada instante temporal.
-    """</span>
-    N = len(t_array)
-    dt = t_array[<span class="tok-num">1</span>] - t_array[<span class="tok-num">0</span>]
+                                <pre id="code-snippet-rk4" class="code-pre"><code><span class="tok-com"># 1. DISCRIMINANTE DE CLASE Y CLASIFICACIÓN DE LOS 4 REGÍMENES:</span>
+<span class="tok-com"># Δ = R² - 4L/C = R² - 10000 Ω²,   ζ = R / 100</span>
+L, C = <span class="tok-num">0.5</span>, <span class="tok-num">200e-6</span>
+RESISTENCIAS = [<span class="tok-num">10.0</span>, <span class="tok-num">50.0</span>, <span class="tok-num">100.0</span>, <span class="tok-num">200.0</span>]
+
+<span class="tok-kw">for</span> R <span class="tok-kw">in</span> RESISTENCIAS:
+    delta = R**<span class="tok-num">2</span> - (<span class="tok-num">4.0</span> * L / C)           <span class="tok-com"># Δ = R² - 10000 Ω²</span>
+    zeta = R / (<span class="tok-num">2.0</span> * np.sqrt(L / C))      <span class="tok-com"># ζ = R / 100</span>
+    <span class="tok-kw">if</span> delta &lt; <span class="tok-num">0</span>:
+        regimen = f<span class="tok-str">"Subamortiguado (ζ = {zeta:.2f})"</span>
+    <span class="tok-kw">elif</span> delta == <span class="tok-num">0</span>:
+        regimen = f<span class="tok-str">"Críticamente Amortiguado (ζ = {zeta:.2f})"</span>
+    <span class="tok-kw">else</span>:
+        regimen = f<span class="tok-str">"Sobreamortiguado (ζ = {zeta:.2f})"</span>
+
+<span class="tok-com"># 2. ALGORITMO RUNGE-KUTTA 4TO ORDEN (RK4 MANUAL):</span>
+<span class="tok-kw">def</span> <span class="tok-fn">rk4_integrador</span>(f, y0, t_array, R, L, C, fuente_func):
+    N, dt = len(t_array), t_array[<span class="tok-num">1</span>] - t_array[<span class="tok-num">0</span>]
     solucion = np.zeros((N, <span class="tok-num">2</span>), dtype=np.float64)
-    solucion[<span class="tok-num">0</span>] = y0
+    solucion[<span class="tok-num">0</span>] = y0  <span class="tok-com"># [Q(0), I(0)]</span>
     
     y = np.array(y0, dtype=np.float64)
     <span class="tok-kw">for</span> i <span class="tok-kw">in</span> range(N - <span class="tok-num">1</span>):
-        t_curr = t_array[i]
+        t_i = t_array[i]
+        k1 = f(t_i, y, R, L, C, fuente_func)
+        k2 = f(t_i + <span class="tok-num">0.5</span> * dt, y + <span class="tok-num">0.5</span> * dt * k1, R, L, C, fuente_func)
+        k3 = f(t_i + <span class="tok-num">0.5</span> * dt, y + <span class="tok-num">0.5</span> * dt * k2, R, L, C, fuente_func)
+        k4 = f(t_i + dt, y + dt * k3, R, L, C, fuente_func)
         
-        k1 = f(t_curr, y, R, L, C, fuente_func)
-        k2 = f(t_curr + <span class="tok-num">0.5</span> * dt, y + <span class="tok-num">0.5</span> * dt * k1, R, L, C, fuente_func)
-        k3 = f(t_curr + <span class="tok-num">0.5</span> * dt, y + <span class="tok-num">0.5</span> * dt * k2, R, L, C, fuente_func)
-        k4 = f(t_curr + dt, y + dt * k3, R, L, C, fuente_func)
-        
+        <span class="tok-com"># y_{n+1} = y_n + (h/6)*(k1 + 2k2 + 2k3 + k4)</span>
         y = y + (dt / <span class="tok-num">6.0</span>) * (k1 + <span class="tok-num">2.0</span> * k2 + <span class="tok-num">2.0</span> * k3 + k4)
         solucion[i + <span class="tok-num">1</span>] = y
         
-    <span class="tok-kw">return</span> solucion</code></pre>
+    <span class="tok-kw">return</span> solucion
+
+<span class="tok-com"># 3. TENSIÓN DE SALIDA EN EL CONDENSADOR:</span>
+<span class="tok-com"># V_C(t) = Q(t) / C  ==>  vc = solucion[:, 0] / C</span></code></pre>
                             </div>
                         </div>
                     </div>
@@ -1256,32 +1420,36 @@
                                 </div>
                                 <pre id="code-snippet-analitica" class="code-pre"><code><span class="tok-kw">def</span> <span class="tok-fn">solucion_analitica_vc</span>(t_array, R=<span class="tok-num">10.0</span>, L=<span class="tok-num">0.5</span>, C=<span class="tok-num">200e-6</span>, E0=<span class="tok-num">12.0</span>, q0=<span class="tok-num">0.0</span>, i0=<span class="tok-num">0.0</span>):
     <span class="tok-str">"""
-    FÓRMULA CANÓNICA DEDUCIDA EN CLASE CON LA PROFESORA:
-    V_C(t) = 12 * [1 - exp(-10*t) * (cos(10*sqrt(99)*t) + (1/sqrt(99))*sin(10*sqrt(99)*t))]
-    Condiciones de reposo inicial del enunciado: Q(0) = 0 C, I(0) = 0 A
+    DEDUCCIÓN ANALÍTICA PASO A PASO (100% FIEL A LA PROFESORA):
+    EDO: Q''(t) + 20*Q'(t) + 10000*Q(t) = 24
     """</span>
-    alpha = R / (<span class="tok-num">2.0</span> * L)                       <span class="tok-com"># 10.0 s^-1 (Atenuación)</span>
-    omega_d = <span class="tok-num">10.0</span> * np.sqrt(<span class="tok-num">99.0</span>)              <span class="tok-com"># 10*sqrt(99) rad/s (Frecuencia amortiguada)</span>
+    <span class="tok-com"># PASO 1: Raíces características r = -α ± j·ω_d</span>
+    alpha = R / (<span class="tok-num">2.0</span> * L)                       <span class="tok-com"># α = 10.0 s⁻¹</span>
+    omega_d = <span class="tok-num">10.0</span> * np.sqrt(<span class="tok-num">99.0</span>)              <span class="tok-com"># ω_d = 10√99 rad/s (≈ 99.50)</span>
     
-    <span class="tok-com"># Evaluación directa de la fórmula de la profesora para reposo:</span>
-    <span class="tok-kw">if</span> q0 == <span class="tok-num">0.0</span> <span class="tok-kw">and</span> i0 == <span class="tok-num">0.0</span>:
-        coef_seno = <span class="tok-num">1.0</span> / np.sqrt(<span class="tok-num">99.0</span>)         <span class="tok-com"># 1/sqrt(99)</span>
-        decay = np.exp(-<span class="tok-num">10.0</span> * t_array)
-        oscilacion = np.cos(omega_d * t_array) + coef_seno * np.sin(omega_d * t_array)
-        vc = <span class="tok-num">12.0</span> * (<span class="tok-num">1.0</span> - decay * oscilacion)  <span class="tok-com"># &lt;-- FÓRMULA OFICIAL DE LA PROFESORA</span>
-        corriente = (<span class="tok-num">12.0</span> / (omega_d * L)) * decay * np.sin(omega_d * t_array)
-        <span class="tok-kw">return</span> vc, corriente, alpha, omega_d
+    <span class="tok-com"># PASO 2: Parte Permanente (Estado Estacionario t -> ∞)</span>
+    Q_perm = C * E0                             <span class="tok-com"># Q_perm = 200 µF · 12 V = 2.4 mC</span>
+    Vc_perm = Q_perm / C                        <span class="tok-com"># V_C,perm = 12.0 V</span>
     
-    <span class="tok-com"># Generalización para condiciones iniciales arbitrarias Q(0) e I(0):</span>
-    q_perm = C * E0                             <span class="tok-com"># 2.4 mC</span>
-    c1 = q0 - q_perm
-    c2 = (i0 + alpha * c1) / omega_d
-    decay = np.exp(-alpha * t_array)
-    q_trans = decay * (c1 * np.cos(omega_d * t_array) + c2 * np.sin(omega_d * t_array))
-    vc = (q_perm + q_trans) / C
-    corriente = decay * ((-alpha * c1 + omega_d * c2) * np.cos(omega_d * t_array) +
-                         (-alpha * c2 - omega_d * c1) * np.sin(omega_d * t_array))
-    <span class="tok-kw">return</span> vc, corriente, alpha, omega_d</code></pre>
+    <span class="tok-com"># PASO 3: Constantes por Condiciones Iniciales (Reposo Q(0)=0, I(0)=0)</span>
+    C1 = q0 - Q_perm                            <span class="tok-com"># C1 = 0 - 2.4 mC = -2.4 mC</span>
+    C2 = (i0 + alpha * C1) / omega_d            <span class="tok-com"># C2 = (0 - 24) / (10√99) = -2.4/√99 mC</span>
+    
+    <span class="tok-com"># PASO 4: Parte Transitoria (Respuesta Natural Amortiguada)</span>
+    decay = np.exp(-alpha * t_array)            <span class="tok-com"># e^(-10t)</span>
+    Q_trans = decay * (C1 * np.cos(omega_d * t_array) + C2 * np.sin(omega_d * t_array))
+    Vc_trans = Q_trans / C                      <span class="tok-com"># -12·e^(-10t)·[cos(10√99t) + (1/√99)·sin(10√99t)]</span>
+    
+    <span class="tok-com"># PASO 5: Solución Total (Superposición): V_C(t) = V_C,perm + V_C,trans(t)</span>
+    Vc_total = Vc_perm + Vc_trans
+    <span class="tok-com"># Factorizando 12 V (FÓRMULA CANÓNICA DEDUCIDA EN CLASE):</span>
+    <span class="tok-com"># V_C(t) = 12 · [1 - e^(-10t) · (cos(10√99t) + (1/√99) · sin(10√99t))]</span>
+    
+    <span class="tok-com"># Corriente analítica del circuito: I(t) = dQ/dt</span>
+    corriente = decay * ((-alpha * C1 + omega_d * C2) * np.cos(omega_d * t_array) +
+                         (-alpha * C2 - omega_d * C1) * np.sin(omega_d * t_array))
+    
+    <span class="tok-kw">return</span> Vc_total, corriente, alpha, omega_d</code></pre>
                             </div>
                         </div>
                     </div>
@@ -1411,131 +1579,6 @@ fig3.write_html(<span class="tok-str">"figura3_interactiva.html"</span>)</code><
             </div>
         </section>
 
-        <!-- ================================================================
-             PESTAÑA 7: TELEPRÓNTER DE DEFENSA (15 MIN) & PREGUNTAS
-             ================================================================ -->
-        <section id="tab-defensa" class="tab-pane">
-            <h2 class="section-title">Teleprónter de Sustentación Oral (15 Minutos)</h2>
-            <p class="section-subtitle">Cronómetro regresivo oficial dividido equitativamente (3 min 45 s c/u) con resaltado automático del expositor:</p>
-
-            <!-- Tarjeta de Control del Cronómetro -->
-            <div class="timer-header-card">
-                <div class="timer-info-wrap">
-                    <div class="timer-meta-label">
-                        <i data-lucide="clock"></i> TIEMPO DE EXPOSICIÓN RESTANTE:
-                    </div>
-                    <div id="timerDisplay" class="timer-display">15:00</div>
-                    <div class="defense-progress-bar-wrap">
-                        <div id="defenseProgressBar" class="defense-progress-bar"></div>
-                    </div>
-                </div>
-
-                <div class="timer-controls">
-                    <button id="btnTimerToggle" class="timer-btn btn-timer-primary">
-                        <i data-lucide="play"></i> <span>Iniciar Defensa</span>
-                    </button>
-                    <button id="btnTimerReset" class="timer-btn">
-                        <i data-lucide="rotate-ccw"></i> <span>Reiniciar (15:00)</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Fases por Integrante -->
-            <div class="speaker-slots">
-                <div class="speaker-card active-speaker">
-                    <div class="speaker-name">Jessica Acosta</div>
-                    <div class="speaker-time-window">00:00 - 03:45 (3m 45s)</div>
-                    <ul class="speaker-bullets">
-                        <li>Introducción y motivación acústica</li>
-                        <li>Deducción KVL y leyes constitutivas</li>
-                        <li>Cálculo de &omega;<sub>n</sub> = 100 y R<sub>cr</sub> = 100 Ω</li>
-                        <li>Discriminantes &Delta; y 4 regímenes</li>
-                    </ul>
-                </div>
-
-                <div class="speaker-card">
-                    <div class="speaker-name">Jorge Muñoz</div>
-                    <div class="speaker-time-window">03:45 - 07:30 (3m 45s)</div>
-                    <ul class="speaker-bullets">
-                        <li>Solución analítica del escalón de 12V</li>
-                        <li>Parte homogénea Q<sub>h</sub> vs particular Q<sub>p</sub></li>
-                        <li>Condiciones iniciales: C<sub>1</sub>, C<sub>2</sub></li>
-                        <li>Analogía física Masa-Resorte</li>
-                    </ul>
-                </div>
-
-                <div class="speaker-card">
-                    <div class="speaker-name">Alvaro Lopez</div>
-                    <div class="speaker-time-window">07:30 - 11:15 (3m 45s)</div>
-                    <ul class="speaker-bullets">
-                        <li>Variables de estado [Q, I]</li>
-                        <li>Implementación manual de RK4</li>
-                        <li>Validación: Error 3.69 nV (L<sub>&infin;</sub>)</li>
-                        <li>Comparativa de las 4 resistencias</li>
-                    </ul>
-                </div>
-
-                <div class="speaker-card">
-                    <div class="speaker-name">Kevin Bermudez</div>
-                    <div class="speaker-time-window">11:15 - 15:00 (3m 45s)</div>
-                    <ul class="speaker-bullets">
-                        <li>Filtrado multi-seno (5, 50, 500 Hz)</li>
-                        <li>Diagrama de Bode: -40 dB/década</li>
-                        <li>Demostración de audio "bajo el agua"</li>
-                        <li>Conclusión de ingeniería (Butterworth)</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Acordeón de Preguntas Difíciles del Docente -->
-            <div class="questions-section">
-                <h3 class="section-title" style="font-size: 1.25rem;">Batería de Preguntas Difíciles del Evaluador (5 Minutos de Sustentación)</h3>
-                <p class="section-subtitle">Preguntas conceptuales de alta exigencia preparadas con respuestas argumentadas:</p>
-
-                <div class="question-accordion">
-                    <!-- Pregunta 1 -->
-                    <div class="question-item">
-                        <div class="question-header">
-                            <span class="question-title"><i data-lucide="help-circle"></i> Pregunta 1: ¿Por qué en el condensador es pasa-bajo, pero en el inductor es pasa-alto y en la resistencia pasa-banda?</span>
-                            <i data-lucide="chevron-down" class="chevron-icon"></i>
-                        </div>
-                        <div class="question-content">
-                            <strong>Respuesta del Grupo:</strong> Por la naturaleza de sus reactancias complejas en frecuencia:<br>
-                            - En el condensador ($Z_C = \frac{1}{j\omega C}$), para $\omega \to 0$, $Z_C \to \infty$ (circuito abierto), quedándose con toda la tensión de entrada; a alta frecuencia es cortocircuito. Es un <strong>filtro pasa-bajo</strong>.<br>
-                            - En el inductor ($Z_L = j\omega L$), a baja frecuencia es cortocircuito ($0\text{ V}$) y a alta frecuencia es circuito abierto ($\infty$). Por tanto, la tensión $v_L(t)$ constituye un <strong>filtro pasa-alto</strong> de segundo orden ($+40\text{ dB/década}$).<br>
-                            - En la resistencia ($v_R = R I$), a baja y alta frecuencia la corriente cae a cero, pero en la frecuencia de resonancia $\omega = \omega_n = \frac{1}{\sqrt{LC}}$, las reactancias inductiva y capacitiva se cancelan mutuamente ($j\omega L + \frac{1}{j\omega C} = 0$), transfiriendo toda la tensión a la resistencia ($|H_R| = 1$). Por tanto, la salida en la resistencia es un <strong>filtro pasa-banda</strong>.
-                        </div>
-                    </div>
-
-                    <!-- Pregunta 2 -->
-                    <div class="question-item">
-                        <div class="question-header">
-                            <span class="question-title"><i data-lucide="help-circle"></i> Pregunta 2: El sobreimpulso en R = 10 Ω alcanza 20.75 V cuando la fuente solo da 12 V. ¿Viola esto la conservación de energía?</span>
-                            <i data-lucide="chevron-down" class="chevron-icon"></i>
-                        </div>
-                        <div class="question-content">
-                            <strong>Respuesta del Grupo:</strong> No viola la conservación de la energía; es una transferencia temporal entre campos de energía.<br>
-                            Durante la primera etapa de carga ($0 < t < 31.57\text{ ms}$), el inductor almacena energía cinética magnética $E_L = \frac{1}{2} L I(t)^2$. Cuando la tensión del condensador iguala los $12\text{ V}$, la corriente sigue fluyendo por inercia inductiva. Al colapsar el campo magnético del inductor, este induce una fem autoinvertida ($v_L = -L \frac{dI}{dt}$) que actúa como una fuente adicional en serie con la batería, inyectando su energía magnética hacia el condensador en forma de energía electrostática adicional $E_C = \frac{1}{2} C V_C^2$. El balance de energía integrado $\int_0^t E(\tau) I(\tau) d\tau$ es estrictamente mayor que la energía almacenada en todo momento.
-                        </div>
-                    </div>
-
-                    <!-- Pregunta 3 -->
-                    <div class="question-item">
-                        <div class="question-header">
-                            <span class="question-title"><i data-lucide="help-circle"></i> Pregunta 3: ¿Por qué RK4 fue perfectamente estable con audio a 44.1 kHz sin presentar aliasing numérico?</span>
-                            <i data-lucide="chevron-down" class="chevron-icon"></i>
-                        </div>
-                        <div class="question-content">
-                            <strong>Respuesta del Grupo:</strong> Por el criterio de la región de estabilidad absoluta de Runge-Kutta 4 en el plano complejo.<br>
-                            El método RK4 es estable en el eje imaginario hasta $|h \cdot \lambda| \le 2.78$. Con $f_s = 44100\text{ Hz}$, el paso temporal es $h = \frac{1}{44100} \approx 2.27 \times 10^{-5}\text{ s}$. Dado que la frecuencia natural más alta del sistema físico es $\omega_n = 100\text{ rad/s}$, el producto adimensional resulta:
-                            $$|h \cdot \omega_n| = (2.27 \times 10^{-5}\text{ s}) \times (100\text{ rad/s}) \approx 0.00227 \ll 2.78$$
-                            Al estar más de mil veces por debajo del límite crítico de estabilidad de RK4, el integrador opera en régimen asintótico hiper-estable, garantizando la convergencia en nanovoltios ($10^{-9}\text{ V}$) observada.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
     </main>
 
     <!-- ====================================================================
@@ -1557,17 +1600,13 @@ fig3.write_html(<span class="tok-str">"figura3_interactiva.html"</span>)</code><
     </div>
 
     <!-- ====================================================================
-         BARRA DE ATAJOS DE TECLADO (MODO EXPOSICIÓN MAGISTRAL)
+         BARRA DE ATAJOS DE TECLADO
          ==================================================================== -->
     <aside class="presentation-shortcuts-bar">
         <div class="shortcuts-container">
             <span class="shortcut-item"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> Cambiar Pestañas</span>
             <span class="shortcut-sep">•</span>
-            <span class="shortcut-item"><kbd>Espacio</kbd> Iniciar / Pausar Cronómetro</span>
-            <span class="shortcut-sep">•</span>
             <span class="shortcut-item"><kbd>P</kbd> Modo Presentación</span>
-            <span class="shortcut-sep">•</span>
-            <span class="shortcut-item"><kbd>R</kbd> Reiniciar 15:00</span>
         </div>
     </aside>
 
@@ -1580,7 +1619,7 @@ fig3.write_html(<span class="tok-str">"figura3_interactiva.html"</span>)</code><
                 <img src="assets/logo_unimayor.png" alt="Colegio Mayor del Cauca" class="footer-logo">
                 <div>
                     <p class="footer-title"><strong>PROYECTO 2: EL CIRCUITO RLC COMO FILTRO DE AUDIO</strong> • Grupo 3</p>
-                    <p class="footer-sub">Institución Universitaria Colegio Mayor del Cauca • Facultad de Ingeniería • Ecuaciones Diferenciales • Popayán, 2026</p>
+                    <p class="footer-sub">Docente: DIANA MARCELA MENDEZ ASTUDILLO &bull; Institución Universitaria Colegio Mayor del Cauca &bull; Facultad de Ingeniería &bull; Popayán, 2026</p>
                 </div>
             </div>
         </div>

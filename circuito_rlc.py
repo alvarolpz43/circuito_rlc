@@ -85,11 +85,15 @@ def sistema_rlc_derivadas(t, state, R, L, C, fuente_func):
     Ecuaciones:
         dQ/dt = I
         dI/dt = (1/L) * [E(t) - R*I - (1/C)*Q]
+        Para el caso base (L=0.5, R=10, C=200uF, E=12V):
+        dI/dt = 24 - 20*I - 10000*Q  <==>  Q'' + 20*Q' + 10000*Q = 24
     """
     Q, I = state[0], state[1]
     E_t = fuente_func(t)
     
     dQ_dt = I
+    # Despeje de la aceleración de carga Q'' = dI/dt:
+    # dI/dt = [E(t) - R*I - (1/C)*Q] / L
     dI_dt = (E_t - R * I - (1.0 / C) * Q) / L
     return np.array([dQ_dt, dI_dt], dtype=np.float64)
 
@@ -158,27 +162,28 @@ def solucion_analitica_vc(t_array, R=10.0, L=0.5, C=200e-6, E0=12.0, q0=0.0, i0=
     Para reposo canónico de clase Q(0)=0, I(0)=0:
         V_C(t) = 12 * [1 - exp(-10*t) * (cos(10*sqrt(99)*t) + (1/sqrt(99))*sin(10*sqrt(99)*t))]
     """
-    alpha = R / (2.0 * L)
-    omega_n_sq = 1.0 / (L * C)
-    omega_d = np.sqrt(omega_n_sq - alpha**2)
+    # PASO 1: Parámetros característicos (Ecuación homogénea)
+    alpha = R / (2.0 * L)                       # alpha = 10.0 s^-1
+    omega_n_sq = 1.0 / (L * C)                  # omega_n^2 = 10000 (rad/s)^2
+    omega_d = np.sqrt(omega_n_sq - alpha**2)    # omega_d = 10*sqrt(99) rad/s (~99.50)
     
-    # Evaluación explícita de la fórmula canónica de la deducción de clase:
-    if q0 == 0.0 and i0 == 0.0 and R == 10.0 and L == 0.5 and C == 200e-6 and E0 == 12.0:
-        decay = np.exp(-10.0 * t_array)
-        oscilacion = np.cos(omega_d * t_array) + (1.0 / np.sqrt(99.0)) * np.sin(omega_d * t_array)
-        vc_total = 12.0 * (1.0 - decay * oscilacion)
-        corriente = (12.0 / (omega_d * L)) * decay * np.sin(omega_d * t_array)
-        return vc_total, corriente, alpha, omega_d
-
-    q_perm = C * E0
-    c1 = q0 - q_perm
-    c2 = (i0 + alpha * c1) / omega_d
+    # PASO 2: Parte Permanente (Estado Estacionario t -> inf)
+    q_perm = C * E0                             # 200 uF * 12 V = 2.4 mC
+    vc_perm = q_perm / C                        # 12.0 V
     
-    decay = np.exp(-alpha * t_array)
+    # PASO 3: Constantes por Condiciones Iniciales (Q(0)=q0, I(0)=i0)
+    c1 = q0 - q_perm                            # Reposo: 0 - 2.4 mC = -2.4 mC
+    c2 = (i0 + alpha * c1) / omega_d            # Reposo: -2.4 / sqrt(99) mC
+    
+    # PASO 4: Parte Transitoria (Respuesta Natural Amortiguada)
+    decay = np.exp(-alpha * t_array)            # exp(-10*t)
     q_trans = decay * (c1 * np.cos(omega_d * t_array) + c2 * np.sin(omega_d * t_array))
-    q_total = q_perm + q_trans
+    vc_trans = q_trans / C                      # -12*exp(-10*t)*[cos(10*sqrt(99)*t) + (1/sqrt(99))*sin]
     
-    vc_total = q_total / C
+    # PASO 5: Solución Total (Superposición): V_C(t) = V_C,perm + V_C,trans(t)
+    vc_total = vc_perm + vc_trans
+    # Para reposo (q0=0, i0=0), simplifica idénticamente a la fórmula canónica de clase:
+    # V_C(t) = 12 * [1 - exp(-10*t) * (cos(10*sqrt(99)*t) + (1/sqrt(99))*sin(10*sqrt(99)*t))]
     
     # Corriente analítica I(t) = dQ/dt
     # d/dt[decay * (c1*cos + c2*sin)] = decay * [(-alpha*c1 + omega_d*c2)*cos + (-alpha*c2 - omega_d*c1)*sin]

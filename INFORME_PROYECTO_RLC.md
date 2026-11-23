@@ -7,12 +7,13 @@
 ### Análisis Matemático Riguroso, Modelado Numérico en Python y Aplicación Acústica
 
 **GRUPO 3:**
-* **ACOSTA GALINDEZ JESSICA VANESA**
-* **BERMUDEZ ZAMORA KEVIN DANIEL**
-* **LOPEZ QUIRA ALVARO JOSE**
-* **MUÑOZ DULCEY JORGE ENRIQUE**
+* **ACOSTA GALINDEZ JESSICA VANESA** (Código: 90125041)
+* **BERMUDEZ ZAMORA KEVIN DANIEL** (Código: 90125059)
+* **LOPEZ QUIRA ALVARO JOSE** (Código: 90125048)
+* **MUÑOZ DULCEY JORGE ENRIQUE** (Código: 90125037)
 
-**Docente:** Departamento de Ciencias Básicas / Matemáticas Aplicadas  
+**Docente:** DIANA MARCELA MENDEZ ASTUDILLO  
+**Institución Universitaria Colegio Mayor del Cauca — Facultad de Ingeniería**  
 **Popayán, Cauca — 2026**
 
 ---
@@ -27,7 +28,25 @@ Asimismo, se obtiene la solución analítica exacta de la respuesta al escalón 
 
 ## 1. DEDUCCIÓN ANALÍTICA A MANO (RIGOR MATEMÁTICO FORMAL)
 
-### 1.1. Origen Físico de la Ecuación Diferencial desde la Segunda Ley de Kirchhoff
+### 1.1. Contexto Histórico: Gustav Robert Kirchhoff (1824–1887) y el Origen de la Ecuación
+
+En **1845**, con apenas **21 años** y siendo aún un estudiante universitario en la Universidad de Königsberg, el físico y matemático alemán **Gustav Robert Kirchhoff** formuló las dos leyes universales que constituyen el pilar fundamental del análisis de circuitos eléctricos:
+1. **Primera Ley de Kirchhoff (Ley de Corrientes o LCK):** Basada en el principio de conservación de la carga eléctrica. En cualquier nodo o unión de un circuito, la suma algebraica de corrientes entrantes es idéntica a la suma de corrientes salientes ($\sum I = 0$).
+2. **Segunda Ley de Kirchhoff (Ley de Voltajes, Ley de Mallas o LVK):** Basada en el principio de **conservación de la energía** en un campo eléctrico cuasi-estacionario. A lo largo de cualquier trayectoria o lazo cerrado, la suma algebraica de las diferencias de potencial es exactamente cero ($\sum \Delta V = 0$).
+
+#### ¿Por qué Kirchhoff es la base indispensable de este proyecto?
+Los tres elementos pasivos de nuestro circuito RLC fueron descubiertos de forma aislada a través de ramas experimentales distintas:
+* **Michael Faraday (1831):** Descubrió que la variación de flujo magnético en un inductor induce una fem proporcional a la rapidez de cambio de la corriente: $v_L(t) = L \frac{dI(t)}{dt}$ (inercia electromagnética).
+* **Georg Simon Ohm (1827):** Demostró que la caída de tensión en un conductor óhmico es proporcional a la corriente por choque de electrones: $v_R(t) = R \, I(t)$ (fricción disipativa).
+* **Charles-Augustin de Coulomb (1785) y Carl Friedrich Gauss:** Establecieron la relación electrostática de acumulación de carga entre placas: $v_C(t) = \frac{Q(t)}{C}$ (energía elástica).
+
+Fue la **Segunda Ley de Kirchhoff (LVK)** la que actuó como el **puente unificador** que permitió enlazar estas tres leyes físicas independientes en una sola ecuación de malla cerrada:
+$$v_L(t) + v_R(t) + v_C(t) = E(t) \iff L Q''(t) + R Q'(t) + \frac{1}{C} Q(t) = E(t)$$
+Sin la ley de mallas de Kirchhoff, no existiría la EDO de segundo orden que gobierna nuestro filtro de audio analógico.
+
+---
+
+### 1.2. Origen Físico de la Ecuación Diferencial desde la Segunda Ley de Kirchhoff
 
 Consideremos una malla eléctrica cerrada formada por una fuente de fuerza electromotriz $E(t)$, un inductor de inductancia $L$, un resistor de resistencia $R$ y un condensador de capacitancia $C$ conectados en serie. Por la topología en serie, la misma corriente eléctrica $I(t)$ recorre cada uno de los elementos pasivos.
 
@@ -371,6 +390,18 @@ Dado que la frecuencia de corte es $f_n \approx 16\text{ Hz}$, todas las frecuen
 
 ---
 
+### 3.5. Arquitectura de la Plataforma Web Interactiva (`index.html`)
+
+La plataforma web interactiva complementa el pipeline en Python proporcionando un laboratorio visual y acústico a 60 FPS, estructurado en seis módulos técnicos:
+1. **Pestaña 1 (Inicio):** Portada institucional, parámetros nominales, introducción al proyecto, hoja de ruta y homenaje histórico a Gustav Kirchhoff.
+2. **Pestaña 2 (Deducción Analítica):** Desarrollo formal paso a paso con KaTeX y mini-gráfica interactiva de descomposición de ondas.
+3. **Pestaña 3 (Simulador RK4):** Sliders interactivos de $R, L, C, E_0$, superposición analítica en vivo (error en nanovoltios) y diagrama dinámico de polos en el plano complejo $s$ con verificación de estabilidad de Lyapunov.
+4. **Pestaña 4 (Galería & Bode):** Visualización interactiva con Chart.js de los 4 regímenes y curvas de respuesta frecuencial en magnitud (dB) y fase.
+5. **Pestaña 5 (Audio Lab):** Sintetizador polifónico virtual, micrófono en vivo y carga de archivos WAV/MP3 procesados en tiempo real con Web Audio API (`BiquadFilterNode`).
+6. **Pestaña 6 (Analogía Física):** Animación sincronizada en Canvas del sistema electromecánico masa-resorte-amortiguador.
+
+---
+
 ## 4. CONCLUSIÓN DE INGENIERÍA: SELECCIÓN DEL VALOR ÓPTIMO DE RESISTENCIA
 
 En el diseño de un filtro de audio o control de tono analógico en ingeniería acústica y electrónica, la selección del valor de resistencia $R$ no puede realizarse de forma arbitraria; obedece a un compromiso fundamental de diseño (*trade-off*) entre:
@@ -399,7 +430,26 @@ En el diseño de un filtro de audio o control de tono analógico en ingeniería 
 
 ---
 
-## 5. REFERENCIAS BIBLIOGRÁFICAS
+## 5. TECNOLOGÍAS, LIBRERÍAS DE SOFTWARE E INTELIGENCIA ARTIFICIAL UTILIZADA
+
+### 5.1. Asistencia con Inteligencia Artificial
+Para el diseño, modelado matemático y desarrollo computacional se empleó **Antigravity AI**, el entorno de desarrollo agéntico avanzado de **Google DeepMind**, impulsado por los modelos multimodales **Google Gemini (Gemini 3.8 Flash / Gemini Pro)**.
+
+La IA colaboró en:
+* Deducción analítica rigurosa a mano a partir de la ley de Kirchhoff y solución de la EDO ante escalón.
+* Implementación y optimización del integrador numérico RK4 en Python y JavaScript Vanilla.
+* Arquitectura de la suite web interactiva con Glassmorphism 2.0 y simulación a 60 FPS.
+* Configuración del pipeline de audio en tiempo real con Web Audio API para el efecto submarino.
+* Redacción técnica del informe y compilación automatizada a PDF editorial con KaTeX.
+
+### 5.2. Librerías de Software
+* **Computación Científica en Python:** `numpy` (cálculo matricial y RK4), `scipy` (`scipy.signal` para FFT y Bode, `scipy.io.wavfile` para audio WAV), `matplotlib` (gráficos a 300 DPI) y `pypdf` (verificación de PDF).
+* **Plataforma Web (Frontend):** `Web Audio API` (nodos de filtrado y sintetizador), `HTML5 Canvas API` (aceleración por GPU a 60 FPS), `KaTeX` (fórmulas LaTeX), `Chart.js` (gráficos de señales) y `Lucide Icons` (iconografía offline).
+* **Compilación:** `Microsoft Edge Headless` (`--headless=new --print-to-pdf`).
+
+---
+
+## 6. REFERENCIAS BIBLIOGRÁFICAS
 
 1. **Boyce, W. E., & DiPrima, R. C. (2017).** *Elementary Differential Equations and Boundary Value Problems* (11th ed.). John Wiley & Sons. (Capítulo 3: Ecuaciones lineales de segundo orden; Aplicaciones en circuitos RLC).
 2. **Zill, D. G. (2018).** *Ecuaciones diferenciales con aplicaciones de modelado* (11.ª ed.). Cengage Learning. (Capítulo 5: Modelos lineales: Circuitos eléctricos análogos a sistemas masa-resorte).
