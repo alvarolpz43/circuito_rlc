@@ -277,7 +277,7 @@
                     <div class="member-avatar">JA</div>
                     <div class="member-info">
                         <h4>Jessica Vanesa Acosta Galindez</h4>
-                        <div class="member-role">Código: 90125041 &bull; Planteamiento Físico & Deducción</div>
+                        <div class="member-role">Código: 90125041</div>
                     </div>
                 </div>
 
@@ -285,7 +285,7 @@
                     <div class="member-avatar">JM</div>
                     <div class="member-info">
                         <h4>Jorge Enrique Muñoz Dulcey</h4>
-                        <div class="member-role">Código: 90125037 &bull; Solución Analítica & Analogía</div>
+                        <div class="member-role">Código: 90125037</div>
                     </div>
                 </div>
 
@@ -293,7 +293,7 @@
                     <div class="member-avatar">AL</div>
                     <div class="member-info">
                         <h4>Alvaro Jose Lopez Quira</h4>
-                        <div class="member-role">Código: 90125048 &bull; Computación Científica & RK4</div>
+                        <div class="member-role">Código: 90125048</div>
                     </div>
                 </div>
 
@@ -301,7 +301,7 @@
                     <div class="member-avatar">KB</div>
                     <div class="member-info">
                         <h4>Kevin Daniel Bermudez Zamora</h4>
-                        <div class="member-role">Código: 90125059 &bull; Análisis de Audio, Bode & Cierre</div>
+                        <div class="member-role">Código: 90125059</div>
                     </div>
                 </div>
             </div>
@@ -1114,14 +1114,97 @@
                     <button id="btnLiveMic" class="synth-btn btn-mic-option">
                         <i data-lucide="mic"></i> <span>Hablar por Micrófono</span>
                     </button>
-                    <label class="synth-btn btn-upload-option" title="Sube una canción o pista de tu computadora para filtrarla en vivo">
-                        <i data-lucide="upload"></i> <span id="lblAudioFile">Cargar Audio Propio</span>
-                        <input type="file" id="audioFileInput" accept="audio/*" style="display: none;">
+                    <label class="synth-btn btn-upload-option" title="Sube una o varias canciones o notas de voz para filtrarlas en vivo">
+                        <i data-lucide="upload"></i> <span id="lblAudioFile">Cargar Audio(s)</span>
+                        <input type="file" id="audioFileInput" accept="audio/*" multiple style="display: none;">
                     </label>
                 </div>
                 <div id="audioSourceIndicator" class="audio-source-indicator">
                     <span class="source-dot"></span>
-                    <span id="audioSourceText">Fuente activa: Sintetizador Polifónico</span>
+                    <span id="audioSourceText">Fuente activa: Ninguna fuente activa</span>
+                </div>
+
+                <!-- ================================================================
+                     GESTOR Y REPRODUCTOR DE AUDIOS CARGADOS (PLAYLIST & CONTROLES)
+                     ================================================================ -->
+                <div class="audio-playlist-panel" id="audioPlaylistPanel">
+                    <div class="playlist-top-bar">
+                        <div class="playlist-heading">
+                            <i data-lucide="list-music"></i>
+                            <span>Bandeja de Audios Cargados</span>
+                            <span id="playlistBadgeCount" class="playlist-badge">0 pistas</span>
+                        </div>
+                        <div class="playlist-top-actions">
+                            <button id="btnPreloadProjectTracks" type="button" class="btn-playlist-action" title="Cargar pistas generadas del proyecto">
+                                <i data-lucide="disc"></i> <span>Pistas del Proyecto</span>
+                            </button>
+                            <label class="btn-playlist-action btn-add-more" title="Agregar más archivos de audio a la lista">
+                                <i data-lucide="plus-circle"></i> <span>+ Agregar Audios</span>
+                                <input type="file" id="audioFileInputExtra" accept="audio/*" multiple style="display: none;">
+                            </label>
+                            <button id="btnClearAllTracks" type="button" class="btn-playlist-action btn-clear-tracks" title="Limpiar lista de audios" style="display: none;">
+                                <i data-lucide="trash-2"></i> <span>Limpiar</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Panel del Reproductor Activo (Deck) -->
+                    <div class="audio-player-deck" id="audioPlayerDeck">
+                        <div class="deck-track-info">
+                            <div class="deck-icon-wrapper" id="deckIconWrapper">
+                                <i data-lucide="music" id="deckTrackIcon"></i>
+                            </div>
+                            <div class="deck-meta">
+                                <h4 id="deckTrackTitle" class="deck-title">Ningún audio seleccionado</h4>
+                                <div class="deck-sub-info">
+                                    <span id="deckTrackDuration">Duración: --:--</span>
+                                    <span class="meta-dot">&bull;</span>
+                                    <span id="deckTrackStatus" class="deck-status-pill status-idle">En espera</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Barra de Progreso y Tiempo -->
+                        <div class="deck-timeline">
+                            <span id="deckCurrentTime" class="deck-time">00:00</span>
+                            <div class="deck-slider-wrap">
+                                <input type="range" id="deckProgressBar" class="deck-progress-slider" min="0" max="100" value="0" step="0.1" disabled>
+                            </div>
+                            <span id="deckTotalDuration" class="deck-time">00:00</span>
+                        </div>
+
+                        <!-- Botones de Control de Reproducción (Play, Pause, Reiniciar, Stop) -->
+                        <div class="deck-controls-row">
+                            <button id="btnDeckPlay" type="button" class="deck-ctrl-btn btn-play-deck" title="Reproducir audio seleccionado" disabled>
+                                <i data-lucide="play"></i> <span>Reproducir</span>
+                            </button>
+                            <button id="btnDeckPause" type="button" class="deck-ctrl-btn btn-pause-deck" title="Pausar audio" disabled>
+                                <i data-lucide="pause"></i> <span>Pausar</span>
+                            </button>
+                            <button id="btnDeckRestart" type="button" class="deck-ctrl-btn btn-restart-deck" title="Reiniciar desde el principio (00:00)" disabled>
+                                <i data-lucide="rotate-ccw"></i> <span>Reiniciar</span>
+                            </button>
+                            <button id="btnDeckStop" type="button" class="deck-ctrl-btn btn-stop-deck" title="Detener y volver a 00:00" disabled>
+                                <i data-lucide="square"></i> <span>Detener</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Audios Cargados (Playlist) -->
+                    <div class="playlist-items-container">
+                        <div class="playlist-list-header">
+                            <i data-lucide="layers" style="width: 14px; height: 14px; color: var(--accent-cyan);"></i>
+                            <span>Selecciona una pista para reproducir:</span>
+                        </div>
+                        <div id="playlistTracksList" class="playlist-tracks-list">
+                            <!-- Estado vacío inicial -->
+                            <div id="playlistEmptyState" class="playlist-empty-state">
+                                <i data-lucide="music"></i>
+                                <p>No hay audios en la bandeja.</p>
+                                <span>Haz clic en <strong>"Cargar Audio(s)"</strong> para subir canciones o notas de voz (.wav, .mp3, .ogg), o presiona <strong>"Pistas del Proyecto"</strong>.</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Canvas del Espectro de Audio FFT -->

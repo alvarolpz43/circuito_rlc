@@ -141,6 +141,12 @@ function initTabNavigation() {
                     UnderwaterSpeaker.resize();
                     UnderwaterSpeaker.start();
                 }
+                if (typeof AudioLab !== 'undefined') {
+                    AudioLab.initPlaylistUI();
+                    if (AudioLab.playlist.length === 0) {
+                        AudioLab.preloadProjectTracks();
+                    }
+                }
             }
 
             // Si salimos de tab-galeria, detener sonda de Bode si está sonando
@@ -879,12 +885,9 @@ function initAudioStudio() {
         });
     }
 
-    if (audioFileInput) {
-        audioFileInput.addEventListener("change", (e) => {
-            if (e.target.files && e.target.files[0]) {
-                AudioLab.loadCustomFile(e.target.files[0]);
-            }
-        });
+    // Inicializar bandeja de audios y reproductor multimedia con playlist
+    if (typeof AudioLab !== 'undefined') {
+        AudioLab.initPlaylistUI();
     }
 
     // Enlazar reproductores nativos WAV con la animación del altavoz sumergible

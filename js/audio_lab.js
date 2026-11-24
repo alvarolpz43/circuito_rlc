@@ -2,7 +2,8 @@
  * ==============================================================================
  * LABORATORIO DE AUDIO OPTIMIZADO (WEB AUDIO API & FFT CANVAS)
  * Proyecto 2: El Circuito RLC como Filtro de Audio - Grupo 3
- * Soporte para Sintetizador, Micrófono en Vivo y Archivos Personalizados
+ * Soporte para Sintetizador, Micrófono en Vivo, Bandeja de Playlist de Audios,
+ * Controles Completos (Reproducir, Pausar, Reiniciar) y Filtrado RLC Dinámico
  * ==============================================================================
  */
 
@@ -29,6 +30,17 @@ const AudioLab = {
     R: 50.0,
     L: 0.5,
     C: 200e-6,
+
+    // =========================================================================
+    // ESTADO DE LA BANDEJA DE AUDIOS Y REPRODUCTOR MULTIMEDIA
+    // =========================================================================
+    playlist: [], // Array de { id, name, duration, size, buffer, type: 'custom' | 'project' }
+    selectedTrackIndex: -1,
+    playerState: 'stopped', // 'stopped' | 'playing' | 'paused'
+    playbackStartedAt: 0,   // currentTime del audioCtx al iniciar
+    offsetSeconds: 0,       // segundo de reproducción actual
+    progressTimer: null,
+    isSeeking: false,
 
     getCutoffFreq() {
         const omega_n = 1.0 / Math.sqrt(this.L * this.C);
@@ -67,14 +79,24 @@ const AudioLab = {
                 this.canvasCtx.scale(dpr, dpr);
                 this.dataArray = new Uint8Array(this.analyserNode.frequencyBinCount);
             }
+
+            // Inicializar eventos de la bandeja de audios
+            this.initPlaylistUI();
         }
         if (this.audioCtx.state === 'suspended') {
             this.audioCtx.resume();
         }
     },
 
-    stopAllAudio() {
-        // 1. Detener sintetizador
+    formatTime(sec) {
+        if (isNaN(sec) || sec < 0) return "00:00";
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
+    },
+
+    stopSynthAndMicOnly() {
+        // Detener osciladores del sintetizador
         if (this.oscillators.length > 0) {
             this.oscillators.forEach(osc => {
                 try { osc.stop(); osc.disconnect(); } catch (e) {}
@@ -82,7 +104,7 @@ const AudioLab = {
             this.oscillators = [];
         }
 
-        // 2. Detener micrófono
+        // Detener micrófono
         if (this.micStream) {
             this.micStream.getTracks().forEach(track => track.stop());
             this.micStream = null;
@@ -97,14 +119,28 @@ const AudioLab = {
             btnMic.innerHTML = '<i data-lucide="mic"></i> <span>Hablar por Micrófono</span>';
         }
 
-        // 3. Detener archivo de audio
+        const btnPlaySynth = document.getElementById("btnPlaySynth");
+        if (btnPlaySynth) {
+            btnPlaySynth.classList.remove("stop");
+            btnPlaySynth.innerHTML = '<i data-lucide="play"></i> <span>Iniciar Sintetizador</span>';
+        }
+    },
+
+    stopAllAudio() {
+        this.stopSynthAndMicOnly();
+
+        // Detener reproducción de archivo activo
         if (this.fileBufferNode) {
+            this.fileBufferNode.onended = null;
             try { this.fileBufferNode.stop(); this.fileBufferNode.disconnect(); } catch (e) {}
             this.fileBufferNode = null;
         }
 
         this.isPlaying = false;
         this.currentSource = null;
+        this.playerState = 'stopped';
+        this.offsetSeconds = 0;
+        this.stopProgressTimer();
 
         if (this.animFrameId) {
             cancelAnimationFrame(this.animFrameId);
@@ -112,6 +148,8 @@ const AudioLab = {
         }
 
         this.updateUIState(false);
+        this.updateDeckUI();
+        this.renderPlaylist();
         this.clearCanvas();
         this.updateSourceIndicator("Ninguna fuente activa");
         if (window.lucide) lucide.createIcons();
@@ -192,40 +230,575 @@ const AudioLab = {
         }
     },
 
-    loadCustomFile(file) {
-        if (!file) return;
-        this.initAudioContext();
-        this.stopAllAudio();
+    // =========================================================================
+    // GESTIÓN DE AUDIOS CARGADOS, PLAYLIST Y REPRODUCTOR (PLAY, PAUSA, REINICIO)
+    // =========================================================================
 
-        const reader = new FileReader();
-        reader.onload = async (e) => {
+    initPlaylistUI() {
+        const fileInput1 = document.getElementById("audioFileInput");
+        const fileInput2 = document.getElementById("audioFileInputExtra");
+        const btnPreload = document.getElementById("btnPreloadProjectTracks");
+        const btnClear = document.getElementById("btnClearAllTracks");
+
+        const btnPlay = document.getElementById("btnDeckPlay");
+        const btnPause = document.getElementById("btnDeckPause");
+        const btnRestart = document.getElementById("btnDeckRestart");
+        const btnStop = document.getElementById("btnDeckStop");
+        const progressBar = document.getElementById("deckProgressBar");
+
+        if (fileInput1 && !fileInput1._bound) {
+            fileInput1._bound = true;
+            fileInput1.addEventListener("change", (e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                    this.loadFiles(e.target.files);
+                }
+            });
+        }
+
+        if (fileInput2 && !fileInput2._bound) {
+            fileInput2._bound = true;
+            fileInput2.addEventListener("change", (e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                    this.loadFiles(e.target.files);
+                }
+            });
+        }
+
+        if (btnPreload && !btnPreload._bound) {
+            btnPreload._bound = true;
+            btnPreload.addEventListener("click", () => {
+                this.preloadProjectTracks();
+            });
+        }
+
+        if (btnClear && !btnClear._bound) {
+            btnClear._bound = true;
+            btnClear.addEventListener("click", () => {
+                this.clearAllTracks();
+            });
+        }
+
+        if (btnPlay && !btnPlay._bound) {
+            btnPlay._bound = true;
+            btnPlay.addEventListener("click", () => {
+                this.playDeckTrack();
+            });
+        }
+
+        if (btnPause && !btnPause._bound) {
+            btnPause._bound = true;
+            btnPause.addEventListener("click", () => {
+                this.pauseDeckTrack();
+            });
+        }
+
+        if (btnRestart && !btnRestart._bound) {
+            btnRestart._bound = true;
+            btnRestart.addEventListener("click", () => {
+                this.restartDeckTrack();
+            });
+        }
+
+        if (btnStop && !btnStop._bound) {
+            btnStop._bound = true;
+            btnStop.addEventListener("click", () => {
+                this.stopDeckTrack();
+            });
+        }
+
+        if (progressBar && !progressBar._bound) {
+            progressBar._bound = true;
+            progressBar.addEventListener("input", (e) => {
+                this.isSeeking = true;
+                const targetSec = parseFloat(e.target.value);
+                const curTrack = this.playlist[this.selectedTrackIndex];
+                if (curTrack) {
+                    const curTimeLbl = document.getElementById("deckCurrentTime");
+                    if (curTimeLbl) curTimeLbl.textContent = this.formatTime(targetSec);
+                }
+            });
+
+            progressBar.addEventListener("change", (e) => {
+                this.isSeeking = false;
+                const targetSec = parseFloat(e.target.value);
+                this.seekDeckTrack(targetSec);
+            });
+        }
+    },
+
+    async loadFiles(fileList) {
+        this.initAudioContext();
+        let loadedCount = 0;
+
+        for (let i = 0; i < fileList.length; i++) {
+            const file = fileList[i];
             try {
-                const arrayBuffer = e.target.result;
+                const arrayBuffer = await file.arrayBuffer();
                 const audioBuffer = await this.audioCtx.decodeAudioData(arrayBuffer);
 
-                this.fileBufferNode = this.audioCtx.createBufferSource();
-                this.fileBufferNode.buffer = audioBuffer;
-                this.fileBufferNode.loop = true;
+                const track = {
+                    id: 'track_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                    name: file.name,
+                    duration: audioBuffer.duration,
+                    size: (file.size / (1024 * 1024)).toFixed(2) + " MB",
+                    buffer: audioBuffer,
+                    type: 'custom'
+                };
 
-                this.routeAudio(this.fileBufferNode);
-                this.fileBufferNode.start();
-
-                this.isPlaying = true;
-                this.currentSource = 'file';
-                this.startSpectrumVisualizer();
-
-                const lbl = document.getElementById("lblAudioFile");
-                if (lbl) {
-                    lbl.textContent = file.name.length > 20 ? file.name.substring(0, 18) + "..." : file.name;
-                }
-
-                this.updateSourceIndicator(`Fuente activa: Archivo (${file.name})`);
+                this.playlist.push(track);
+                loadedCount++;
             } catch (err) {
-                console.error("Error al decodificar audio:", err);
-                alert("Formato de audio no compatible o archivo dañado.");
+                console.error("Error al procesar el archivo:", file.name, err);
+                alert(`No se pudo leer el archivo "${file.name}". Verifica que sea un formato de audio válido (.mp3, .wav, .ogg, .flac).`);
+            }
+        }
+
+        if (loadedCount > 0) {
+            // Si no había ninguno seleccionado, seleccionar el primero recién agregado
+            if (this.selectedTrackIndex === -1) {
+                this.selectedTrackIndex = this.playlist.length - loadedCount;
+            }
+            this.renderPlaylist();
+            this.updateDeckUI();
+            const lbl = document.getElementById("lblAudioFile");
+            if (lbl) {
+                const curTrack = this.playlist[this.selectedTrackIndex];
+                lbl.textContent = curTrack.name.length > 15 ? curTrack.name.substring(0, 13) + "..." : curTrack.name;
+            }
+        }
+    },
+
+    // Compatibilidad hacia atrás con llamada anterior
+    loadCustomFile(file) {
+        if (!file) return;
+        this.loadFiles([file]);
+    },
+
+    async preloadProjectTracks() {
+        this.initAudioContext();
+        const projectFiles = [
+            { name: "audio_original.wav (Audio Sintético)", url: "audio_original.wav" },
+            { name: "audio_filtrado_submarino.wav (Filtrado RLC)", url: "audio_filtrado_submarino.wav" }
+        ];
+
+        let addedCount = 0;
+        for (const item of projectFiles) {
+            // Evitar duplicados si ya existen
+            if (this.playlist.some(t => t.name === item.name)) continue;
+
+            try {
+                const resp = await fetch(item.url);
+                if (!resp.ok) throw new Error("Fetch falló con código " + resp.status);
+                const arrayBuffer = await resp.arrayBuffer();
+                const audioBuffer = await this.audioCtx.decodeAudioData(arrayBuffer);
+
+                this.playlist.push({
+                    id: 'proj_' + Math.random().toString(36).substr(2, 6),
+                    name: item.name,
+                    duration: audioBuffer.duration,
+                    size: "308 KB",
+                    buffer: audioBuffer,
+                    type: 'project'
+                });
+                addedCount++;
+            } catch (err) {
+                console.log("No se pudo precargar vía fetch relativo (comportamiento habitual en file:///):", err);
+            }
+        }
+
+        if (addedCount > 0) {
+            if (this.selectedTrackIndex === -1) this.selectedTrackIndex = 0;
+            this.renderPlaylist();
+            this.updateDeckUI();
+        } else if (this.playlist.length === 0) {
+            alert("En modo archivo local (file:///), por favor presiona '+ Agregar Audios' o 'Cargar Audio(s)' y selecciona directamente los archivos .wav desde la carpeta del proyecto.");
+        }
+    },
+
+    selectTrack(index, autoplay = false) {
+        if (index < 0 || index >= this.playlist.length) return;
+
+        // Si ya está sonando esta misma pista, no reiniciar si solo se hace clic
+        if (this.selectedTrackIndex === index && this.playerState === 'playing' && !autoplay) {
+            return;
+        }
+
+        // Detener la reproducción actual
+        if (this.fileBufferNode) {
+            this.fileBufferNode.onended = null;
+            try { this.fileBufferNode.stop(); this.fileBufferNode.disconnect(); } catch (e) {}
+            this.fileBufferNode = null;
+        }
+
+        this.selectedTrackIndex = index;
+        this.offsetSeconds = 0;
+        this.playerState = 'stopped';
+        this.isPlaying = false;
+        this.stopProgressTimer();
+
+        this.updateDeckUI();
+        this.renderPlaylist();
+
+        if (autoplay) {
+            this.playDeckTrack();
+        }
+    },
+
+    getDeckCurrentTime() {
+        if (this.playerState === 'playing') {
+            const elapsed = this.offsetSeconds + (this.audioCtx.currentTime - this.playbackStartedAt);
+            const curTrack = this.playlist[this.selectedTrackIndex];
+            return curTrack ? Math.min(elapsed, curTrack.duration) : 0;
+        }
+        return this.offsetSeconds;
+    },
+
+    playDeckTrack() {
+        if (this.playlist.length === 0) return;
+        if (this.selectedTrackIndex < 0) this.selectedTrackIndex = 0;
+
+        this.initAudioContext();
+        this.stopSynthAndMicOnly();
+
+        const track = this.playlist[this.selectedTrackIndex];
+        if (!track || !track.buffer) return;
+
+        // Si ya hay un buffer node activo, detenerlo
+        if (this.fileBufferNode) {
+            this.fileBufferNode.onended = null;
+            try { this.fileBufferNode.stop(); this.fileBufferNode.disconnect(); } catch (e) {}
+            this.fileBufferNode = null;
+        }
+
+        const src = this.audioCtx.createBufferSource();
+        src.buffer = track.buffer;
+        this.routeAudio(src);
+        this.fileBufferNode = src;
+
+        let startOffset = this.offsetSeconds;
+        if (startOffset < 0 || startOffset >= track.duration) {
+            startOffset = 0;
+        }
+        this.offsetSeconds = startOffset;
+        this.playbackStartedAt = this.audioCtx.currentTime;
+
+        src.start(0, startOffset);
+
+        src.onended = () => {
+            if (this.playerState === 'playing') {
+                const elapsed = this.offsetSeconds + (this.audioCtx.currentTime - this.playbackStartedAt);
+                if (elapsed >= track.duration - 0.25) {
+                    this.onDeckTrackEnded();
+                }
             }
         };
-        reader.readAsArrayBuffer(file);
+
+        this.playerState = 'playing';
+        this.isPlaying = true;
+        this.currentSource = 'file';
+
+        this.startSpectrumVisualizer();
+        this.startProgressTimer();
+        this.updateDeckUI();
+        this.renderPlaylist();
+        this.updateSourceIndicator(`Reproduciendo: ${track.name} (${this.filterEnabled ? 'Con Filtro RLC' : 'Audio Directo'})`);
+    },
+
+    pauseDeckTrack() {
+        if (this.playerState !== 'playing' || !this.fileBufferNode) return;
+
+        const curTime = this.getDeckCurrentTime();
+        const curTrack = this.playlist[this.selectedTrackIndex];
+        this.offsetSeconds = (curTrack && curTime >= curTrack.duration) ? 0 : curTime;
+
+        this.fileBufferNode.onended = null;
+        try { this.fileBufferNode.stop(); this.fileBufferNode.disconnect(); } catch (e) {}
+        this.fileBufferNode = null;
+
+        this.playerState = 'paused';
+        this.isPlaying = false;
+        this.stopProgressTimer();
+
+        this.updateDeckUI();
+        this.renderPlaylist();
+        this.updateSourceIndicator(`En pausa: ${curTrack ? curTrack.name : ''} [${this.formatTime(this.offsetSeconds)}]`);
+    },
+
+    restartDeckTrack() {
+        if (this.playlist.length === 0 || this.selectedTrackIndex < 0) return;
+        this.initAudioContext();
+
+        // Rebobinar offset al segundo 0
+        this.offsetSeconds = 0;
+
+        if (this.fileBufferNode) {
+            this.fileBufferNode.onended = null;
+            try { this.fileBufferNode.stop(); this.fileBufferNode.disconnect(); } catch (e) {}
+            this.fileBufferNode = null;
+        }
+
+        // Iniciar reproducción inmediata desde el inicio
+        this.playDeckTrack();
+    },
+
+    stopDeckTrack() {
+        this.offsetSeconds = 0;
+        this.playerState = 'stopped';
+        this.isPlaying = false;
+
+        if (this.fileBufferNode) {
+            this.fileBufferNode.onended = null;
+            try { this.fileBufferNode.stop(); this.fileBufferNode.disconnect(); } catch (e) {}
+            this.fileBufferNode = null;
+        }
+
+        this.stopProgressTimer();
+        this.clearCanvas();
+        this.updateDeckUI();
+        this.renderPlaylist();
+        this.updateSourceIndicator("Reproductor en reposo (00:00)");
+    },
+
+    seekDeckTrack(targetSeconds) {
+        const curTrack = this.playlist[this.selectedTrackIndex];
+        if (!curTrack) return;
+
+        targetSeconds = Math.max(0, Math.min(targetSeconds, curTrack.duration));
+        this.offsetSeconds = targetSeconds;
+
+        if (this.playerState === 'playing') {
+            if (this.fileBufferNode) {
+                this.fileBufferNode.onended = null;
+                try { this.fileBufferNode.stop(); this.fileBufferNode.disconnect(); } catch (e) {}
+                this.fileBufferNode = null;
+            }
+            this.playDeckTrack();
+        } else {
+            const curTimeLbl = document.getElementById("deckCurrentTime");
+            if (curTimeLbl) curTimeLbl.textContent = this.formatTime(targetSeconds);
+            const progressBar = document.getElementById("deckProgressBar");
+            if (progressBar) progressBar.value = targetSeconds;
+        }
+    },
+
+    onDeckTrackEnded() {
+        this.playerState = 'stopped';
+        this.offsetSeconds = 0;
+        this.isPlaying = false;
+        this.fileBufferNode = null;
+
+        this.stopProgressTimer();
+        this.clearCanvas();
+        this.updateDeckUI();
+        this.renderPlaylist();
+        this.updateSourceIndicator("Pista finalizada");
+    },
+
+    removeTrack(index, event) {
+        if (event) event.stopPropagation();
+        if (index < 0 || index >= this.playlist.length) return;
+
+        if (index === this.selectedTrackIndex) {
+            this.stopDeckTrack();
+            this.playlist.splice(index, 1);
+            if (this.playlist.length > 0) {
+                this.selectedTrackIndex = Math.min(index, this.playlist.length - 1);
+            } else {
+                this.selectedTrackIndex = -1;
+            }
+        } else if (index < this.selectedTrackIndex) {
+            this.selectedTrackIndex--;
+            this.playlist.splice(index, 1);
+        } else {
+            this.playlist.splice(index, 1);
+        }
+
+        this.renderPlaylist();
+        this.updateDeckUI();
+    },
+
+    clearAllTracks() {
+        this.stopDeckTrack();
+        this.playlist = [];
+        this.selectedTrackIndex = -1;
+        this.offsetSeconds = 0;
+        this.renderPlaylist();
+        this.updateDeckUI();
+    },
+
+    startProgressTimer() {
+        this.stopProgressTimer();
+        this.progressTimer = setInterval(() => {
+            if (this.playerState !== 'playing' || this.isSeeking) return;
+
+            const curTime = this.getDeckCurrentTime();
+            const curTrack = this.playlist[this.selectedTrackIndex];
+            if (!curTrack) return;
+
+            const curTimeLbl = document.getElementById("deckCurrentTime");
+            if (curTimeLbl) curTimeLbl.textContent = this.formatTime(curTime);
+
+            const progressBar = document.getElementById("deckProgressBar");
+            if (progressBar) progressBar.value = curTime;
+        }, 80);
+    },
+
+    stopProgressTimer() {
+        if (this.progressTimer) {
+            clearInterval(this.progressTimer);
+            this.progressTimer = null;
+        }
+    },
+
+    updateDeckUI() {
+        const titleEl = document.getElementById("deckTrackTitle");
+        const durEl = document.getElementById("deckTrackDuration");
+        const statusEl = document.getElementById("deckTrackStatus");
+        const iconWrapper = document.getElementById("deckIconWrapper");
+
+        const curTimeLbl = document.getElementById("deckCurrentTime");
+        const totalDurLbl = document.getElementById("deckTotalDuration");
+        const progressBar = document.getElementById("deckProgressBar");
+
+        const btnPlay = document.getElementById("btnDeckPlay");
+        const btnPause = document.getElementById("btnDeckPause");
+        const btnRestart = document.getElementById("btnDeckRestart");
+        const btnStop = document.getElementById("btnDeckStop");
+
+        const curTrack = this.playlist[this.selectedTrackIndex];
+
+        if (!curTrack) {
+            if (titleEl) titleEl.textContent = "Ningún audio seleccionado";
+            if (durEl) durEl.textContent = "Duración: --:--";
+            if (statusEl) {
+                statusEl.textContent = "En espera";
+                statusEl.className = "deck-status-pill status-idle";
+            }
+            if (iconWrapper) iconWrapper.classList.remove("pulsing");
+            if (curTimeLbl) curTimeLbl.textContent = "00:00";
+            if (totalDurLbl) totalDurLbl.textContent = "00:00";
+            if (progressBar) {
+                progressBar.max = 100;
+                progressBar.value = 0;
+                progressBar.disabled = true;
+            }
+
+            if (btnPlay) btnPlay.disabled = true;
+            if (btnPause) btnPause.disabled = true;
+            if (btnRestart) btnRestart.disabled = true;
+            if (btnStop) btnStop.disabled = true;
+            return;
+        }
+
+        // Si hay pista seleccionada
+        if (titleEl) titleEl.textContent = curTrack.name;
+        if (durEl) durEl.textContent = `Duración: ${this.formatTime(curTrack.duration)} (${curTrack.size})`;
+        if (totalDurLbl) totalDurLbl.textContent = this.formatTime(curTrack.duration);
+
+        if (progressBar) {
+            progressBar.disabled = false;
+            progressBar.max = curTrack.duration;
+            if (!this.isSeeking) {
+                progressBar.value = this.getDeckCurrentTime();
+            }
+        }
+        if (curTimeLbl && !this.isSeeking) {
+            curTimeLbl.textContent = this.formatTime(this.getDeckCurrentTime());
+        }
+
+        if (btnPlay) btnPlay.disabled = false;
+        if (btnPause) btnPause.disabled = (this.playerState !== 'playing');
+        if (btnRestart) btnRestart.disabled = false;
+        if (btnStop) btnStop.disabled = (this.playerState === 'stopped');
+
+        if (statusEl) {
+            if (this.playerState === 'playing') {
+                statusEl.textContent = "Reproduciendo";
+                statusEl.className = "deck-status-pill status-playing";
+                if (iconWrapper) iconWrapper.classList.add("pulsing");
+            } else if (this.playerState === 'paused') {
+                statusEl.textContent = "En Pausa";
+                statusEl.className = "deck-status-pill status-paused";
+                if (iconWrapper) iconWrapper.classList.remove("pulsing");
+            } else {
+                statusEl.textContent = "Listo";
+                statusEl.className = "deck-status-pill status-idle";
+                if (iconWrapper) iconWrapper.classList.remove("pulsing");
+            }
+        }
+    },
+
+    renderPlaylist() {
+        const container = document.getElementById("playlistTracksList");
+        const badgeCount = document.getElementById("playlistBadgeCount");
+        const btnClear = document.getElementById("btnClearAllTracks");
+
+        if (badgeCount) {
+            badgeCount.textContent = `${this.playlist.length} ${this.playlist.length === 1 ? 'pista' : 'pistas'}`;
+        }
+
+        if (btnClear) {
+            btnClear.style.display = this.playlist.length > 0 ? "inline-flex" : "none";
+        }
+
+        if (!container) return;
+
+        if (this.playlist.length === 0) {
+            container.innerHTML = `
+                <div id="playlistEmptyState" class="playlist-empty-state">
+                    <i data-lucide="music"></i>
+                    <p>No hay audios en la bandeja.</p>
+                    <span>Haz clic en <strong>"Cargar Audio(s)"</strong> para subir canciones o notas de voz (.wav, .mp3, .ogg), o presiona <strong>"Pistas del Proyecto"</strong>.</span>
+                </div>
+            `;
+            if (window.lucide) lucide.createIcons();
+            return;
+        }
+
+        let html = "";
+        this.playlist.forEach((track, idx) => {
+            const isActive = idx === this.selectedTrackIndex;
+            let statusText = "Elegir";
+            if (isActive) {
+                if (this.playerState === 'playing') statusText = "Sonando";
+                else if (this.playerState === 'paused') statusText = "En Pausa";
+                else statusText = "Seleccionada";
+            }
+
+            const originTag = track.type === 'project' 
+                ? '<span class="track-origin-tag project">Proyecto</span>' 
+                : '<span class="track-origin-tag">Subido</span>';
+
+            html += `
+                <div class="playlist-track-row ${isActive ? 'active' : ''}" onclick="AudioLab.selectTrack(${idx}, false)">
+                    <div class="track-row-left">
+                        <span class="track-num">${idx + 1}</span>
+                        <div class="track-name-wrap">
+                            <div class="track-name" title="${track.name}">${track.name}</div>
+                            <div class="track-details">
+                                <span>${this.formatTime(track.duration)}</span>
+                                <span>•</span>
+                                <span>${track.size}</span>
+                                <span>•</span>
+                                ${originTag}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="track-row-right">
+                        <button type="button" class="btn-select-track" onclick="event.stopPropagation(); AudioLab.selectTrack(${idx}, true);" title="${isActive && this.playerState === 'playing' ? 'Pista activa' : 'Seleccionar y reproducir'}">
+                            <i data-lucide="${isActive && this.playerState === 'playing' ? 'volume-2' : 'play-circle'}" style="width:13px;height:13px;"></i>
+                            <span>${statusText}</span>
+                        </button>
+                        <button type="button" class="btn-remove-track" onclick="AudioLab.removeTrack(${idx}, event);" title="Eliminar de la lista">
+                            <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+        if (window.lucide) lucide.createIcons();
     },
 
     updateSourceIndicator(text) {
@@ -260,6 +833,10 @@ const AudioLab = {
             } else {
                 UnderwaterSpeaker.surface();
             }
+        }
+
+        if (this.playerState === 'playing' && this.playlist[this.selectedTrackIndex]) {
+            this.updateSourceIndicator(`Reproduciendo: ${this.playlist[this.selectedTrackIndex].name} (${this.filterEnabled ? 'Con Filtro RLC' : 'Audio Directo'})`);
         }
     },
 
